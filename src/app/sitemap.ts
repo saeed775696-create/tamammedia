@@ -34,10 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.7,
       // تضمين الصور لتحسين فهرستها
-      images: portfolioImages.map((img) => ({
-        url: `${baseUrl}${img.url}`,
-        title: img.title,
-      })),
+     images: portfolioImages.map((img) => `${baseUrl}${img.url}`),
     },
     {
       url: `${baseUrl}/contact`,
