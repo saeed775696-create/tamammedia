@@ -1,24 +1,49 @@
-export default function sitemap() {
+import { MetadataRoute } from "next";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://tamammedia.vercel.app";
+
+  // مثال: يمكنك لاحقاً جلب المشاريع من API وإدراجها
+  const portfolioImages = [
+    { url: "/projects/1.jpg", title: "E-commerce Redesign" },
+    { url: "/projects/2.jpg", title: "Brand Identity" },
+  ];
+
   return [
     {
-      url: "https://your-domain.com",
+      url: baseUrl,
       lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 1,
     },
     {
-      url: "https://your-domain.com/about",
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
-      url: "https://your-domain.com/services",
+      url: `${baseUrl}/services`,
       lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
-      url: "https://your-domain.com/portfolio",
+      url: `${baseUrl}/portfolio`,
       lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+      // تضمين الصور لتحسين فهرستها
+      images: portfolioImages.map((img) => ({
+        url: `${baseUrl}${img.url}`,
+        title: img.title,
+      })),
     },
     {
-      url: "https://your-domain.com/contact",
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
   ];
 }

@@ -5,38 +5,40 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import ClientScripts from "@/components/ClientScripts";
 import { LanguageProvider } from "@/context/LanguageContext";
+import StructuredData from "@/components/StructuredData";
 
 export const metadata = {
-  metadataBase: new URL("https://your-domain.com"),
+  metadataBase: new URL("https://tamammedia.vercel.app/"),
 
   title: {
-    default: "Tamam Media | Digital Marketing Agency in Yemen",
-    template: "%s | Tamam Media",
+    default: "تمام ميديا | وكالة تسويق رقمي في اليمن",
+    template: "%s | تمام ميديا",
   },
 
   description:
-    "Tamam Media is a Yemeni digital marketing agency specializing in branding, web development, social media management, and integrated marketing solutions.",
+    "تمام ميديا وكالة تسويق رقمي يمنية متخصصة في بناء العلامات التجارية، تطوير المواقع، إدارة وسائل التواصل الاجتماعي وحلول تسويقية متكاملة.",
 
   keywords: [
-    "Tamam Media",
-    "Digital Marketing Yemen",
-    "Marketing Agency Taiz",
-    "Branding Yemen",
-    "Web Development Yemen",
-    "SEO Yemen",
-    "Social Media Marketing Yemen",
+    "تمام ميديا",
+    "تسويق رقمي اليمن",
+    "وكالة تسويق تعز",
+    "بناء علامة تجارية اليمن",
+    "تطوير مواقع اليمن",
+    "SEO اليمن",
+    "تسويق سوشيال ميديا اليمن",
+    "حلول تسويقية اليمن",
   ],
 
-  authors: [{ name: "Tamam Media" }],
-  creator: "Tamam Media",
-  publisher: "Tamam Media",
+  authors: [{ name: "تمام ميديا" }],
+  creator: "تمام ميديا",
+  publisher: "تمام ميديا",
 
   openGraph: {
-    title: "Tamam Media",
+    title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
     description:
-      "Integrated digital marketing & branding agency in Yemen.",
-    url: "https://your-domain.com",
-    siteName: "Tamam Media",
+      "وكالة تسويق رقمي متكاملة في اليمن - بناء العلامات التجارية وتطوير المواقع.",
+    url: "https://tamammedia.vercel.app/",
+    siteName: "تمام ميديا",
     locale: "ar_YE",
     type: "website",
     images: [
@@ -44,14 +46,15 @@ export const metadata = {
         url: "/imgs/2-3.png",
         width: 1200,
         height: 630,
+        alt: "شعار تمام ميديا",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Tamam Media",
-    description: "Digital Marketing Agency in Yemen",
+    title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
+    description: "وكالة تسويق رقمي يمنية متخصصة في بناء العلامات التجارية",
     images: ["/imgs/2-3.png"],
   },
 
@@ -59,35 +62,20 @@ export const metadata = {
     icon: "/imgs/favicon-32x32.png",
   },
 };
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const schema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Tamam Media",
-  url: "https://your-domain.com",
-  logo: "https://your-domain.com/imgs/2-3.png",
-  description:
-    "Digital marketing agency in Yemen offering branding, web development, and integrated marketing solutions.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Taiz",
-    addressCountry: "Yemen",
-  },
-  sameAs: [],
-};
   return (
     <html lang="ar" dir="rtl">
       <body>
+        <StructuredData />
         <LanguageProvider>
           <ClientScripts />
           <Navbar />
-
           <main>{children}</main>
-
           <Footer />
           <FloatingWhatsApp />
         </LanguageProvider>
