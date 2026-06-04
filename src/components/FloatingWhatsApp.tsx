@@ -1,3 +1,7 @@
+"use client";
+
+import { FaWhatsapp } from "react-icons/fa";
+
 export default function FloatingWhatsApp() {
   return (
     <a
@@ -6,7 +10,7 @@ export default function FloatingWhatsApp() {
       rel="noopener noreferrer"
       className="floating-whatsapp"
     >
-      <i className="fab fa-whatsapp"></i>
+      <FaWhatsapp />
     </a>
   );
 }

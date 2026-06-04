@@ -12,7 +12,6 @@ export default function HomePage() {
       <section className="hero">
         <div className="container">
           <div className="hero-grid">
-
             <div className="hero-content">
               <h1 className="hero-title">
                 {lang === "ar" ? "نحو حضور أقوى" : "Towards a Stronger Presence"}{" "}
