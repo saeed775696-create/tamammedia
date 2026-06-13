@@ -1,0 +1,1 @@
+INSERT INTO User (id, email, name, password, role) VALUES ('cm_admin', 'admin@tamammedia.com', 'Admin', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', 'admin');
