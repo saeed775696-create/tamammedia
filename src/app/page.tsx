@@ -170,7 +170,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      {/* ========== TEAM SECTION ========== */}
+     {/* ========== TEAM SECTION ========== */}
 <section className="section">
   <div className="container">
     <div className="section-header">
@@ -189,20 +189,28 @@ export default function HomePage() {
     </div>
 
     <div className="services-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
+      
       {/* وسيم */}
       <div className="service-category" style={{ textAlign: "center" }}>
-        <img
-          src="/imgs/teampics/waseem.jpeg"
-          alt="وسيم"
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: "50%",
-            objectFit: "cover",
-            margin: "0 auto 16px",
-            border: "3px solid var(--secondary)",
-          }}
-        />
+        <div style={{
+          width: 100,
+          height: 100,
+          borderRadius: "50%",
+          overflow: "hidden",
+          margin: "0 auto 16px",
+          border: "3px solid var(--secondary)",
+        }}>
+          <img
+            src="/imgs/teampics/waseem.jpeg"
+            alt="وسيم"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "top",    // يضمن عدم اقتصاص الوجه من الأعلى
+            }}
+          />
+        </div>
         <h3 className="service-cat-title" style={{ marginBottom: 6 }}>وسيم</h3>
         <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>
           {lang === "ar" ? "المدير التنفيذي" : "CEO"}
@@ -214,18 +222,25 @@ export default function HomePage() {
 
       {/* سعيد */}
       <div className="service-category" style={{ textAlign: "center" }}>
-        <img
-          src="/imgs/teampics/saeed.png"
-          alt="سعيد"
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: "50%",
-            objectFit: "cover",
-            margin: "0 auto 16px",
-            border: "3px solid var(--secondary)",
-          }}
-        />
+        <div style={{
+          width: 100,
+          height: 100,
+          borderRadius: "50%",
+          overflow: "hidden",
+          margin: "0 auto 16px",
+          border: "3px solid var(--secondary)",
+        }}>
+          <img
+            src="/imgs/teampics/saeed.png"
+            alt="سعيد"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "top",
+            }}
+          />
+        </div>
         <h3 className="service-cat-title" style={{ marginBottom: 6 }}>سعيد</h3>
         <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>
           {lang === "ar" ? "المطور الرئيسي" : "Lead Developer"}
@@ -235,7 +250,36 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* يمكنك إضافة أعضاء أكثر هنا بنفس التنسيق */}
+      {/* عبدالرحمن */}
+      <div className="service-category" style={{ textAlign: "center" }}>
+        <div style={{
+          width: 100,
+          height: 100,
+          borderRadius: "50%",
+          overflow: "hidden",
+          margin: "0 auto 16px",
+          border: "3px solid var(--secondary)",
+        }}>
+          <img
+            src="/imgs/teampics/abdulrahman.jpeg"
+            alt="عبدالرحمن"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "top",
+            }}
+          />
+        </div>
+        <h3 className="service-cat-title" style={{ marginBottom: 6 }}>عبدالرحمن</h3>
+        <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>
+          {lang === "ar" ? "مصمم إبداعي" : "Creative Designer"}
+        </p>
+        <p style={{ color: "var(--gray)", fontSize: 13 }}>
+          {lang === "ar" ? "متخصص في الهوية البصرية والجرافيك" : "Branding & graphic specialist"}
+        </p>
+      </div>
+      
     </div>
   </div>
 </section>
@@ -269,8 +313,11 @@ export default function HomePage() {
         marginTop: 40,
       }}
     >
-      {/* Partner 1 */}
-      <div
+      {/* شريك حقيقي: شرفة */}
+      <a
+        href="https://www.shurfa.org"
+        target="_blank"
+        rel="noopener noreferrer"
         className="service-category"
         style={{
           padding: "20px",
@@ -280,20 +327,26 @@ export default function HomePage() {
           justifyContent: "center",
           border: "none",
           boxShadow: "var(--shadow)",
-          cursor: "default",
+          cursor: "pointer",
           transition: "var(--transition)",
+          textDecoration: "none",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
         <img
-          src="/imgs/service imgs/creative_identity.png"
-          alt="Partner 1"
-          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+          src="/assets/ourparteners/شرفه-0١2-0١.png"
+          alt="شرفة"
+          style={{
+            width: "100%",
+            maxWidth: 130,
+            height: "auto",
+            objectFit: "contain",
+          }}
         />
-      </div>
+      </a>
 
-      {/* Partner 2 */}
+      {/* Partner 2 (مؤقت) */}
       <div
         className="service-category"
         style={{
@@ -317,7 +370,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Partner 3 */}
+      {/* Partner 3 (مؤقت) */}
       <div
         className="service-category"
         style={{
@@ -341,7 +394,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Partner 4 */}
+      {/* Partner 4 (مؤقت) */}
       <div
         className="service-category"
         style={{
@@ -365,7 +418,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Partner 5 */}
+      {/* Partner 5 (مؤقت) */}
       <div
         className="service-category"
         style={{
