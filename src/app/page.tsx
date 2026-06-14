@@ -170,6 +170,227 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      {/* ========== TEAM SECTION ========== */}
+<section className="section">
+  <div className="container">
+    <div className="section-header">
+      <div className="section-badge">
+        <Users size={16} />
+        {lang === "ar" ? "فريقنا" : "Our Team"}
+      </div>
+      <h2 className="section-title">
+        {lang === "ar" ? "خبراء خلف كل مشروع" : "Experts Behind Every Project"}
+      </h2>
+      <p className="section-desc">
+        {lang === "ar"
+          ? "نخبة من المبدعين والمطورين والمسوقين يعملون معاً لتحقيق رؤيتك"
+          : "A team of creatives, developers, and marketers working together to realize your vision"}
+      </p>
+    </div>
+
+    <div className="services-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
+      {/* وسيم */}
+      <div className="service-category" style={{ textAlign: "center" }}>
+        <img
+          src="/imgs/teampics/waseem.jpeg"
+          alt="وسيم"
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: "50%",
+            objectFit: "cover",
+            margin: "0 auto 16px",
+            border: "3px solid var(--secondary)",
+          }}
+        />
+        <h3 className="service-cat-title" style={{ marginBottom: 6 }}>وسيم</h3>
+        <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>
+          {lang === "ar" ? "المدير التنفيذي" : "CEO"}
+        </p>
+        <p style={{ color: "var(--gray)", fontSize: 13 }}>
+          {lang === "ar" ? "خبرة في التسويق الرقمي" : "Digital marketing expert"}
+        </p>
+      </div>
+
+      {/* سعيد */}
+      <div className="service-category" style={{ textAlign: "center" }}>
+        <img
+          src="/imgs/teampics/saeed.png"
+          alt="سعيد"
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: "50%",
+            objectFit: "cover",
+            margin: "0 auto 16px",
+            border: "3px solid var(--secondary)",
+          }}
+        />
+        <h3 className="service-cat-title" style={{ marginBottom: 6 }}>سعيد</h3>
+        <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>
+          {lang === "ar" ? "المطور الرئيسي" : "Lead Developer"}
+        </p>
+        <p style={{ color: "var(--gray)", fontSize: 13 }}>
+          {lang === "ar" ? "خبير في تطوير المواقع والتطبيقات" : "Web & app development expert"}
+        </p>
+      </div>
+
+      {/* يمكنك إضافة أعضاء أكثر هنا بنفس التنسيق */}
+    </div>
+  </div>
+</section>
+
+{/* ========== PARTNERS SECTION ========== */}
+<section className="section section-light">
+  <div className="container">
+    <div className="section-header">
+      <div className="section-badge">
+        <Sparkles size={16} />
+        {lang === "ar" ? "شركاؤنا" : "Our Partners"}
+      </div>
+      <h2 className="section-title">
+        {lang === "ar" ? "نفخر بالعمل معهم" : "Proud to Work With"}
+      </h2>
+      <p className="section-desc">
+        {lang === "ar"
+          ? "شراكات استراتيجية مع أبرز الجهات المحلية والإقليمية"
+          : "Strategic partnerships with leading local and regional entities"}
+      </p>
+    </div>
+
+    {/* شعارات الشركاء */}
+    <div
+      className="services-grid"
+      style={{
+        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+        gap: "30px",
+        alignItems: "center",
+        justifyItems: "center",
+        marginTop: 40,
+      }}
+    >
+      {/* Partner 1 */}
+      <div
+        className="service-category"
+        style={{
+          padding: "20px",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          boxShadow: "var(--shadow)",
+          cursor: "default",
+          transition: "var(--transition)",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src="/imgs/service imgs/creative_identity.png"
+          alt="Partner 1"
+          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+        />
+      </div>
+
+      {/* Partner 2 */}
+      <div
+        className="service-category"
+        style={{
+          padding: "20px",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          boxShadow: "var(--shadow)",
+          cursor: "default",
+          transition: "var(--transition)",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src="/imgs/service imgs/ecommerce.png"
+          alt="Partner 2"
+          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+        />
+      </div>
+
+      {/* Partner 3 */}
+      <div
+        className="service-category"
+        style={{
+          padding: "20px",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          boxShadow: "var(--shadow)",
+          cursor: "default",
+          transition: "var(--transition)",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src="/imgs/service imgs/graphic_design.png"
+          alt="Partner 3"
+          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+        />
+      </div>
+
+      {/* Partner 4 */}
+      <div
+        className="service-category"
+        style={{
+          padding: "20px",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          boxShadow: "var(--shadow)",
+          cursor: "default",
+          transition: "var(--transition)",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src="/imgs/service imgs/app_development.png"
+          alt="Partner 4"
+          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+        />
+      </div>
+
+      {/* Partner 5 */}
+      <div
+        className="service-category"
+        style={{
+          padding: "20px",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+          boxShadow: "var(--shadow)",
+          cursor: "default",
+          transition: "var(--transition)",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src="/imgs/service imgs/marketing_campaigns.png"
+          alt="Partner 5"
+          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+        />
+      </div>
+    </div>
+  </div>
+</section>
     </>
   );
 }
