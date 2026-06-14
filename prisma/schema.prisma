@@ -49,6 +49,7 @@ model Service {
   descriptionEn String
   descriptionAr String
   iconName      String?
+  imageUrl      String?   // أضف هذا السطر
   order         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

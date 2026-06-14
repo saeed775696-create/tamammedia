@@ -2084,3 +2084,11 @@ i {
     font-size: 26px;
   }
 }
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl;
+  }
+  .btn-gold {
+    @apply bg-gradient-to-r from-[#da8827] to-[#b86e1f] text-white font-bold;
+  }
+}

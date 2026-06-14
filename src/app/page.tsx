@@ -1,5 +1,5 @@
 "use client";
-
+import Hero from "@/components/Hero";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { 
@@ -14,171 +14,118 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
 
   return (
     <>
-      {/* ========== HERO SECTION ========== */}
-      <section className="hero">
-        <div className="container">
-          <div className="hero-grid">
-            <div className="hero-content">
-              <div className="hero-badge">
-                <Sparkles size={16} />
-                {lang === "ar" ? "وكالة تسويق رقمي متكاملة" : "Integrated Digital Marketing Agency"}
-              </div>
+      <Hero />
+{/* ========== SERVICES SECTION ========== */}
+<section className="section">
+  <div className="container">
+    <div className="section-header">
+      <div className="section-badge">
+        <Sparkles size={16} />
+        {lang === "ar" ? "خدماتنا" : "Our Services"}
+      </div>
+      <h2 className="section-title">
+        {lang === "ar" ? "حلول متكاملة تحت سقف واحد" : "All-in-One Solutions"}
+      </h2>
+      <p className="section-desc">
+        {lang === "ar"
+          ? "نقدم لك كل ما تحتاجه لبناء حضور رقمي قوي ومؤثر"
+          : "Everything you need to build a strong digital presence"}
+      </p>
+    </div>
 
-              <h1 className="hero-title">
-                {lang === "ar" ? "نحو حضور أقوى" : "Towards a Stronger Presence"}{" "}
-                <span className="highlight">
-                  {lang === "ar" ? "بصناعة رقمية" : "Digital Excellence"}
-                </span>
-              </h1>
+    <div className="services-preview">
+      {/* الخدمات الإبداعية */}
+      <div className="service-card">
+        <img
+          src="/imgs/service imgs/photography.png"
+          alt={lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}
+          style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
+        />
+        <h3>{lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}</h3>
+        <p>
+          {lang === "ar"
+            ? "هوية بصرية، تصميم جرافيكي، إدارة سوشيال ميديا، تصوير وإنتاج فيديو."
+            : "Branding, graphic design, social media, video production."}
+        </p>
+        <Link
+          href="/services/creative"
+          className="btn btn-outline-dark"
+          style={{ color: 'var(--primary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--primary)'; }}
+        >
+          {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
+          <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
+        </Link>
+      </div>
 
-              <p className="hero-subtitle">
-                {lang === "ar"
-                  ? "نبني حضوراً رقمياً وميدانياً متكاملاً ينقل علامتك التجارية إلى آفاق جديدة."
-                  : "We build integrated digital and on-ground presence that takes your brand to new heights."}
-              </p>
+      {/* الخدمات التقنية */}
+      <div className="service-card">
+        <img
+          src="/imgs/service imgs/web_design.png"
+          alt={lang === "ar" ? "الخدمات التقنية" : "Tech Services"}
+          style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
+        />
+        <h3>{lang === "ar" ? "الخدمات التقنية" : "Tech Services"}</h3>
+        <p>
+          {lang === "ar"
+            ? "تطوير مواقع وتطبيقات، متاجر إلكترونية، استضافة وأمن معلومات."
+            : "Web & app development, e-commerce, hosting & security."}
+        </p>
+        <Link
+          href="/services/tech"
+          className="btn btn-outline-dark"
+          style={{ color: 'var(--primary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--primary)'; }}
+        >
+          {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
+          <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
+        </Link>
+      </div>
 
-              <div className="hero-btns">
-                <Link href="/contact" className="btn btn-primary">
-                  {lang === "ar" ? "ابدأ مشروعك" : "Start Project"}
-                  <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-                </Link>
+      {/* الحلول المتكاملة */}
+      <div className="service-card">
+        <img
+          src="/imgs/service imgs/marketing_campaigns.png"
+          alt={lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}
+          style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
+        />
+        <h3>{lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}</h3>
+        <p>
+          {lang === "ar"
+            ? "خطط تسويقية، حملات رقمية وميدانية، استشارات استراتيجية."
+            : "Marketing strategies, campaigns, and consulting."}
+        </p>
+        <Link
+          href="/services/integrated"
+          className="btn btn-outline-dark"
+          style={{ color: 'var(--primary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--primary)'; }}
+        >
+          {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
+          <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
+        </Link>
+      </div>
+    </div>
 
-                <Link href="/services" className="btn btn-outline">
-                  {lang === "ar" ? "استكشف الخدمات" : "Explore Services"}
-                  <ArrowRight size={18} style={{ transform: lang === 'ar' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-                </Link>
-              </div>
-
-              <div className="hero-stats">
-                <div className="hero-stat">
-                  <div className="number">+50</div>
-                  <div className="label">{lang === "ar" ? "عميل" : "Clients"}</div>
-                </div>
-                <div className="hero-stat">
-                  <div className="number">+120</div>
-                  <div className="label">{lang === "ar" ? "مشروع" : "Projects"}</div>
-                </div>
-                <div className="hero-stat">
-                  <div className="number">100%</div>
-                  <div className="label">{lang === "ar" ? "رضا العملاء" : "Satisfaction"}</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="hero-visual">
-              <div className="hero-card">
-                <img
-                  src="/imgs/2-3.png"
-                  alt="Tamam Media"
-                  style={{ display: "block", margin: "0 auto 20px", maxWidth: "160px" }}
-                />
-                <p style={{ fontWeight: 600, fontSize: "16px" }}>
-                  {lang === "ar"
-                    ? "تمام للحلول التسويقية الرقمية المتكاملة"
-                    : "Integrated Digital Marketing Solutions"}
-                </p>
-                <div style={{ width: "60px", height: "3px", background: "var(--secondary)", margin: "16px auto" }} />
-                <div style={{ display: "flex", justifyContent: "space-between", gap: "20px" }}>
-                  <div>
-                    <span className="number">تعز</span>
-                    <div className="label">{lang === "ar" ? "اليمن" : "Yemen"}</div>
-                  </div>
-                  <div>
-                    <span className="number">{lang === "ar" ? "إبداع" : "Creative"}</span>
-                    <div className="label">{lang === "ar" ? "بلا حدود" : "Without Limits"}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SERVICES SECTION ========== */}
-      <section className="section">
-        <div className="container">
-          <div className="section-header">
-            <div className="section-badge">
-              <Sparkles size={16} />
-              {lang === "ar" ? "خدماتنا" : "Our Services"}
-            </div>
-            <h2 className="section-title">
-              {lang === "ar" ? "حلول متكاملة تحت سقف واحد" : "All-in-One Solutions"}
-            </h2>
-            <p className="section-desc">
-              {lang === "ar"
-                ? "نقدم لك كل ما تحتاجه لبناء حضور رقمي قوي ومؤثر"
-                : "Everything you need to build a strong digital presence"}
-            </p>
-          </div>
-
-          <div className="services-preview">
-            <div className="service-card">
-              <div className="service-icon">
-                <Palette size={32} />
-              </div>
-              <h3>{lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}</h3>
-              <p>
-                {lang === "ar"
-                  ? "هوية بصرية، تصميم جرافيكي، إدارة سوشيال ميديا، تصوير وإنتاج فيديو."
-                  : "Branding, design, social media, and video production."}
-              </p>
-              <Link href="/services">
-                {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft size={16} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-              </Link>
-            </div>
-
-            <div className="service-card">
-              <div className="service-icon">
-                <Code size={32} />
-              </div>
-              <h3>{lang === "ar" ? "الخدمات التقنية" : "Tech Services"}</h3>
-              <p>
-                {lang === "ar"
-                  ? "تطوير مواقع وتطبيقات، متاجر إلكترونية، استضافة وأمن معلومات."
-                  : "Web & app development, e-commerce, hosting & security."}
-              </p>
-              <Link href="/services">
-                {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft size={16} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-              </Link>
-            </div>
-
-            <div className="service-card">
-              <div className="service-icon">
-                <TrendingUp size={32} />
-              </div>
-              <h3>{lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}</h3>
-              <p>
-                {lang === "ar"
-                  ? "خطط تسويقية، حملات رقمية وميدانية، استشارات استراتيجية."
-                  : "Marketing strategies, campaigns, and consulting."}
-              </p>
-              <Link href="/services">
-                {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft size={16} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-              </Link>
-            </div>
-          </div>
-
-          <div className="cta-buttons">
-            <Link href="/services" className="btn btn-primary">
-              {lang === "ar" ? "جميع الخدمات" : "All Services"}
-              <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-            </Link>
-            <Link href="/portfolio" className="btn btn-outline-dark">
-              {lang === "ar" ? "أعمالنا" : "Portfolio"}
-              <ArrowRight size={18} style={{ transform: lang === 'ar' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
+    <div className="cta-buttons">
+      <Link href="/services" className="btn btn-primary">
+        {lang === "ar" ? "جميع الخدمات" : "All Services"}
+        <ArrowLeft size={18} style={{ transform: lang === 'ar' ? 'rotate(0deg)' : 'rotate(180deg)' }} />
+      </Link>
+      <Link href="/portfolio" className="btn btn-outline-dark">
+        {lang === "ar" ? "أعمالنا" : "Portfolio"}
+        <ArrowRight size={18} style={{ transform: lang === 'ar' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </Link>
+    </div>
+  </div>
+</section>
       {/* ========== ABOUT SECTION ========== */}
       <section className="section section-light">
         <div className="container">
