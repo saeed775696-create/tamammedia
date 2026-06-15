@@ -2,20 +2,20 @@
 
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import FloatingWhatsApp from "./FloatingWhatsApp";
 
-export default function ConditionalLayoutClient() {
+export default function LayoutHeader() {
   const pathname = usePathname();
-  const hideLayout = pathname?.startsWith("/dashboard") || pathname?.startsWith("/login");
 
-  if (hideLayout) return null;
+  // إخفاء الشريط والواتساب في لوحة التحكم وصفحة الدخول
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/login")) {
+    return null;
+  }
 
   return (
     <>
       <Navbar />
       <FloatingWhatsApp />
-      <Footer />
     </>
   );
 }

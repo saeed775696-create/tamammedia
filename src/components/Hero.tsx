@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { Sparkles, ArrowLeft, ArrowRight } from "lucide-react";
@@ -10,6 +11,7 @@ export default function Hero() {
     <section className="hero">
       <div className="container">
         <div className="hero-grid">
+          {/* المحتوى النصي */}
           <div className="hero-content">
             <div className="hero-badge">
               <Sparkles size={16} />
@@ -75,18 +77,24 @@ export default function Hero() {
             </div>
           </div>
 
+          {/* البطاقة البصرية مع شعار واضح */}
           <div className="hero-visual">
-            <div className="hero-card">
+            <div className="hero-card" style={{ background: "rgba(255,255,255,0.1)" }}>
+              {/* شعار واضح باللون الأبيض مع ظل */}
               <img
                 src="/imgs/2-3.png"
                 alt="Tamam Media"
                 style={{
                   display: "block",
                   margin: "0 auto 20px",
-                  maxWidth: "160px",
+                  maxWidth: "180px",
+                  filter: "drop-shadow(0 0 12px rgba(255,255,255,0.8))", // تأثير توهج أبيض
+                  background: "rgba(255,255,255,0.15)", // خلفية نصف شفافة لزيادة التباين
+                  padding: "12px",
+                  borderRadius: "16px",
                 }}
               />
-              <p style={{ fontWeight: 600, fontSize: "16px" }}>
+              <p style={{ fontWeight: 600, fontSize: "16px", color: "#fff" }}>
                 {lang === "ar"
                   ? "تمام للحلول التسويقية الرقمية المتكاملة"
                   : "Integrated Digital Marketing Solutions"}
@@ -104,16 +112,19 @@ export default function Hero() {
                   display: "flex",
                   justifyContent: "space-between",
                   gap: "20px",
+                  color: "#fff",
                 }}
               >
                 <div>
-                  <span className="number">تعز</span>
+                  <span className="number" style={{ color: "var(--secondary)" }}>
+                    {lang === "ar" ? "تعز" : "Taiz"}
+                  </span>
                   <div className="label">
                     {lang === "ar" ? "اليمن" : "Yemen"}
                   </div>
                 </div>
                 <div>
-                  <span className="number">
+                  <span className="number" style={{ color: "var(--secondary)" }}>
                     {lang === "ar" ? "إبداع" : "Creative"}
                   </span>
                   <div className="label">

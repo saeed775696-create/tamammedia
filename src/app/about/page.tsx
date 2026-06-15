@@ -35,21 +35,21 @@ export default function AboutPage() {
         <div className="container">
           <div className="about-grid">
 
-            <div className="about-image-wrapper">
-              <div className="about-image">
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop"
-                  alt="Tamam Media"
-                />
-              </div>
+           <div className="about-image-wrapper">
+  <div className="about-image">
+    <img
+      src="/imgs/غلاف فيس copy-1.jpg.jpeg"
+      alt="Tamam Media"
+    />
+  </div>
 
-              <div className="about-image-badge">
-                <div className="num">Tamam</div>
-                <div className="label">
-                  {lang === "ar" ? "في الإتقان" : "Excellence"}
-                </div>
-              </div>
-            </div>
+  <div className="about-image-badge">
+    <div className="num">Tamam</div>
+    <div className="label">
+      {lang === "ar" ? "في الإتقان" : "Excellence"}
+    </div>
+  </div>
+</div>
 
             <div className="about-text">
               <div className="section-badge">

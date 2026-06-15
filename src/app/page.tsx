@@ -346,8 +346,11 @@ export default function HomePage() {
         />
       </a>
 
-      {/* Partner 2 (مؤقت) */}
-      <div
+      {/* شريك حقيقي: وعي للتراث */}
+      <a
+        href="https://waeey.org/"
+        target="_blank"
+        rel="noopener noreferrer"
         className="service-category"
         style={{
           padding: "20px",
@@ -357,18 +360,24 @@ export default function HomePage() {
           justifyContent: "center",
           border: "none",
           boxShadow: "var(--shadow)",
-          cursor: "default",
+          cursor: "pointer",
           transition: "var(--transition)",
+          textDecoration: "none",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
         <img
-          src="/imgs/service imgs/ecommerce.png"
-          alt="Partner 2"
-          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
+          src="/assets/ourparteners/وعي للتراث.jpg"
+          alt="وعي للتراث"
+          style={{
+            width: "100%",
+            maxWidth: 130,
+            height: "auto",
+            objectFit: "contain",
+          }}
         />
-      </div>
+      </a>
 
       {/* Partner 3 (مؤقت) */}
       <div
@@ -414,30 +423,6 @@ export default function HomePage() {
         <img
           src="/imgs/service imgs/app_development.png"
           alt="Partner 4"
-          style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
-        />
-      </div>
-
-      {/* Partner 5 (مؤقت) */}
-      <div
-        className="service-category"
-        style={{
-          padding: "20px",
-          background: "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "none",
-          boxShadow: "var(--shadow)",
-          cursor: "default",
-          transition: "var(--transition)",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      >
-        <img
-          src="/imgs/service imgs/marketing_campaigns.png"
-          alt="Partner 5"
           style={{ width: "100%", maxWidth: 120, height: "auto", objectFit: "contain", filter: "grayscale(0.5) opacity(0.7)" }}
         />
       </div>
