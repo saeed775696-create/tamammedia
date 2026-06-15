@@ -3,6 +3,7 @@ import LayoutHeader from "@/components/LayoutHeader";
 import LayoutFooter from "@/components/LayoutFooter";
 import ClientScripts from "@/components/ClientScripts";
 import { LanguageProvider } from "@/context/LanguageContext";
+import StructuredData from "@/components/StructuredData";
 
 export const metadata = {
   metadataBase: new URL("https://tamammedia.vercel.app/"),
@@ -73,6 +74,7 @@ export default function RootLayout({
           <LayoutHeader />
           <main>{children}</main>
           <LayoutFooter />
+          <StructuredData />
         </LanguageProvider>
       </body>
     </html>

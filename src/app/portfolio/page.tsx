@@ -1,36 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
-// ⬇️ Define the shape of a portfolio item (from your database)
+// تعريف نوع المشروع
 interface PortfolioItem {
   id: string;
   titleEn: string;
   titleAr: string;
-  descriptionEn: string;
-  descriptionAr: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
   imageUrl: string;
-  category: string; // English key: "branding", "video", "social", "web"
+  gallery?: string | null; // JSON string
+  category: string;
+  clientName?: string;
+  completionDate?: string;
+  technologies?: string | null; // JSON string
+  link?: string;
+  videoUrl?: string;
   featured: boolean;
-  order: number;
 }
 
-// Helper: translate category to Arabic label (used in filter buttons & overlay)
-const categoryLabelMap: Record<string, { en: string; ar: string }> = {
+const categoryLabels: Record<string, { en: string; ar: string }> = {
+  all: { en: "All", ar: "الكل" },
   branding: { en: "Branding", ar: "هوية بصرية" },
   video: { en: "Video", ar: "فيديو" },
   social: { en: "Social Media", ar: "سوشيال ميديا" },
   web: { en: "Web", ar: "مواقع" },
+  website: { en: "Website", ar: "موقع إلكتروني" },
+  ecommerce: { en: "E-Commerce", ar: "متجر إلكتروني" },
 };
 
 export default function PortfolioPage() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState("all");
 
-  // Fetch portfolio items from your API endpoint
   useEffect(() => {
     fetch("/api/portfolio")
       .then((res) => res.json())
@@ -41,18 +48,22 @@ export default function PortfolioPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  // Extract unique categories from items
+  // استخراج الفئات الفريدة من المشاريع
   const categories = Array.from(new Set(items.map((item) => item.category)));
 
-  // Filter items based on active category
   const filteredItems =
     activeCategory === "all"
       ? items
       : items.filter((item) => item.category === activeCategory);
 
+  // ترتيب المميز أولاً
+  const sortedItems = [...filteredItems].sort(
+    (a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+  );
+
   return (
     <>
-      {/* BANNER – لا تغيير فيها، تبقى ثابتة */}
+      {/* Banner */}
       <section className="page-banner">
         <div className="container">
           <div className="page-banner-content">
@@ -63,26 +74,34 @@ export default function PortfolioPage() {
                 : "Explore our successful projects across different fields"}
             </p>
             <div className="breadcrumb">
-              <a href="/">{lang === "ar" ? "الرئيسية" : "Home"}</a> /{" "}
+              <Link href="/">{lang === "ar" ? "الرئيسية" : "Home"}</Link> /{" "}
               <span>{lang === "ar" ? "أعمالنا" : "Portfolio"}</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FILTERS + GRID – أصبحت ديناميكية */}
+      {/* Filters */}
       <section className="section">
         <div className="container">
           {loading ? (
-            <p className="text-center py-12">
-              {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-            </p>
+            <div className="text-center py-12">
+              {lang === "ar" ? "جار تحميل الأعمال..." : "Loading works..."}
+            </div>
+          ) : items.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              {lang === "ar"
+                ? "لا توجد أعمال بعد. ترقبوا مشاريعنا قريبًا!"
+                : "No works yet. Stay tuned for our projects!"}
+            </div>
           ) : (
             <>
-              {/* أزرار الفلترة تُبنى من التصنيفات الموجودة فعلاً */}
+              {/* أزرار الفلترة */}
               <div className="portfolio-filters">
                 <button
-                  className={`filter-btn ${activeCategory === "all" ? "active" : ""}`}
+                  className={`filter-btn ${
+                    activeCategory === "all" ? "active" : ""
+                  }`}
                   onClick={() => setActiveCategory("all")}
                 >
                   {lang === "ar" ? "الكل" : "All"}
@@ -90,93 +109,54 @@ export default function PortfolioPage() {
                 {categories.map((cat) => (
                   <button
                     key={cat}
-                    className={`filter-btn ${activeCategory === cat ? "active" : ""}`}
+                    className={`filter-btn ${
+                      activeCategory === cat ? "active" : ""
+                    }`}
                     onClick={() => setActiveCategory(cat)}
                   >
                     {lang === "ar"
-                      ? categoryLabelMap[cat]?.ar || cat
-                      : categoryLabelMap[cat]?.en || cat}
+                      ? categoryLabels[cat]?.ar || cat
+                      : categoryLabels[cat]?.en || cat}
                   </button>
                 ))}
               </div>
 
-              {/* شبكة الأعمال من البيانات */}
+              {/* شبكة المشاريع */}
               <div className="portfolio-grid">
-                {filteredItems.map((item) => (
-                  <div key={item.id} className="portfolio-item">
-                    <img src={item.imageUrl} alt={lang === "ar" ? item.titleAr : item.titleEn} />
+                {sortedItems.map((item) => (
+                  <Link
+                    href={`/portfolio/${item.id}`}
+                    key={item.id}
+                    className="portfolio-item"
+                  >
+                    <img src={item.imageUrl} alt={item.titleAr} />
                     <div className="portfolio-overlay">
-                      <h4>{lang === "ar" ? item.titleAr : item.titleEn}</h4>
+                      <h4>
+                        {lang === "ar" ? item.titleAr : item.titleEn}
+                      </h4>
                       <span>
                         {lang === "ar"
-                          ? categoryLabelMap[item.category]?.ar || item.category
-                          : categoryLabelMap[item.category]?.en || item.category}
+                          ? categoryLabels[item.category]?.ar || item.category
+                          : categoryLabels[item.category]?.en || item.category}
                       </span>
+                      {item.featured && (
+                        <span style={{ marginLeft: 8, color: "#ffd700" }}>
+                          ★
+                        </span>
+                      )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </>
           )}
-        </div>
-      </section>
 
-      {/* TESTIMONIALS – ما زالت ثابتة (يمكن تحويلها لاحقاً بنفس الطريقة) */}
-      <section className="section section-light">
-        <div className="container">
-          <div className="section-header">
-            <div className="section-badge">
-              {lang === "ar" ? "ماذا يقولون عنا" : "Testimonials"}
-            </div>
-            <h2 className="section-title">
-              {lang === "ar" ? "آراء عملائنا" : "What Clients Say"}
-            </h2>
+          {/* CTA */}
+          <div className="text-center mt-10">
+            <Link href="/contact" className="btn btn-primary">
+              {lang === "ar" ? "هل لديك فكرة؟ تواصل معنا" : "Have a project in mind? Contact us"}
+            </Link>
           </div>
-          <div className="testimonials-grid">
-            <div className="testimonial-card">
-              <p>
-                {lang === "ar"
-                  ? "غيّرت تمام ميديا طريقة تسويقنا بالكامل، نتائج ممتازة"
-                  : "Tamam Media completely transformed our marketing results"}
-              </p>
-              <h4>محمد العواضي</h4>
-            </div>
-            <div className="testimonial-card">
-              <p>
-                {lang === "ar"
-                  ? "فريق محترف وسريع التنفيذ"
-                  : "Professional and fast team"}
-              </p>
-              <h4>أروى ناجي</h4>
-            </div>
-            <div className="testimonial-card">
-              <p>
-                {lang === "ar"
-                  ? "أفضل تجربة تطوير موقع حصلت عليها"
-                  : "Best website development experience"}
-              </p>
-              <h4>خالد سعيد</h4>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="cta-section">
-        <div className="container">
-          <h2 className="cta-title">
-            {lang === "ar"
-              ? "هل أنت مستعد لتعزيز حضورك الرقمي؟"
-              : "Ready to grow your digital presence?"}
-          </h2>
-          <p className="cta-desc">
-            {lang === "ar"
-              ? "تواصل مع فريقنا اليوم"
-              : "Contact our team today"}
-          </p>
-          <a href="/contact" className="btn btn-secondary">
-            {lang === "ar" ? "طلب عرض سعر" : "Get a Quote"}
-          </a>
         </div>
       </section>
     </>

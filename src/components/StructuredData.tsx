@@ -1,36 +1,37 @@
-import Script from "next/script";
-
 export default function StructuredData() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Tamam Media",
-    url: "https://tamammedia.vercel.app/",
-    logo: "https://tamammedia.vercel.app/imgs/2-3.png",
+    "@type": "LocalBusiness",
+    name: "تمام ميديا",
+    alternateName: "Tamam Media",
     description:
-      "Digital marketing agency in Yemen offering branding, web development, and integrated marketing solutions.",
+      "وكالة تسويق رقمي متكاملة في اليمن – تصميم مواقع، تسويق، وبناء علامات تجارية.",
+    url: "https://tamammedia.vercel.app",
+    logo: "https://tamammedia.vercel.app/imgs/2-3.png",
+    image: "https://tamammedia.vercel.app/imgs/2-3.png",
+    telephone: "+967733579558",
+    email: "tamammedia9@gmail.com",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Taiz",
+      addressLocality: "تعز",
       addressCountry: "YE",
     },
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: "+96777552639", // ضع رقمك هنا
-      contactType: "customer service",
-      availableLanguage: ["Arabic", "English"],
-    },
     sameAs: [
-      "https://www.facebook.com/share/1CcpgN53m2/",
-      "https://www.instagram.com/tamammedia9",
+      "https://wa.me/967733579558",
+      "https://www.facebook.com/tamammedia",
+      "https://www.instagram.com/tamammedia",
     ],
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
   };
 
   return (
-    <Script
-      id="schema-org"
+    <script
       type="application/ld+json"
-      strategy="beforeInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
   );
