@@ -1,57 +1,89 @@
-
 import { prisma } from "@/lib/prisma";
+import { FolderOpen, MessageSquare, MousePointerClick, TrendingUp } from "lucide-react";
 
 export default async function DashboardPage() {
-  const leadsCount = await prisma.contactSubmission.count();
-  const portfolioCount = await prisma.portfolioItem.count();
-  const whatsappClicks = await prisma.whatsAppClick.count();
-  const recentLeads = await prisma.contactSubmission.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-  });
+  const [leadsCount, portfolioCount, whatsappClicks, recentLeads] =
+    await Promise.all([
+      prisma.contactSubmission.count(),
+      prisma.portfolioItem.count(),
+      prisma.whatsAppClick.count(),
+      prisma.contactSubmission.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
+
+  const stats = [
+    {
+      label: "الرسائل",
+      value: leadsCount,
+      icon: MessageSquare,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      label: "الأعمال",
+      value: portfolioCount,
+      icon: FolderOpen,
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      label: "نقرات واتساب",
+      value: whatsappClicks,
+      icon: MousePointerClick,
+      color: "from-green-500 to-green-600",
+    },
+  ];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">لوحة التحكم</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-8">لوحة التحكم</h1>
 
       {/* بطاقات الإحصائيات */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white p-4 rounded shadow">
-          <p className="text-gray-500">إجمالي الرسائل</p>
-          <p className="text-3xl font-bold">{leadsCount}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <p className="text-gray-500">الأعمال</p>
-          <p className="text-3xl font-bold">{portfolioCount}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <p className="text-gray-500">نقرات واتساب</p>
-          <p className="text-3xl font-bold">{whatsappClicks}</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4"
+          >
+            <div
+              className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white`}
+            >
+              <stat.icon size={24} />
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">{stat.label}</p>
+              <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* آخر الرسائل */}
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold mb-3">آخر الرسائل</h2>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          آخر الرسائل
+        </h2>
         {recentLeads.length === 0 ? (
-          <p className="text-gray-400">لا توجد رسائل بعد.</p>
+          <p className="text-gray-400 text-center py-8">لا توجد رسائل بعد.</p>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">الاسم</th>
-                <th className="text-left p-2">البريد</th>
-                <th className="text-left p-2">الخدمة</th>
-                <th className="text-left p-2">التاريخ</th>
+              <tr className="border-b border-gray-100">
+                <th className="text-right p-3 text-gray-500">الاسم</th>
+                <th className="text-right p-3 text-gray-500">البريد</th>
+                <th className="text-right p-3 text-gray-500">الخدمة</th>
+                <th className="text-right p-3 text-gray-500">التاريخ</th>
               </tr>
             </thead>
             <tbody>
               {recentLeads.map((lead) => (
-                <tr key={lead.id} className="border-b">
-                  <td className="p-2">{lead.name}</td>
-                  <td className="p-2">{lead.email}</td>
-                  <td className="p-2">{lead.service || "-"}</td>
-                  <td className="p-2">{new Date(lead.createdAt).toLocaleDateString("ar")}</td>
+                <tr key={lead.id} className="border-b border-gray-50">
+                  <td className="p-3">{lead.name}</td>
+                  <td className="p-3">{lead.email}</td>
+                  <td className="p-3">{lead.service || "-"}</td>
+                  <td className="p-3">
+                    {new Date(lead.createdAt).toLocaleDateString("ar")}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -7,7 +7,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const data = await req.json();
-  const updated = await prisma.service.update({ where: { id }, data });
+  const updated = await prisma.teamMember.update({ where: { id }, data });
   return NextResponse.json(updated);
 }
 
@@ -16,6 +16,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  await prisma.service.delete({ where: { id } });
+  await prisma.teamMember.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }

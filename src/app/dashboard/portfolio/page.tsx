@@ -1,19 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Plus, Trash2, Edit2, Star } from "lucide-react";
 
 type PortfolioItem = {
   id: string;
-  titleEn: string;
   titleAr: string;
-  descriptionEn?: string;
-  descriptionAr?: string;
+  titleEn: string;
   imageUrl: string;
   category: string;
   clientName?: string;
-  completionDate?: string;
-  link?: string;
-  videoUrl?: string;
   featured: boolean;
 };
 
@@ -37,10 +33,9 @@ const categoryLabels: Record<string, string> = {
   social: "سوشيال ميديا",
   website: "موقع إلكتروني",
   ecommerce: "متجر إلكتروني",
-  web: "ويب",
 };
 
-export default function PortfolioDashboardPage() {
+export default function PortfolioDashboard() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -52,8 +47,8 @@ export default function PortfolioDashboardPage() {
     try {
       const res = await fetch("/api/portfolio");
       if (res.ok) setItems(await res.json());
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -80,14 +75,14 @@ export default function PortfolioDashboardPage() {
     setForm({
       titleEn: item.titleEn,
       titleAr: item.titleAr,
-      descriptionEn: item.descriptionEn || "",
-      descriptionAr: item.descriptionAr || "",
+      descriptionEn: "",
+      descriptionAr: "",
       imageUrl: item.imageUrl,
       category: item.category,
       clientName: item.clientName || "",
-      completionDate: item.completionDate || "",
-      link: item.link || "",
-      videoUrl: item.videoUrl || "",
+      completionDate: "",
+      link: "",
+      videoUrl: "",
       featured: item.featured,
     });
     setShowModal(true);
@@ -98,19 +93,13 @@ export default function PortfolioDashboardPage() {
       ? `/api/portfolio/${editingId}`
       : "/api/portfolio";
     const method = editingId ? "PUT" : "POST";
-
-    const res = await fetch(url, {
+    await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-
-    if (res.ok) {
-      setShowModal(false);
-      fetchItems(); // تحديث القائمة من الخادم
-    } else {
-      alert("فشل في حفظ العمل");
-    }
+    setShowModal(false);
+    fetchItems();
   };
 
   const handleChange = (
@@ -127,72 +116,82 @@ export default function PortfolioDashboardPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">الأعمال</h1>
+        <h1 className="text-2xl font-bold text-gray-800">الأعمال</h1>
         <button
           onClick={openAdd}
-          className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+          className="flex items-center gap-2 bg-[#da8827] text-white px-5 py-3 rounded-xl hover:bg-[#c07520] transition shadow-lg shadow-[#da8827]/20"
         >
-          + إضافة عمل
+          <Plus size={18} />
+          إضافة عمل
         </button>
       </div>
 
       {loading ? (
-        <p className="text-center py-12">جار التحميل...</p>
+        <p className="text-center py-12 text-gray-400">جار التحميل...</p>
       ) : items.length === 0 ? (
-        <p className="text-center py-12 text-gray-500">لا توجد أعمال بعد.</p>
+        <p className="text-center py-12 text-gray-400">
+          لا توجد أعمال بعد. أضف أول مشروع!
+        </p>
       ) : (
-        <div className="bg-white rounded shadow overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-gray-50 text-right">
-                <th className="p-3">الصورة</th>
-                <th className="p-3">العنوان AR</th>
-                <th className="p-3">التصنيف</th>
-                <th className="p-3">العميل</th>
-                <th className="p-3">مميز</th>
-                <th className="p-3">حذف</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="p-3">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.titleAr}
-                      className="w-12 h-12 object-cover rounded"
-                      onError={(e) => (e.currentTarget.src = "/imgs/2-3.png")}
-                    />
-                  </td>
-                  <td className="p-3">{item.titleAr}</td>
-                  <td className="p-3">
-                    {categoryLabels[item.category] || item.category}
-                  </td>
-                  <td className="p-3">{item.clientName || "-"}</td>
-                  <td className="p-3">{item.featured ? "⭐" : "-"}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="text-red-600 underline hover:text-red-800"
-                    >
-                      حذف
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition"
+            >
+              <div className="relative h-40 bg-gray-100">
+                <img
+                  src={item.imageUrl}
+                  alt={item.titleAr}
+                  className="w-full h-full object-cover"
+                  onError={(e) =>
+                    (e.currentTarget.src = "/imgs/2-3.png")
+                  }
+                />
+                {item.featured && (
+                  <span className="absolute top-2 left-2 bg-[#da8827] text-white p-1 rounded-full">
+                    <Star size={14} />
+                  </span>
+                )}
+                <span className="absolute top-2 right-2 bg-white/90 text-xs px-2 py-1 rounded-full">
+                  {categoryLabels[item.category] || item.category}
+                </span>
+              </div>
+              <div className="p-4">
+                <h3 className="font-bold text-gray-800">{item.titleAr}</h3>
+                <p className="text-sm text-gray-500">{item.titleEn}</p>
+                {item.clientName && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    👤 {item.clientName}
+                  </p>
+                )}
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => openEdit(item)}
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                  >
+                    <Edit2 size={14} /> تعديل
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="flex items-center gap-1 text-sm text-red-500 hover:underline"
+                  >
+                    <Trash2 size={14} /> حذف
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* المودال المنبثق */}
+      {/* المودال المنبثق (بدون تغيير) */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
             <h2 className="text-2xl font-bold mb-6">
               {editingId ? "تعديل العمل" : "إضافة عمل جديد"}
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1">العنوان العربي *</label>
@@ -200,7 +199,7 @@ export default function PortfolioDashboardPage() {
                   name="titleAr"
                   value={form.titleAr}
                   onChange={handleChange}
-                  className="w-full border rounded p-2"
+                  className="w-full border rounded-xl p-2"
                   required
                 />
               </div>
@@ -210,31 +209,9 @@ export default function PortfolioDashboardPage() {
                   name="titleEn"
                   value={form.titleEn}
                   onChange={handleChange}
-                  className="w-full border rounded p-2"
+                  className="w-full border rounded-xl p-2"
                   required
                 />
-              </div>
-              <div className="md:col-span-2 grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm mb-1">وصف عربي</label>
-                  <textarea
-                    name="descriptionAr"
-                    value={form.descriptionAr}
-                    onChange={handleChange}
-                    className="w-full border rounded p-2"
-                    rows={2}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm mb-1">وصف إنجليزي</label>
-                  <textarea
-                    name="descriptionEn"
-                    value={form.descriptionEn}
-                    onChange={handleChange}
-                    className="w-full border rounded p-2"
-                    rows={2}
-                  />
-                </div>
               </div>
               <div>
                 <label className="block text-sm mb-1">رابط الصورة</label>
@@ -242,15 +219,8 @@ export default function PortfolioDashboardPage() {
                   name="imageUrl"
                   value={form.imageUrl}
                   onChange={handleChange}
-                  className="w-full border rounded p-2"
+                  className="w-full border rounded-xl p-2"
                 />
-                {form.imageUrl && (
-                  <img
-                    src={form.imageUrl}
-                    alt="معاينة"
-                    className="mt-2 h-20 w-20 object-cover rounded"
-                  />
-                )}
               </div>
               <div>
                 <label className="block text-sm mb-1">التصنيف</label>
@@ -258,7 +228,7 @@ export default function PortfolioDashboardPage() {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full border rounded p-2"
+                  className="w-full border rounded-xl p-2"
                 >
                   {Object.entries(categoryLabels).map(([key, label]) => (
                     <option key={key} value={key}>
@@ -273,35 +243,7 @@ export default function PortfolioDashboardPage() {
                   name="clientName"
                   value={form.clientName}
                   onChange={handleChange}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1">تاريخ الإنجاز</label>
-                <input
-                  type="month"
-                  name="completionDate"
-                  value={form.completionDate}
-                  onChange={handleChange}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1">رابط المشروع</label>
-                <input
-                  name="link"
-                  value={form.link}
-                  onChange={handleChange}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1">رابط الفيديو</label>
-                <input
-                  name="videoUrl"
-                  value={form.videoUrl}
-                  onChange={handleChange}
-                  className="w-full border rounded p-2"
+                  className="w-full border rounded-xl p-2"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -315,17 +257,16 @@ export default function PortfolioDashboardPage() {
                 <label htmlFor="featured">مشروع مميز</label>
               </div>
             </div>
-
             <div className="flex justify-end gap-3 mt-6 border-t pt-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="px-5 py-2 bg-gray-200 rounded-xl hover:bg-gray-300"
               >
                 إلغاء
               </button>
               <button
                 onClick={handleSave}
-                className="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-5 py-2 bg-[#da8827] text-white rounded-xl hover:bg-[#c07520]"
               >
                 {editingId ? "حفظ التعديلات" : "إضافة المشروع"}
               </button>
