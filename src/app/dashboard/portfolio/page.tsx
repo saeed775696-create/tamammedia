@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Edit2, Star } from "lucide-react";
+import { Plus, Trash2, Edit2, Star, Upload } from "lucide-react";
 
 type PortfolioItem = {
   id: string;
@@ -41,6 +41,7 @@ export default function PortfolioDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -100,6 +101,29 @@ export default function PortfolioDashboard() {
     });
     setShowModal(false);
     fetchItems();
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (res.ok) {
+        const { url } = await res.json();
+        setForm((prev) => ({ ...prev, imageUrl: url }));
+      } else {
+        alert("فشل رفع الصورة");
+      }
+    } catch (err) {
+      alert("خطأ في الاتصال");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleChange = (
@@ -185,7 +209,7 @@ export default function PortfolioDashboard() {
         </div>
       )}
 
-      {/* المودال المنبثق (بدون تغيير) */}
+      {/* المودال المنبثق مع حقل رفع الصورة */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
@@ -213,15 +237,44 @@ export default function PortfolioDashboard() {
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm mb-1">رابط الصورة</label>
-                <input
-                  name="imageUrl"
-                  value={form.imageUrl}
-                  onChange={handleChange}
-                  className="w-full border rounded-xl p-2"
-                />
+
+              {/* حقل الصورة مع الرفع */}
+              <div className="md:col-span-2">
+                <label className="block text-sm mb-1">صورة المشروع</label>
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* زر الرفع */}
+                  <label className="flex items-center gap-2 cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-xl transition">
+                    <Upload size={16} />
+                    <span className="text-sm">
+                      {uploading ? "جاري الرفع..." : "اختر صورة"}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                  </label>
+                  {/* الرابط اليدوي */}
+                  <input
+                    name="imageUrl"
+                    value={form.imageUrl}
+                    onChange={handleChange}
+                    className="flex-1 border rounded-xl p-2 text-sm"
+                    placeholder="أو اكتب رابط الصورة يدويًا"
+                  />
+                </div>
+                {/* معاينة الصورة */}
+                {form.imageUrl && (
+                  <img
+                    src={form.imageUrl}
+                    alt="معاينة"
+                    className="mt-2 h-20 w-20 object-cover rounded border"
+                  />
+                )}
               </div>
+
               <div>
                 <label className="block text-sm mb-1">التصنيف</label>
                 <select
