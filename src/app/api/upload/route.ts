@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
   try {
+    const supabaseUrl = "https://nxrkeuabjyjalgsrmbzv.supabase.co";
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+    if (!supabaseKey) {
+      return NextResponse.json({ error: "Missing service role key" }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
@@ -9,24 +19,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
-    // ImgBB API
-    const imgbbForm = new FormData();
-    imgbbForm.append("image", file);
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(`${Date.now()}_${file.name}`, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
 
-    const res = await fetch(
-      "https://api.imgbb.com/1/upload?key=28984d6b0dd7f0cf395e1db0caa3a0f0",
-      {
-        method: "POST",
-        body: imgbbForm,
-      },
-    );
-
-    const data = await res.json();
-    if (data.success) {
-      return NextResponse.json({ url: data.data.url });
-    } else {
-      return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    const { data: urlData } = supabase.storage
+      .from("images")
+      .getPublicUrl(data.path);
+
+    return NextResponse.json({ url: urlData.publicUrl });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
