@@ -105,9 +105,9 @@ export default function Navbar() {
             {lang === "ar" ? "EN" : "AR"}
           </button>
 
-          {/* زر CTA */}
+          {/* زر معرض أعمالنا (بدلاً من اطلب عرض سعر) */}
           <Link
-            href="/contact"
+            href="/portfolio"
             className="btn btn-primary"
             style={{
               padding: "12px 26px",
@@ -118,7 +118,7 @@ export default function Navbar() {
               gap: 6,
             }}
           >
-            {lang === "ar" ? "اطلب عرض سعر" : "Get a Quote"}
+            {lang === "ar" ? "معرض أعمالنا" : "Our Portfolio"}
             <ArrowLeft size={16} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
           </Link>
         </div>

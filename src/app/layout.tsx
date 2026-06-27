@@ -32,10 +32,11 @@ export const metadata = {
   publisher: "تمام ميديا",
 
   openGraph: {
+    
     title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
     description:
       "وكالة تسويق رقمي متكاملة في اليمن - بناء العلامات التجارية وتطوير المواقع.",
-    url: "https://tamammedia.vercel.app/",
+    url: "https://tamammedia.tech",
     siteName: "تمام ميديا",
     locale: "ar_YE",
     type: "website",
