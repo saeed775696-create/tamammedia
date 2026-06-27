@@ -1,40 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { google } from "googleapis";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabaseUrl = "https://nxrkeuabjyjalgsrmbzv.supabase.co";
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const credentials = JSON.parse(process.env.GDRIVE_CREDENTIALS!);
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ["https://www.googleapis.com/auth/drive.file"],
+    });
 
-    if (!supabaseKey) {
-      return NextResponse.json({ error: "Missing service role key" }, { status: 500 });
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const drive = google.drive({ version: "v3", auth });
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
+    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
-    if (!file) {
-      return NextResponse.json({ error: "No file" }, { status: 400 });
-    }
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const { data, error } = await supabase.storage
-      .from("images")
-      .upload(`${Date.now()}_${file.name}`, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
+    // رفع الملف إلى Google Drive
+    const response = await drive.files.create({
+      requestBody: {
+        name: `${Date.now()}_${file.name}`,
+        parents: ["17YfGRpiAtlNj64RELZcV3UlpbwSVeJKm?usp=sharing"],
+      },
+      media: {
+        mimeType: file.type,
+        body: buffer,
+      },
+    });
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const fileId = response.data.id;
 
-    const { data: urlData } = supabase.storage
-      .from("images")
-      .getPublicUrl(data.path);
+    // جعل الملف عامًا
+    await drive.permissions.create({
+      fileId: fileId!,
+      requestBody: { role: "reader", type: "anyone" },
+    });
 
-    return NextResponse.json({ url: urlData.publicUrl });
+    // الحصول على الرابط المباشر
+    const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+    return NextResponse.json({ url: directUrl });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
