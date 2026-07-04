@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
 
 export default function ContactPage() {
   const { lang } = useLanguage();
@@ -49,7 +50,7 @@ export default function ContactPage() {
                 : "We are here to answer your inquiries"}
             </p>
             <div className="breadcrumb">
-              <a href="/">{lang === "ar" ? "الرئيسية" : "Home"}</a> /{" "}
+              <Link href="/">{lang === "ar" ? "الرئيسية" : "Home"}</Link> /{" "}
               <span>{lang === "ar" ? "اتصل بنا" : "Contact"}</span>
             </div>
           </div>

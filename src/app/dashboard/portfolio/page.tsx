@@ -120,6 +120,7 @@ export default function PortfolioDashboard() {
         alert("فشل رفع الصورة");
       }
     } catch (err) {
+      console.error(err);
       alert("خطأ في الاتصال");
     } finally {
       setUploading(false);

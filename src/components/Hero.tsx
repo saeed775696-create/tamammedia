@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { Sparkles, ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -11,7 +12,7 @@ export default function Hero() {
     <section className="hero">
       <div className="container">
         <div className="hero-grid">
-          {/* المحتوى النصي */}
+          {/* Text Content */}
           <div className="hero-content">
             <div className="hero-badge">
               <Sparkles size={16} />
@@ -38,9 +39,7 @@ export default function Hero() {
                 {lang === "ar" ? "ابدأ مشروعك" : "Start Project"}
                 <ArrowLeft
                   size={18}
-                  style={{
-                    transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)",
-                  }}
+                  className={lang === "ar" ? "" : "rotate-180"}
                 />
               </Link>
 
@@ -48,9 +47,7 @@ export default function Hero() {
                 {lang === "ar" ? "استكشف الخدمات" : "Explore Services"}
                 <ArrowRight
                   size={18}
-                  style={{
-                    transform: lang === "ar" ? "rotate(180deg)" : "rotate(0deg)",
-                  }}
+                  className={lang === "ar" ? "rotate-180" : ""}
                 />
               </Link>
             </div>
@@ -77,46 +74,27 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* البطاقة البصرية مع شعار واضح */}
+          {/* Visual Card */}
           <div className="hero-visual">
-            <div className="hero-card" style={{ background: "rgba(255,255,255,0.1)" }}>
-              {/* شعار واضح باللون الأبيض مع ظل */}
-              <img
+            <div className="hero-card bg-white/10">
+              {/* Logo with glow */}
+              <Image
                 src="/imgs/2-3.png"
-                alt="Tamam Media"
-                style={{
-                  display: "block",
-                  margin: "0 auto 20px",
-                  maxWidth: "180px",
-                  filter: "drop-shadow(0 0 12px rgba(255,255,255,0.8))", // تأثير توهج أبيض
-                  background: "rgba(255,255,255,0.15)", // خلفية نصف شفافة لزيادة التباين
-                  padding: "12px",
-                  borderRadius: "16px",
-                }}
+                alt="Tamam Media Logo"
+                width={180}
+                height={180}
+                priority
+                className="block mx-auto mb-5 max-w-[180px] drop-shadow-[0_0_12px_rgba(255,255,255,0.8)] bg-white/15 p-3 rounded-2xl h-auto"
               />
-              <p style={{ fontWeight: 600, fontSize: "16px", color: "#fff" }}>
+              <p className="font-semibold text-base text-white">
                 {lang === "ar"
                   ? "تمام للحلول التسويقية الرقمية المتكاملة"
                   : "Integrated Digital Marketing Solutions"}
               </p>
-              <div
-                style={{
-                  width: "60px",
-                  height: "3px",
-                  background: "var(--secondary)",
-                  margin: "16px auto",
-                }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "20px",
-                  color: "#fff",
-                }}
-              >
+              <div className="w-[60px] h-[3px] bg-[var(--secondary)] mx-auto my-4" />
+              <div className="flex justify-between gap-5 text-white">
                 <div>
-                  <span className="number" style={{ color: "var(--secondary)" }}>
+                  <span className="number text-[var(--secondary)]">
                     {lang === "ar" ? "تعز" : "Taiz"}
                   </span>
                   <div className="label">
@@ -124,7 +102,7 @@ export default function Hero() {
                   </div>
                 </div>
                 <div>
-                  <span className="number" style={{ color: "var(--secondary)" }}>
+                  <span className="number text-[var(--secondary)]">
                     {lang === "ar" ? "إبداع" : "Creative"}
                   </span>
                   <div className="label">

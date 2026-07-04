@@ -3,8 +3,8 @@ export default function Head() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Tamam Media",
-    url: "https://tamammedia.com",
-    logo: "https://tamammedia.com/imgs/tamam logo.png",
+    url: "https://tamammedia.tech",
+    logo: "https://tamammedia.tech/imgs/tamam logo.png",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+967-123-456-789",

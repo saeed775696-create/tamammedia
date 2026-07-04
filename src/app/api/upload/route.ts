@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       .from("media")
       .getPublicUrl(data.path);
     return NextResponse.json({ url: urlData.publicUrl });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }

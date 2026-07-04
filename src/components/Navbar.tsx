@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { ChevronDown, Menu, X, ArrowLeft } from "lucide-react";
@@ -25,110 +26,91 @@ export default function Navbar() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav
-      className={`navbar${scrolled ? " scrolled" : ""}`}
-      style={{
-        background: scrolled
-          ? "rgba(255,255,255,0.96)"
-          : "rgba(255,255,255,0.75)",
-        backdropFilter: "blur(20px)",
-        padding: "12px 0",              // زيادة الارتفاع
-      }}
-    >
-      <div className="nav-inner" style={{ maxWidth: "1280px" }}>
-        {/* الشعار - بدون تغيير */}
+    <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
+      <div className="nav-inner max-w-7xl w-full mx-auto px-4 md:px-8">
+        {/* Logo */}
         <Link href="/" className="nav-logo" onClick={closeMobile}>
-          <img src="/imgs/2-3.png" style={{ width: 45 }} alt="Tamam" />
+          <Image src="/imgs/2-3.png" width={45} height={45} className="w-[45px] h-auto" alt="Tamam Media" priority />
           <h1>{lang === "ar" ? "تمام ميديا" : "Tamam Media"}</h1>
         </Link>
 
-        {/* روابط سطح المكتب */}
-        <div className="nav-links desktop" style={{ gap: 8 }}>
-          <Link href="/" className={isActive("/") ? "active" : ""} style={{ fontSize: 15, padding: "10px 16px" }}>
+        {/* Desktop Links */}
+        <div className="nav-links desktop hidden md:flex items-center gap-2">
+          <Link href="/" className={`text-[15px] px-4 py-2.5 ${isActive("/") ? "active" : ""}`}>
             {lang === "ar" ? "الرئيسية" : "Home"}
           </Link>
-          <Link href="/about" className={isActive("/about") ? "active" : ""} style={{ fontSize: 15, padding: "10px 16px" }}>
+          <Link href="/about" className={`text-[15px] px-4 py-2.5 ${isActive("/about") ? "active" : ""}`}>
             {lang === "ar" ? "من نحن" : "About"}
           </Link>
 
-          {/* قائمة منسدلة للخدمات */}
+          {/* Services Dropdown */}
           <div
-            style={{ position: "relative" }}
+            className="relative"
             onMouseEnter={() => setServicesOpen(true)}
             onMouseLeave={() => setServicesOpen(false)}
           >
             <Link
               href="/services"
-              className={isActive("/services") ? "active" : ""}
-              style={{ fontSize: 15, padding: "10px 16px", display: "inline-flex", alignItems: "center", gap: 4 }}
+              className={`text-[15px] px-4 py-2.5 inline-flex items-center gap-1 ${isActive("/services") ? "active" : ""}`}
             >
               {lang === "ar" ? "خدماتنا" : "Services"}
               <ChevronDown size={14} />
             </Link>
             {servicesOpen && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "100%",
-                  right: 0,
-                  background: "#fff",
-                  borderRadius: 14,
-                  boxShadow: "0 10px 40px rgba(33,33,79,0.15)",
-                  padding: "8px 0",
-                  minWidth: 200,
-                  zIndex: 1001,
-                  border: "1px solid #eef0f5",
-                }}
-              >
-                <Link href="/services/creative" onClick={() => setServicesOpen(false)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", color: "var(--primary)", fontWeight: 600, transition: "background 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8f9fc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+              <div className="absolute top-full right-0 bg-white rounded-2xl shadow-[0_10px_40px_rgba(33,33,79,0.15)] py-2 min-w-[200px] z-[1001] border border-[#eef0f5]">
+                <Link 
+                  href="/services/creative" 
+                  onClick={() => setServicesOpen(false)} 
+                  className="flex items-center gap-2.5 px-5 py-2.5 text-[var(--primary)] font-semibold transition-colors hover:bg-[#f8f9fc]"
+                >
                   {lang === "ar" ? "الإبداعية" : "Creative"}
                 </Link>
-                <Link href="/services/tech" onClick={() => setServicesOpen(false)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", color: "var(--primary)", fontWeight: 600, transition: "background 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8f9fc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <Link 
+                  href="/services/tech" 
+                  onClick={() => setServicesOpen(false)} 
+                  className="flex items-center gap-2.5 px-5 py-2.5 text-[var(--primary)] font-semibold transition-colors hover:bg-[#f8f9fc]"
+                >
                   {lang === "ar" ? "التقنية" : "Tech"}
                 </Link>
-                <Link href="/services/integrated" onClick={() => setServicesOpen(false)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", color: "var(--primary)", fontWeight: 600, transition: "background 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8f9fc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <Link 
+                  href="/services/integrated" 
+                  onClick={() => setServicesOpen(false)} 
+                  className="flex items-center gap-2.5 px-5 py-2.5 text-[var(--primary)] font-semibold transition-colors hover:bg-[#f8f9fc]"
+                >
                   {lang === "ar" ? "المتكاملة" : "Integrated"}
                 </Link>
               </div>
             )}
           </div>
 
-          <Link href="/portfolio" className={isActive("/portfolio") ? "active" : ""} style={{ fontSize: 15, padding: "10px 16px" }}>
+          <Link href="/portfolio" className={`text-[15px] px-4 py-2.5 ${isActive("/portfolio") ? "active" : ""}`}>
             {lang === "ar" ? "أعمالنا" : "Portfolio"}
           </Link>
-          <Link href="/contact" className={isActive("/contact") ? "active" : ""} style={{ fontSize: 15, padding: "10px 16px" }}>
+          <Link href="/contact" className={`text-[15px] px-4 py-2.5 ${isActive("/contact") ? "active" : ""}`}>
             {lang === "ar" ? "اتصل بنا" : "Contact"}
           </Link>
 
-          {/* زر اللغة */}
-          <button className="lang-btn" onClick={toggleLang} style={{ fontSize: 13, padding: "8px 16px" }}>
+          {/* Lang Button */}
+          <button className="lang-btn text-[13px] px-4 py-2" onClick={toggleLang}>
             {lang === "ar" ? "EN" : "AR"}
           </button>
 
-          {/* زر معرض أعمالنا (بدلاً من اطلب عرض سعر) */}
+          {/* Portfolio CTA */}
           <Link
             href="/portfolio"
-            className="btn btn-primary"
-            style={{
-              padding: "12px 26px",
-              fontSize: 14,
-              marginInlineStart: 8,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-            }}
+            className="btn btn-primary px-6 py-3 text-sm ms-2 inline-flex items-center gap-1.5"
           >
             {lang === "ar" ? "معرض أعمالنا" : "Our Portfolio"}
-            <ArrowLeft size={16} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
+            <ArrowLeft size={16} className={lang === "ar" ? "" : "rotate-180"} />
           </Link>
         </div>
 
-        {/* زر الجوال */}
-        <button className="menu-btn" onClick={() => setMobileOpen(!mobileOpen)}>
+        {/* Mobile Button */}
+        <button className="menu-btn block md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
 
-        {/* القائمة الجانبية للجوال */}
+        {/* Mobile Menu */}
         {mobileOpen && (
           <>
             <div className="overlay" onClick={closeMobile} />
@@ -136,33 +118,32 @@ export default function Navbar() {
               <button className="mobile-close" onClick={closeMobile}>
                 <X size={28} />
               </button>
-              <Link href="/" onClick={closeMobile} style={{ padding: "14px 24px", fontSize: 18 }}>
+              <Link href="/" onClick={closeMobile} className="px-6 py-3.5 text-lg">
                 {lang === "ar" ? "الرئيسية" : "Home"}
               </Link>
-              <Link href="/about" onClick={closeMobile} style={{ padding: "14px 24px", fontSize: 18 }}>
+              <Link href="/about" onClick={closeMobile} className="px-6 py-3.5 text-lg">
                 {lang === "ar" ? "من نحن" : "About"}
               </Link>
-              <Link href="/services" onClick={closeMobile} style={{ padding: "14px 24px", fontSize: 18, fontWeight: "bold" }}>
+              <Link href="/services" onClick={closeMobile} className="px-6 py-3.5 text-lg font-bold">
                 {lang === "ar" ? "خدماتنا" : "Services"}
               </Link>
-              <Link href="/services/creative" onClick={closeMobile} style={{ padding: "10px 40px", fontSize: 16 }}>
+              <Link href="/services/creative" onClick={closeMobile} className="px-10 py-2.5 text-base">
                 {lang === "ar" ? "الإبداعية" : "Creative"}
               </Link>
-              <Link href="/services/tech" onClick={closeMobile} style={{ padding: "10px 40px", fontSize: 16 }}>
+              <Link href="/services/tech" onClick={closeMobile} className="px-10 py-2.5 text-base">
                 {lang === "ar" ? "التقنية" : "Tech"}
               </Link>
-              <Link href="/services/integrated" onClick={closeMobile} style={{ padding: "10px 40px", fontSize: 16 }}>
+              <Link href="/services/integrated" onClick={closeMobile} className="px-10 py-2.5 text-base">
                 {lang === "ar" ? "المتكاملة" : "Integrated"}
               </Link>
-              <Link href="/portfolio" onClick={closeMobile} style={{ padding: "14px 24px", fontSize: 18 }}>
+              <Link href="/portfolio" onClick={closeMobile} className="px-6 py-3.5 text-lg">
                 {lang === "ar" ? "أعمالنا" : "Portfolio"}
               </Link>
-              <Link href="/contact" onClick={closeMobile} style={{ padding: "14px 24px", fontSize: 18 }}>
+              <Link href="/contact" onClick={closeMobile} className="px-6 py-3.5 text-lg">
                 {lang === "ar" ? "اتصل بنا" : "Contact"}
               </Link>
               <button
-                className="lang-btn"
-                style={{ marginTop: 20, width: "fit-content", alignSelf: "center", fontSize: 14, padding: "10px 20px" }}
+                className="lang-btn mt-5 w-fit self-center text-sm px-5 py-2.5"
                 onClick={() => {
                   toggleLang();
                   closeMobile();

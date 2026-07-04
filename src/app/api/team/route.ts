@@ -8,6 +8,7 @@ export async function GET() {
     });
     return NextResponse.json(members);
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to fetch team" },
       { status: 500 },
@@ -35,6 +36,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(member);
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to create team member" },
       { status: 500 },

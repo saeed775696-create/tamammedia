@@ -6,6 +6,7 @@ export async function POST() {
     await prisma.whatsAppClick.create({ data: {} });
     return NextResponse.json({ ok: true });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { FolderOpen, MessageSquare, MousePointerClick, TrendingUp } from "lucide-react";
+import { FolderOpen, MessageSquare, MousePointerClick } from "lucide-react";
 
 export default async function DashboardPage() {
   const [leadsCount, portfolioCount, whatsappClicks, recentLeads] =

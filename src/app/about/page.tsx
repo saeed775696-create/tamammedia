@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function AboutPage() {
@@ -37,9 +38,11 @@ export default function AboutPage() {
 
            <div className="about-image-wrapper">
   <div className="about-image">
-    <img
+    <Image
       src="/imgs/غلاف فيس copy-1.jpg.jpeg"
       alt="Tamam Media"
+      fill
+      className="object-cover rounded-3xl"
     />
   </div>
 
