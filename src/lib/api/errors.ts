@@ -1,7 +1,7 @@
 export class AppError extends Error {
   public statusCode: number;
   public code: string;
-  public details?: any;
+  public details?: unknown;
   public timestamp: string;
   public requestId?: string;
 
@@ -15,7 +15,7 @@ export class AppError extends Error {
     message: string;
     statusCode?: number;
     code?: string;
-    details?: any;
+    details?: unknown;
     requestId?: string;
   }) {
     super(message);
@@ -33,31 +33,31 @@ export class AppError extends Error {
 }
 
 export class NotFoundError extends AppError {
-  constructor(message = 'Resource not found', details?: any) {
+  constructor(message = 'Resource not found', details?: unknown) {
     super({ message, statusCode: 404, code: 'NOT_FOUND', details });
   }
 }
 
 export class ValidationError extends AppError {
-  constructor(message = 'Validation failed', details?: any) {
+  constructor(message = 'Validation failed', details?: unknown) {
     super({ message, statusCode: 400, code: 'VALIDATION_ERROR', details });
   }
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message = 'Unauthorized access', details?: any) {
+  constructor(message = 'Unauthorized access', details?: unknown) {
     super({ message, statusCode: 401, code: 'UNAUTHORIZED', details });
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message = 'Access forbidden', details?: any) {
+  constructor(message = 'Access forbidden', details?: unknown) {
     super({ message, statusCode: 403, code: 'FORBIDDEN', details });
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message = 'Resource conflict', details?: any) {
+  constructor(message = 'Resource conflict', details?: unknown) {
     super({ message, statusCode: 409, code: 'CONFLICT', details });
   }
 }
