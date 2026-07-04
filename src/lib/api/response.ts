@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { AppError } from './errors';
 
 export interface ApiResponse<T = unknown> {
@@ -22,7 +22,28 @@ export interface ApiResponse<T = unknown> {
   };
 }
 
+import { z } from 'zod';
+import { ValidationError } from './errors';
+
 export class ApiResponseHandler {
+  static async handle<T>(
+    req: NextRequest,
+    handler: () => Promise<T>,
+    options?: { status?: number; successMessage?: string }
+  ) {
+    try {
+      const data = await handler();
+      if (options?.status === 201) {
+        return ApiResponseHandler.created(data, options?.successMessage);
+      }
+      return ApiResponseHandler.success(data, options?.successMessage);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return ApiResponseHandler.error(new ValidationError('Validation failed', error.issues));
+      }
+      return ApiResponseHandler.error(error);
+    }
+  }
   static success<T>(
     data: T,
     message?: string,

@@ -1,17 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from 'next/server';
+import { contactService } from '@/lib/services';
+import { updateContactSchema } from '@/lib/validations';
+import { ApiResponseHandler } from '@/lib/api';
 
-export async function PATCH(
+export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const { status } = await req.json();
-
-  await prisma.contactSubmission.update({
-    where: { id },
-    data: { status },
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    return contactService.getSubmissionById(id);
   });
+}
 
-  return NextResponse.json({ success: true });
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    const body = await req.json();
+    const validatedData = updateContactSchema.parse(body);
+    const updated = await contactService.updateSubmissionStatus(id, validatedData);
+    
+    return updated;
+  });
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    await contactService.deleteSubmission(id);
+    return { success: true };
+  });
 }

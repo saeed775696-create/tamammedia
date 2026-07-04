@@ -1,44 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from 'next/server';
+import { partnerService } from '@/lib/services';
+import { createPartnerSchema } from '@/lib/validations';
+import { parsePaginationParams, ApiResponseHandler } from '@/lib/api';
 
-export async function GET() {
-  try {
-    const partners = await prisma.partner.findMany({
-      orderBy: { order: "asc" },
-    });
-    return NextResponse.json(partners);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to fetch partners" },
-      { status: 500 },
-    );
-  }
+export async function GET(req: NextRequest) {
+  return ApiResponseHandler.handle(req, async () => {
+    const params = parsePaginationParams(req);
+    const { items, total } = await partnerService.getAllPartners(params);
+    return { items, total };
+  });
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json();
-    if (!data.name || !data.imageUrl) {
-      return NextResponse.json(
-        { error: "الاسم والصورة مطلوبان" },
-        { status: 400 },
-      );
-    }
-    const partner = await prisma.partner.create({
-      data: {
-        name: data.name,
-        imageUrl: data.imageUrl,
-        website: data.website || "",
-        order: data.order || 0,
-      },
-    });
-    return NextResponse.json(partner);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to create partner" },
-      { status: 500 },
-    );
-  }
+  return ApiResponseHandler.handle(req, async () => {
+    const body = await req.json();
+    const validatedData = createPartnerSchema.parse(body);
+    const item = await partnerService.createPartner(validatedData);
+    
+    return item;
+  }, { status: 201 });
 }

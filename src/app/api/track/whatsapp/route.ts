@@ -1,12 +1,10 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { ApiResponseHandler } from '@/lib/api';
 
-export async function POST() {
-  try {
+export async function POST(req: NextRequest) {
+  return ApiResponseHandler.handle(req, async () => {
     await prisma.whatsAppClick.create({ data: {} });
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ ok: false }, { status: 500 });
-  }
+    return { ok: true };
+  }, { status: 201 });
 }

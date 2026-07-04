@@ -1,28 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextRequest } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { ApiResponseHandler } from '@/lib/api';
+import { ValidationError } from '@/lib/api/errors';
 
 export async function POST(req: NextRequest) {
-  try {
-    const supabaseUrl = "https://nxrkeuabjyjalgsrmbzv.supabase.co";
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return ApiResponseHandler.handle(req, async () => {
+    const supabaseUrl = 'https://nxrkeuabjyjalgsrmbzv.supabase.co';
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseKey) {
+      throw new Error('Supabase configuration is missing');
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const formData = await req.formData();
-    const file = formData.get("file") as File;
-    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+    const file = formData.get('file') as File;
+    if (!file) {
+      throw new ValidationError('No file uploaded');
+    }
 
     const { data, error } = await supabase.storage
-      .from("media")
+      .from('media')
       .upload(`${Date.now()}_${file.name}`, file, { upsert: true });
 
-    if (error)
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const { data: urlData } = supabase.storage
-      .from("media")
+      .from('media')
       .getPublicUrl(data.path);
-    return NextResponse.json({ url: urlData.publicUrl });
-  } catch (err: unknown) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
-  }
+      
+    return { url: urlData.publicUrl };
+  }, { status: 201 });
 }

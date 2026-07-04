@@ -1,21 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from 'next/server';
+import { serviceService } from '@/lib/services';
+import { updateServiceSchema } from '@/lib/validations';
+import { ApiResponseHandler } from '@/lib/api';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    return serviceService.getServiceById(id);
+  });
+}
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const data = await req.json();
-  const updated = await prisma.service.update({ where: { id }, data });
-  return NextResponse.json(updated);
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    const body = await req.json();
+    const validatedData = updateServiceSchema.parse(body);
+    const updated = await serviceService.updateService(id, validatedData);
+    
+    return updated;
+  });
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  await prisma.service.delete({ where: { id } });
-  return NextResponse.json({ success: true });
+  return ApiResponseHandler.handle(req, async () => {
+    const { id } = await params;
+    await serviceService.deleteService(id);
+    return { success: true };
+  });
 }
