@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
-// تعريف نوع المشروع
 interface PortfolioItem {
   id: string;
   titleEn: string;
@@ -12,13 +11,8 @@ interface PortfolioItem {
   descriptionEn?: string;
   descriptionAr?: string;
   imageUrl: string;
-  gallery?: string | null; // JSON string
   category: string;
   clientName?: string;
-  completionDate?: string;
-  technologies?: string | null; // JSON string
-  link?: string;
-  videoUrl?: string;
   featured: boolean;
 }
 
@@ -42,13 +36,18 @@ export default function PortfolioPage() {
     fetch("/api/portfolio")
       .then((res) => res.json())
       .then((data) => {
-        setItems(data);
-        setLoading(false);
+        if (Array.isArray(data)) {
+          setItems(data);
+        } else {
+          setItems([]);
+        }
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setItems([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  // استخراج الفئات الفريدة من المشاريع
   const categories = Array.from(new Set(items.map((item) => item.category)));
 
   const filteredItems =
@@ -56,7 +55,6 @@ export default function PortfolioPage() {
       ? items
       : items.filter((item) => item.category === activeCategory);
 
-  // ترتيب المميز أولاً
   const sortedItems = [...filteredItems].sort(
     (a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
   );
@@ -81,27 +79,24 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* Filters */}
       <section className="section">
         <div className="container">
           {loading ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 text-gray-400">
               {lang === "ar" ? "جار تحميل الأعمال..." : "Loading works..."}
             </div>
           ) : items.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-400">
               {lang === "ar"
-                ? "لا توجد أعمال بعد. ترقبوا مشاريعنا قريبًا!"
-                : "No works yet. Stay tuned for our projects!"}
+                ? "لا توجد أعمال بعد."
+                : "No works yet."}
             </div>
           ) : (
             <>
               {/* أزرار الفلترة */}
               <div className="portfolio-filters">
                 <button
-                  className={`filter-btn ${
-                    activeCategory === "all" ? "active" : ""
-                  }`}
+                  className={`filter-btn ${activeCategory === "all" ? "active" : ""}`}
                   onClick={() => setActiveCategory("all")}
                 >
                   {lang === "ar" ? "الكل" : "All"}
@@ -109,9 +104,7 @@ export default function PortfolioPage() {
                 {categories.map((cat) => (
                   <button
                     key={cat}
-                    className={`filter-btn ${
-                      activeCategory === cat ? "active" : ""
-                    }`}
+                    className={`filter-btn ${activeCategory === cat ? "active" : ""}`}
                     onClick={() => setActiveCategory(cat)}
                   >
                     {lang === "ar"
@@ -131,18 +124,14 @@ export default function PortfolioPage() {
                   >
                     <img src={item.imageUrl} alt={item.titleAr} />
                     <div className="portfolio-overlay">
-                      <h4>
-                        {lang === "ar" ? item.titleAr : item.titleEn}
-                      </h4>
+                      <h4>{lang === "ar" ? item.titleAr : item.titleEn}</h4>
                       <span>
                         {lang === "ar"
                           ? categoryLabels[item.category]?.ar || item.category
                           : categoryLabels[item.category]?.en || item.category}
                       </span>
                       {item.featured && (
-                        <span style={{ marginLeft: 8, color: "#ffd700" }}>
-                          ★
-                        </span>
+                        <span style={{ marginLeft: 8, color: "#ffd700" }}>★</span>
                       )}
                     </div>
                   </Link>
@@ -151,10 +140,10 @@ export default function PortfolioPage() {
             </>
           )}
 
-          {/* CTA */}
+          {/* زر العودة إلى التواصل */}
           <div className="text-center mt-10">
             <Link href="/contact" className="btn btn-primary">
-              {lang === "ar" ? "هل لديك فكرة؟ تواصل معنا" : "Have a project in mind? Contact us"}
+              {lang === "ar" ? "هل لديك فكرة؟ تواصل معنا" : "Have a project? Contact us"}
             </Link>
           </div>
         </div>

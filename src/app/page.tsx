@@ -2,23 +2,26 @@
 
 import Hero from "@/components/Hero";
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { ArrowLeft, Sparkles, Users } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, Users } from "lucide-react";
 
+// تعريف أنواع البيانات لتجنب استخدام any
 interface TeamMember {
   id: string;
   name: string;
   role: string;
+  bio?: string;
   imageUrl?: string;
+  order?: number;
 }
 
 interface Partner {
   id: string;
   name: string;
-  website?: string;
   imageUrl: string;
+  website?: string;
+  order?: number;
 }
 
 export default function HomePage() {
@@ -26,6 +29,7 @@ export default function HomePage() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
 
+  // ... باقي الكود كما هو بدون تعديل (useEffect, return, إلخ)
   useEffect(() => {
     fetch("/api/team")
       .then((r) => r.json())
@@ -42,7 +46,7 @@ export default function HomePage() {
     <>
       <Hero />
 
-      {/* ========== SERVICES ========== */}
+      {/* ========== الخدمات ========== */}
       <section className="section">
         <div className="container">
           <div className="section-header">
@@ -62,136 +66,133 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {/* Service 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-[var(--secondary)]/10 transition-all duration-300 border border-gray-50 flex flex-col h-full text-center group">
-              <Image
-                src="/imgs/service imgs/photography.png"
-                alt="Creative Services"
-                width={80}
-                height={80}
-                className="object-cover mx-auto mb-6 rounded-xl group-hover:scale-105 transition-transform duration-300"
+          <div className="services-preview">
+            {/* الخدمات الإبداعية */}
+            <div className="service-card">
+              <img
+                src="/imgs/service imgs/creative_identity.png"
+                alt={lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}
+                className="service-card-img"
+                style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
               />
-              <h3 className="text-xl font-bold text-[var(--primary)] mb-4">
-                {lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}
-              </h3>
-              <p className="text-gray-600 mb-8 flex-grow leading-relaxed">
+              <h3>{lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}</h3>
+              <p>
                 {lang === "ar"
                   ? "هوية بصرية، تصميم جرافيكي، إدارة سوشيال ميديا، تصوير وإنتاج فيديو."
                   : "Branding, graphic design, social media, video production."}
               </p>
               <Link
                 href="/services/creative"
-                className="mt-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-[var(--primary)] text-[var(--primary)] font-semibold hover:bg-[var(--primary)] hover:text-white transition-colors duration-300"
+                className="btn btn-outline-dark"
+                style={{ color: "var(--primary)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary)")}
               >
                 {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft
-                  size={18}
-                  className={lang === "ar" ? "" : "rotate-180"}
-                />
+                <ArrowLeft size={18} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </Link>
             </div>
 
-            {/* Service 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-[var(--secondary)]/10 transition-all duration-300 border border-gray-50 flex flex-col h-full text-center group">
-              <Image
-                src="/imgs/service imgs/web_design.png"
-                alt="Tech Services"
-                width={80}
-                height={80}
-                className="object-cover mx-auto mb-6 rounded-xl group-hover:scale-105 transition-transform duration-300"
+            {/* الخدمات التقنية */}
+            <div className="service-card">
+              <img
+                src="/imgs/service imgs/app_development.png"
+                alt={lang === "ar" ? "الخدمات التقنية" : "Tech Services"}
+                style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
               />
-              <h3 className="text-xl font-bold text-[var(--primary)] mb-4">
-                {lang === "ar" ? "الخدمات التقنية" : "Tech Services"}
-              </h3>
-              <p className="text-gray-600 mb-8 flex-grow leading-relaxed">
+              <h3>{lang === "ar" ? "الخدمات التقنية" : "Tech Services"}</h3>
+              <p>
                 {lang === "ar"
                   ? "تطوير مواقع وتطبيقات، متاجر إلكترونية، استضافة وأمن معلومات."
                   : "Web & app development, e-commerce, hosting & security."}
               </p>
               <Link
                 href="/services/tech"
-                className="mt-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-[var(--primary)] text-[var(--primary)] font-semibold hover:bg-[var(--primary)] hover:text-white transition-colors duration-300"
+                className="btn btn-outline-dark"
+                style={{ color: "var(--primary)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary)")}
               >
                 {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft
-                  size={18}
-                  className={lang === "ar" ? "" : "rotate-180"}
-                />
+                <ArrowLeft size={18} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </Link>
             </div>
 
-            {/* Service 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-[var(--secondary)]/10 transition-all duration-300 border border-gray-50 flex flex-col h-full text-center group">
-              <Image
-                src="/imgs/service imgs/marketing_campaigns.png"
-                alt="Integrated Solutions"
-                width={80}
-                height={80}
-                className="object-cover mx-auto mb-6 rounded-xl group-hover:scale-105 transition-transform duration-300"
+            {/* الحلول المتكاملة */}
+            <div className="service-card">
+              <img
+                src="/imgs/service imgs/marketing_strategies (1).png"
+                alt={lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}
+                style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
               />
-              <h3 className="text-xl font-bold text-[var(--primary)] mb-4">
-                {lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}
-              </h3>
-              <p className="text-gray-600 mb-8 flex-grow leading-relaxed">
+              <h3>{lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}</h3>
+              <p>
                 {lang === "ar"
                   ? "خطط تسويقية، حملات رقمية وميدانية، استشارات استراتيجية."
                   : "Marketing strategies, campaigns, and consulting."}
               </p>
               <Link
                 href="/services/integrated"
-                className="mt-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-[var(--primary)] text-[var(--primary)] font-semibold hover:bg-[var(--primary)] hover:text-white transition-colors duration-300"
+                className="btn btn-outline-dark"
+                style={{ color: "var(--primary)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary)")}
               >
                 {lang === "ar" ? "تفاصيل الخدمة" : "Service Details"}
-                <ArrowLeft
-                  size={18}
-                  className={lang === "ar" ? "" : "rotate-180"}
-                />
+                <ArrowLeft size={18} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </Link>
             </div>
+          </div>
+
+          <div className="cta-buttons">
+            <Link href="/services" className="btn btn-primary">
+              {lang === "ar" ? "جميع الخدمات" : "All Services"}
+              <ArrowLeft size={18} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
+            </Link>
+            <Link href="/portfolio" className="btn btn-outline-dark">
+              {lang === "ar" ? "أعمالنا" : "Portfolio"}
+              <ArrowRight size={18} style={{ transform: lang === "ar" ? "rotate(180deg)" : "rotate(0deg)" }} />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ========== ABOUT ========== */}
-      <section className="section bg-[#f8f9fc]">
+      {/* ========== من نحن ========== */}
+      <section className="section section-light">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl">
-              <Image
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
-                alt="Tamam Media"
-                fill
-                className="object-cover"
-                unoptimized
-              />
+          <div className="about-grid">
+            <div className="about-image-wrapper">
+              <div className="about-image">
+                <img
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop"
+                  alt="Tamam Media"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>
             </div>
-            <div className="flex flex-col items-start text-start">
-              <div className="section-badge mb-4">
+            <div>
+              <div className="section-badge" style={{ marginBottom: 16 }}>
                 <Users size={16} />
                 {lang === "ar" ? "من نحن" : "About Us"}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary)] mb-6 leading-tight">
+              <h2 className="section-title" style={{ textAlign: "right", marginBottom: 16 }}>
                 {lang === "ar" ? "تعرف على تمام ميديا" : "About Tamam Media"}
               </h2>
-              <p className="text-lg leading-loose text-gray-600 mb-8">
+              <p style={{ fontSize: "1.05rem", lineHeight: 2, color: "var(--gray)", marginBottom: 20 }}>
                 {lang === "ar"
                   ? "تمام ميديا هي شركة يمنية متخصصة في تقديم الحلول الرقمية والتسويقية المتكاملة. نعمل على تمكين العلامات التجارية من المنافسة بقوة في السوق."
                   : "Tamam Media is a Yemeni company specialized in providing integrated digital and marketing solutions. We empower brands to compete strongly."}
               </p>
-              <Link href="/about" className="btn btn-primary inline-flex items-center gap-2">
-                {lang === "ar" ? "اقرأ قصتنا" : "Read Our Story"}{" "}
-                <ArrowLeft
-                  size={18}
-                  className={lang === "ar" ? "" : "rotate-180"}
-                />
+              <Link href="/about" className="btn btn-primary">
+                {lang === "ar" ? "اقرأ قصتنا" : "Read Our Story"}
+                <ArrowLeft size={18} style={{ transform: lang === "ar" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========== TEAM ========== */}
+      {/* ========== الفريق ========== */}
       <section className="section">
         <div className="container">
           <div className="section-header">
@@ -200,37 +201,41 @@ export default function HomePage() {
               {lang === "ar" ? "فريقنا" : "Our Team"}
             </div>
             <h2 className="section-title">
-              {lang === "ar"
-                ? "خبراء خلف كل مشروع"
-                : "Experts Behind Every Project"}
+              {lang === "ar" ? "خبراء خلف كل مشروع" : "Experts Behind Every Project"}
             </h2>
           </div>
+
           {team.length === 0 ? (
             <p className="text-center text-gray-500 py-8">
               {lang === "ar" ? "لا يوجد أعضاء بعد." : "No team members yet."}
             </p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <div
+              className="services-grid"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "24px" }}
+            >
               {team.map((member) => (
-                <div
-                  key={member.id}
-                  className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-[var(--secondary)]/10 transition-all duration-300 text-center flex flex-col h-full border border-gray-50"
-                >
-                  <div className="w-24 h-24 mx-auto mb-5 rounded-full overflow-hidden border-4 border-[var(--secondary)]/20 p-1">
-                    <div className="relative w-full h-full rounded-full overflow-hidden">
-                      <Image
-                        src={member.imageUrl || "/imgs/2-3.png"}
-                        alt={member.name}
-                        fill
-                        className="object-cover"
-                        unoptimized={!!member.imageUrl?.startsWith("http")}
-                      />
-                    </div>
+                <div key={member.id} className="service-category" style={{ textAlign: "center", padding: "32px 20px" }}>
+                  <div
+                    style={{
+                      width: 96,
+                      height: 96,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      margin: "0 auto 16px",
+                      border: "3px solid var(--secondary)",
+                    }}
+                  >
+                    <img
+                      src={member.imageUrl || "/imgs/2-3.png"}
+                      alt={member.name}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                   </div>
-                  <h3 className="text-lg font-bold text-[var(--primary)] mb-1">
+                  <h3 className="service-cat-title" style={{ fontSize: "1.1rem", marginBottom: 6 }}>
                     {member.name}
                   </h3>
-                  <p className="text-[var(--secondary)] font-semibold text-sm">
+                  <p style={{ color: "var(--secondary)", fontWeight: 600, fontSize: "0.9rem" }}>
                     {member.role}
                   </p>
                 </div>
@@ -240,8 +245,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ========== PARTNERS ========== */}
-      <section className="section bg-[#f8f9fc]">
+      {/* ========== الشركاء ========== */}
+      <section className="section section-light">
         <div className="container">
           <div className="section-header">
             <div className="section-badge">
@@ -252,29 +257,49 @@ export default function HomePage() {
               {lang === "ar" ? "نفخر بالعمل معهم" : "Proud to Work With"}
             </h2>
           </div>
+
           {partners.length === 0 ? (
             <p className="text-center text-gray-500 py-8">
               {lang === "ar" ? "لا يوجد شركاء بعد." : "No partners yet."}
             </p>
           ) : (
-            <div className="flex flex-wrap justify-center items-center gap-6 max-w-5xl mx-auto">
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "40px",
+                marginTop: 20,
+              }}
+            >
               {partners.map((partner) => (
                 <a
                   key={partner.id}
                   href={partner.website || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 flex items-center justify-center w-[160px] h-[100px]"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "16px",
+                    background: "#fff",
+                    borderRadius: "var(--radius)",
+                    boxShadow: "var(--shadow)",
+                    transition: "var(--transition)",
+                    cursor: "pointer",
+                    maxWidth: 160,
+                    flex: "1 1 140px",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                 >
-                  <div className="relative w-full h-full grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-100 transition-all duration-300">
-                    <Image
-                      src={partner.imageUrl}
-                      alt={partner.name}
-                      fill
-                      className="object-contain"
-                      unoptimized={partner.imageUrl?.startsWith("http")}
-                    />
-                  </div>
+                  <img
+                    src={partner.imageUrl}
+                    alt={partner.name}
+                    style={{ maxWidth: "100%", maxHeight: 80, objectFit: "contain" }}
+                  />
                 </a>
               ))}
             </div>
