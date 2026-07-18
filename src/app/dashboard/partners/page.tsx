@@ -29,9 +29,16 @@ export default function PartnersDashboard() {
     setLoading(true);
     try {
       const res = await fetch("/api/partners");
-      if (res.ok) setPartners(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        // تأكد أن البيانات مصفوفة
+        setPartners(Array.isArray(data) ? data : []);
+      } else {
+        setPartners([]);
+      }
     } catch (err) {
       console.error(err);
+      setPartners([]);
     } finally {
       setLoading(false);
     }
@@ -96,7 +103,7 @@ export default function PartnersDashboard() {
 
       {loading ? (
         <p className="text-center py-12 text-gray-400">جار التحميل...</p>
-      ) : partners.length === 0 ? (
+      ) : !Array.isArray(partners) || partners.length === 0 ? (
         <p className="text-center py-12 text-gray-400">
           لا يوجد شركاء بعد. أضف أول شريك!
         </p>

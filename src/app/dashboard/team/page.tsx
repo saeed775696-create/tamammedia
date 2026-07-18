@@ -31,9 +31,16 @@ export default function TeamDashboard() {
     setLoading(true);
     try {
       const res = await fetch("/api/team");
-      if (res.ok) setMembers(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        // تأكد أن البيانات مصفوفة
+        setMembers(Array.isArray(data) ? data : []);
+      } else {
+        setMembers([]);
+      }
     } catch (err) {
       console.error(err);
+      setMembers([]);
     } finally {
       setLoading(false);
     }
@@ -45,8 +52,16 @@ export default function TeamDashboard() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا العضو؟")) return;
-    await fetch(`/api/team/${id}`, { method: "DELETE" });
-    setMembers((prev) => prev.filter((m) => m.id !== id));
+    try {
+      const res = await fetch(`/api/team/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setMembers((prev) => prev.filter((m) => m.id !== id));
+      } else {
+        alert("فشل في حذف العضو");
+      }
+    } catch (err) {
+      alert("تعذر الاتصال بالخادم");
+    }
   };
 
   const openAdd = () => {
@@ -68,15 +83,26 @@ export default function TeamDashboard() {
   };
 
   const handleSave = async () => {
+    if (!form.name || !form.role) return alert("الاسم والدور مطلوبان");
+
     const url = editingId ? `/api/team/${editingId}` : "/api/team";
     const method = editingId ? "PUT" : "POST";
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setShowModal(false);
-    fetchMembers();
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setShowModal(false);
+        fetchMembers(); // إعادة تحميل القائمة
+      } else {
+        alert("فشل في حفظ العضو");
+      }
+    } catch (err) {
+      alert("تعذر الاتصال بالخادم");
+    }
   };
 
   const handleChange = (
@@ -89,6 +115,7 @@ export default function TeamDashboard() {
     }));
   };
 
+  // --- واجهة المستخدم ---
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -104,7 +131,7 @@ export default function TeamDashboard() {
 
       {loading ? (
         <p className="text-center py-12 text-gray-400">جار التحميل...</p>
-      ) : members.length === 0 ? (
+      ) : !Array.isArray(members) || members.length === 0 ? (
         <div className="text-center py-12">
           <Users size={48} className="mx-auto text-gray-300 mb-4" />
           <p className="text-gray-400">لا يوجد أعضاء بعد. أضف أول عضو!</p>
@@ -166,6 +193,7 @@ export default function TeamDashboard() {
         </div>
       )}
 
+      {/* المودال المنبثق */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
