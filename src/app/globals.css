@@ -352,3 +352,298 @@ ul { list-style: none; }
   .btn { width: 100%; justify-content: center; }
   .container { padding: 0 15px; }
 }
+/* ==========================================================
+   TAMAM MEDIA DASHBOARD TYPOGRAPHY SYSTEM
+   ========================================================== */
+
+.dashboard-content{
+    color:#1b2345;
+    font-family:'Alexandria',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+}
+
+/* ===========================
+   Headings
+=========================== */
+
+.dashboard-content h1{
+    font-size:2.35rem;
+    font-weight:900;
+    color:#21214f;
+    line-height:1.2;
+    margin-bottom:1rem;
+    letter-spacing:-1px;
+}
+
+.dashboard-content h2{
+    font-size:1.85rem;
+    font-weight:800;
+    color:#21214f;
+    line-height:1.3;
+    margin-bottom:.85rem;
+}
+
+.dashboard-content h3{
+    font-size:1.45rem;
+    font-weight:800;
+    color:#21214f;
+    line-height:1.4;
+    margin-bottom:.75rem;
+}
+
+.dashboard-content h4{
+    font-size:1.2rem;
+    font-weight:700;
+    color:#21214f;
+}
+
+.dashboard-content h5{
+    font-size:1rem;
+    font-weight:700;
+    color:#21214f;
+}
+
+/* ===========================
+   Text
+=========================== */
+
+.dashboard-content p,
+.dashboard-content li,
+.dashboard-content td,
+.dashboard-content label{
+
+    font-size:.97rem;
+    line-height:1.9;
+    color:#5f6580;
+    font-weight:500;
+}
+
+.dashboard-content strong{
+    color:#21214f;
+    font-weight:700;
+}
+
+.dashboard-content small{
+    color:#8a90aa;
+    font-size:.82rem;
+}
+
+/* ===========================
+   Links
+=========================== */
+
+.dashboard-content a{
+
+    color:#21214f;
+    font-weight:600;
+    transition:.25s;
+}
+
+.dashboard-content a:hover{
+
+    color:#da8827;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.dashboard-content .btn{
+
+    font-size:.95rem;
+    font-weight:700;
+
+    border-radius:14px;
+
+    padding:.85rem 1.6rem;
+
+    transition:.3s;
+
+    box-shadow:
+    0 8px 20px rgba(33,33,79,.08);
+
+    letter-spacing:.2px;
+}
+
+.dashboard-content .btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+    0 12px 26px rgba(33,33,79,.15);
+}
+
+/* ===========================
+   Forms
+=========================== */
+
+.dashboard-content input,
+.dashboard-content textarea,
+.dashboard-content select{
+
+    font-size:.95rem;
+
+    color:#21214f;
+
+    border:1px solid #dde3ef;
+
+    border-radius:14px;
+
+    padding:.9rem 1rem;
+
+    background:#fff;
+
+    transition:.25s;
+}
+
+.dashboard-content input:focus,
+.dashboard-content textarea:focus,
+.dashboard-content select:focus{
+
+    border-color:#da8827;
+
+    box-shadow:
+    0 0 0 4px rgba(218,136,39,.12);
+
+    outline:none;
+}
+
+/* Placeholder */
+
+.dashboard-content input::placeholder,
+.dashboard-content textarea::placeholder{
+
+    color:#a0a7be;
+}
+
+/* ===========================
+   Tables
+=========================== */
+
+.dashboard-content table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    border-radius:18px;
+
+    overflow:hidden;
+}
+
+.dashboard-content table th{
+
+    background:#f7f8fd;
+
+    color:#21214f;
+
+    font-size:.88rem;
+
+    font-weight:800;
+
+    padding:18px;
+
+    border-bottom:1px solid #edf0f7;
+
+    text-transform:uppercase;
+
+    letter-spacing:.4px;
+}
+
+.dashboard-content table td{
+
+    color:#5f6580;
+
+    font-size:.94rem;
+
+    padding:18px;
+
+    border-bottom:1px solid #f0f2f7;
+}
+
+.dashboard-content table tr{
+
+    transition:.25s;
+}
+
+.dashboard-content table tbody tr:hover{
+
+    background:#fafbff;
+}
+
+/* ===========================
+   Cards
+=========================== */
+
+.dashboard-content .card{
+
+    border-radius:20px;
+
+    border:1px solid #edf0f7;
+
+    box-shadow:
+
+    0 12px 35px rgba(33,33,79,.05);
+
+    transition:.3s;
+}
+
+.dashboard-content .card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+
+    0 18px 45px rgba(33,33,79,.08);
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+aside{
+
+    background:#21214f;
+}
+
+aside a,
+aside button{
+
+    color:#eef2ff !important;
+
+    font-weight:600;
+
+    transition:.25s;
+
+    border-radius:12px;
+}
+
+aside a:hover,
+aside button:hover{
+
+    background:rgba(255,255,255,.08);
+
+    color:#ffffff !important;
+}
+
+aside .active{
+
+    background:linear-gradient(
+        135deg,
+        #da8827,
+        #f0a340
+    );
+
+    color:#fff !important;
+
+    box-shadow:
+
+    0 8px 18px rgba(218,136,39,.35);
+}
+
+aside span{
+
+    color:inherit !important;
+}
