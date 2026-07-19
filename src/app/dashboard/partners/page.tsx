@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Edit2, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Edit2, ExternalLink, Briefcase } from "lucide-react";
+import toast from "react-hot-toast";
+import ImageUpload from "@/components/dashboard/ImageUpload";
 
 type Partner = {
   id: string;
@@ -31,13 +33,12 @@ export default function PartnersDashboard() {
       const res = await fetch("/api/partners");
       if (res.ok) {
         const data = await res.json();
-        // تأكد أن البيانات مصفوفة
         setPartners(Array.isArray(data) ? data : []);
       } else {
         setPartners([]);
       }
     } catch (err) {
-      console.error(err);
+      toast.error("حدث خطأ في جلب بيانات الشركاء");
       setPartners([]);
     } finally {
       setLoading(false);
@@ -50,8 +51,18 @@ export default function PartnersDashboard() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا الشريك؟")) return;
-    await fetch(`/api/partners/${id}`, { method: "DELETE" });
-    setPartners((prev) => prev.filter((p) => p.id !== id));
+    const loadingToast = toast.loading("جاري الحذف...");
+    try {
+      const res = await fetch(`/api/partners/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setPartners((prev) => prev.filter((p) => p.id !== id));
+        toast.success("تم حذف الشريك بنجاح", { id: loadingToast });
+      } else {
+        throw new Error("فشل الحذف");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ أثناء الحذف", { id: loadingToast });
+    }
   };
 
   const openAdd = () => {
@@ -63,24 +74,40 @@ export default function PartnersDashboard() {
   const openEdit = (partner: Partner) => {
     setEditingId(partner.id);
     setForm({
-      name: partner.name,
-      imageUrl: partner.imageUrl,
+      name: partner.name || "",
+      imageUrl: partner.imageUrl || "",
       website: partner.website || "",
-      order: partner.order,
+      order: partner.order || 0,
     });
     setShowModal(true);
   };
 
   const handleSave = async () => {
+    if (!form.name || !form.imageUrl) {
+      toast.error("الاسم والشعار مطلوبان");
+      return;
+    }
+
+    const loadingToast = toast.loading("جاري الحفظ...");
     const url = editingId ? `/api/partners/${editingId}` : "/api/partners";
     const method = editingId ? "PUT" : "POST";
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setShowModal(false);
-    fetchPartners();
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        toast.success(editingId ? "تم تعديل الشريك بنجاح" : "تم إضافة الشريك بنجاح", { id: loadingToast });
+        setShowModal(false);
+        fetchPartners();
+      } else {
+        throw new Error("فشل الحفظ");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ أثناء الحفظ", { id: loadingToast });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,139 +117,153 @@ export default function PartnersDashboard() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">الشركاء</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-[#21214f] mb-2">الشركاء</h1>
+          <p className="text-gray-500">إدارة شركاء النجاح</p>
+        </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 bg-[#da8827] text-white px-5 py-3 rounded-xl hover:bg-[#c07520] transition shadow-lg shadow-[#da8827]/20"
+          className="flex items-center gap-2 bg-[#da8827] text-white px-6 py-3 rounded-xl hover:bg-[#b8701e] transition-all shadow-lg shadow-[#da8827]/30 font-medium"
         >
-          <Plus size={18} />
-          إضافة شريك
+          <Plus size={20} />
+          إضافة شريك جديد
         </button>
       </div>
 
       {loading ? (
-        <p className="text-center py-12 text-gray-400">جار التحميل...</p>
-      ) : !Array.isArray(partners) || partners.length === 0 ? (
-        <p className="text-center py-12 text-gray-400">
-          لا يوجد شركاء بعد. أضف أول شريك!
-        </p>
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#da8827]"></div>
+        </div>
+      ) : partners.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <Briefcase size={48} className="mx-auto text-gray-300 mb-4" />
+          <p className="text-xl text-gray-500">لا يوجد شركاء بعد</p>
+          <button onClick={openAdd} className="mt-4 text-[#da8827] hover:underline font-medium">أضف الشريك الأول</button>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {partners.map((partner) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {partners.sort((a, b) => a.order - b.order).map((partner) => (
             <div
               key={partner.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col"
             >
-              <div className="h-40 bg-gray-100 flex items-center justify-center p-6">
+              <div className="h-40 bg-gray-50 flex items-center justify-center p-6 relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={partner.imageUrl}
                   alt={partner.name}
-                  className="max-h-full max-w-full object-contain"
-                  onError={(e) =>
-                    (e.currentTarget.src = "/imgs/2-3.png")
-                  }
+                  className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110"
+                  onError={(e) => (e.currentTarget.src = "/imgs/2-3.png")}
                 />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
+                  <button
+                    onClick={() => openEdit(partner)}
+                    className="p-2 bg-white text-blue-600 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
+                    title="تعديل"
+                  >
+                    <Edit2 size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(partner.id)}
+                    className="p-2 bg-white text-red-600 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
+                    title="حذف"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-bold text-gray-800">{partner.name}</h3>
+              <div className="p-4 text-center border-t border-gray-50 flex-1 flex flex-col justify-center">
+                <h3 className="font-bold text-[#21214f] text-lg mb-1">{partner.name}</h3>
                 {partner.website && (
                   <a
                     href={partner.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 flex items-center gap-1 mt-1 hover:underline"
+                    className="text-xs text-[#da8827] flex items-center justify-center gap-1 mt-1 hover:underline mx-auto"
                   >
-                    <ExternalLink size={14} />
+                    <ExternalLink size={12} />
                     زيارة الموقع
                   </a>
                 )}
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => openEdit(partner)}
-                    className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
-                  >
-                    <Edit2 size={14} /> تعديل
-                  </button>
-                  <button
-                    onClick={() => handleDelete(partner.id)}
-                    className="flex items-center gap-1 text-sm text-red-500 hover:underline"
-                  >
-                    <Trash2 size={14} /> حذف
-                  </button>
-                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Modal Form */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
-            <h2 className="text-2xl font-bold mb-6">
-              {editingId ? "تعديل الشريك" : "إضافة شريك جديد"}
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm mb-1">اسم الشريك *</label>
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="w-full border rounded-xl p-2"
-                  required
+        <div className="fixed inset-0 bg-[#21214f]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg my-8 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h2 className="text-2xl font-bold text-[#21214f]">
+                {editingId ? "تعديل بيانات الشريك" : "إضافة شريك جديد"}
+              </h2>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-red-500 transition-colors p-2 bg-white rounded-full shadow-sm">
+                <Trash2 size={20} className="hidden" />
+                <span className="font-bold text-xl leading-none">&times;</span>
+              </button>
+            </div>
+            
+            <div className="p-6 md:p-8 overflow-y-auto flex-1 space-y-6 custom-scrollbar">
+              
+              <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                <ImageUpload 
+                  value={form.imageUrl} 
+                  onChange={(url) => setForm({ ...form, imageUrl: url })} 
+                  label="شعار الشريك *" 
                 />
               </div>
-              <div>
-                <label className="block text-sm mb-1">رابط الشعار *</label>
-                <input
-                  name="imageUrl"
-                  value={form.imageUrl}
-                  onChange={handleChange}
-                  className="w-full border rounded-xl p-2"
-                  placeholder="/assets/ourparteners/شرفه.png"
-                  required
-                />
-                {form.imageUrl && (
-                  <img
-                    src={form.imageUrl}
-                    alt="معاينة"
-                    className="mt-2 h-16 object-contain rounded"
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">اسم الشريك *</label>
+                  <input
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#da8827] outline-none transition-all"
                   />
-                )}
-              </div>
-              <div>
-                <label className="block text-sm mb-1">رابط الموقع</label>
-                <input
-                  name="website"
-                  value={form.website}
-                  onChange={handleChange}
-                  className="w-full border rounded-xl p-2"
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1">الترتيب</label>
-                <input
-                  type="number"
-                  name="order"
-                  value={form.order}
-                  onChange={handleChange}
-                  className="w-full border rounded-xl p-2"
-                />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">رابط الموقع (اختياري)</label>
+                  <div className="relative">
+                    <ExternalLink size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                    <input
+                      name="website"
+                      value={form.website}
+                      onChange={handleChange}
+                      className="w-full border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-[#da8827] outline-none transition-all text-left"
+                      dir="ltr"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">الترتيب</label>
+                  <input
+                    type="number"
+                    name="order"
+                    value={form.order}
+                    onChange={handleChange}
+                    className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#da8827] outline-none transition-all"
+                    min="0"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6 border-t pt-4">
+            
+            <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2 bg-gray-200 rounded-xl hover:bg-gray-300"
+                className="px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
               >
                 إلغاء
               </button>
               <button
                 onClick={handleSave}
-                className="px-5 py-2 bg-[#da8827] text-white rounded-xl hover:bg-[#c07520]"
+                className="px-8 py-3 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md shadow-[#da8827]/20"
               >
                 {editingId ? "حفظ التعديلات" : "إضافة الشريك"}
               </button>

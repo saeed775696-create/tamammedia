@@ -6,25 +6,29 @@ export interface IAIProvider {
 }
 
 export class MockAIProvider implements IAIProvider {
-  async generateText(prompt: string, systemPrompt?: string): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async generateText(prompt: string, _systemPrompt?: string): Promise<string> {
     logger.info('Mocking AI text generation', { promptLength: prompt.length });
     return `Mock AI response for prompt: ${prompt.substring(0, 20)}...`;
   }
 
-  async analyzeImage(imageUrl: string, prompt: string): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async analyzeImage(imageUrl: string, _prompt: string): Promise<string> {
     logger.info('Mocking AI image analysis', { imageUrl });
     return `Mock image analysis for ${imageUrl}`;
   }
 }
 
 export class OpenAIProvider implements IAIProvider {
-  async generateText(prompt: string, systemPrompt?: string): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async generateText(prompt: string, _systemPrompt?: string): Promise<string> {
     logger.info('Generating text with OpenAI', { promptLength: prompt.length });
     // TODO: Implement actual OpenAI call
     throw new Error('OpenAI Provider not yet implemented');
   }
 
-  async analyzeImage(imageUrl: string, prompt: string): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async analyzeImage(imageUrl: string, _prompt: string): Promise<string> {
     logger.info('Analyzing image with OpenAI', { imageUrl });
     // TODO: Implement actual OpenAI vision call
     throw new Error('OpenAI Vision Provider not yet implemented');

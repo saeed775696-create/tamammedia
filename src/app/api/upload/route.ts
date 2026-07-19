@@ -5,7 +5,7 @@ import { ValidationError } from '@/lib/api/errors';
 
 export async function POST(req: NextRequest) {
   return ApiResponseHandler.handle(req, async () => {
-    const supabaseUrl = 'https://nxrkeuabjyjalgsrmbzv.supabase.co';
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nxrkeuabjyjalgsrmbzv.supabase.co';
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseKey) {
@@ -20,16 +20,20 @@ export async function POST(req: NextRequest) {
       throw new ValidationError('No file uploaded');
     }
 
+    // Clean file name
+    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const path = `${Date.now()}_${cleanFileName}`;
+
     const { data, error } = await supabase.storage
-      .from('media')
-      .upload(`${Date.now()}_${file.name}`, file, { upsert: true });
+      .from('images')
+      .upload(path, file, { upsert: true });
 
     if (error) {
       throw new Error(error.message);
     }
 
     const { data: urlData } = supabase.storage
-      .from('media')
+      .from('images')
       .getPublicUrl(data.path);
       
     return { url: urlData.publicUrl };
