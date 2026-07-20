@@ -5,6 +5,7 @@ import LayoutFooter from "@/components/LayoutFooter";
 import ClientScripts from "@/components/ClientScripts";
 import { LanguageProvider } from "@/context/LanguageContext";
 import StructuredData from "@/components/StructuredData";
+import TawkChat from "@/components/TawkChat";
 
 /* =========================================================
    التحسينات التي تمت:
@@ -121,6 +122,7 @@ export default function RootLayout({
           <main className="flex-grow">{children}</main>
           <LayoutFooter />
           <StructuredData />
+          <TawkChat />   {/* بوت المحادثة المباشرة */}
         </LanguageProvider>
       </body>
     </html>
