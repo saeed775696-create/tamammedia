@@ -4,7 +4,6 @@ import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Upload, Loader2 } from "lucide-react";
 
-// أنشئ عميل Supabase مرة واحدة
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -37,8 +36,9 @@ export default function ImageUpload({ value, onChange, label }: Props) {
         .getPublicUrl(data.path);
 
       onChange(urlData.publicUrl);
-    } catch (err: any) {
-      alert("فشل رفع الصورة: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "فشل رفع الصورة";
+      alert(message);
     } finally {
       setUploading(false);
     }
@@ -80,6 +80,7 @@ export default function ImageUpload({ value, onChange, label }: Props) {
       </div>
       {value && (
         <div className="mt-3 p-2 bg-white rounded-xl border inline-block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="معاينة" className="h-20 object-contain rounded" />
         </div>
       )}
