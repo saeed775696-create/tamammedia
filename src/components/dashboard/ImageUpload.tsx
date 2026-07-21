@@ -1,105 +1,88 @@
 "use client";
 
 import { useState } from "react";
-import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
-import toast from "react-hot-toast";
+import { createClient } from "@supabase/supabase-js";
+import { Upload, Loader2 } from "lucide-react";
 
-interface ImageUploadProps {
+// أنشئ عميل Supabase مرة واحدة
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+type Props = {
   value: string;
   onChange: (url: string) => void;
   label?: string;
-}
+};
 
-export default function ImageUpload({ value, onChange, label = "الصورة الرئيسية" }: ImageUploadProps) {
-  const [isUploading, setIsUploading] = useState(false);
+export default function ImageUpload({ value, onChange, label }: Props) {
+  const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الصورة كبير جداً. الحد الأقصى هو 5 ميجابايت");
-      return;
-    }
-
-    setIsUploading(true);
-    const loadingToast = toast.loading("جاري الرفع...");
-
+    setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("images")
+        .upload(fileName, file, { upsert: true });
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      if (error) throw error;
 
-      const data = await res.json();
+      const { data: urlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(data.path);
 
-      if (!res.ok) {
-        throw new Error(data.error || "فشل الرفع");
-      }
-
-      onChange(data.url);
-      toast.success("تم رفع الصورة بنجاح", { id: loadingToast });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "حدث خطأ أثناء الرفع";
-      toast.error(errorMessage, { id: loadingToast });
+      onChange(urlData.publicUrl);
+    } catch (err: any) {
+      alert("فشل رفع الصورة: " + err.message);
     } finally {
-      setIsUploading(false);
+      setUploading(false);
     }
   };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-[#21214f]">{label}</label>
-      <div className="flex items-start gap-4">
-        {/* Preview Area */}
-        <div className="relative w-32 h-32 rounded-xl border-2 border-dashed border-gray-300 overflow-hidden bg-white flex items-center justify-center shrink-0">
-          {value ? (
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+      <div className="flex items-center gap-3">
+        <label className={`flex items-center gap-2 px-4 py-2 rounded-xl border cursor-pointer transition ${
+          uploading ? "bg-gray-100 text-gray-400" : "bg-white hover:bg-gray-50 border-gray-300"
+        }`}>
+          {uploading ? (
             <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={value} alt="Preview" className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="absolute top-1 right-1 p-1 bg-white/80 rounded-full text-red-500 hover:bg-red-50 transition-colors"
-                title="إزالة الصورة"
-              >
-                <X size={16} />
-              </button>
+              <Loader2 size={16} className="animate-spin" />
+              جاري الرفع...
             </>
           ) : (
-            <div className="text-gray-400 flex flex-col items-center">
-              <ImageIcon size={32} className="mb-2 opacity-30" />
-              <span className="text-xs">بدون صورة</span>
-            </div>
+            <>
+              <Upload size={16} />
+              اختر صورة
+            </>
           )}
-          {isUploading && (
-            <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-sm">
-              <Loader2 className="animate-spin text-[#da8827]" size={24} />
-            </div>
-          )}
-        </div>
-
-        {/* Upload Button */}
-        <div className="flex-1">
-          <label className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 h-12 bg-white">
-            <Upload size={18} className="text-[#da8827]" />
-            {isUploading ? "جاري الرفع..." : "اختر صورة لرفعها"}
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleUpload}
-              disabled={isUploading}
-            />
-          </label>
-          <p className="text-xs text-gray-500 mt-2">
-            يُفضل أن تكون الصورة بصيغة JPG أو PNG وبحجم لا يتجاوز 5MB.
-          </p>
-        </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            className="hidden"
+            disabled={uploading}
+          />
+        </label>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="أو الصق رابط الصورة"
+          className="flex-1 border border-gray-300 rounded-xl p-2 text-sm focus:ring-2 focus:ring-[#da8827] outline-none"
+        />
       </div>
+      {value && (
+        <div className="mt-3 p-2 bg-white rounded-xl border inline-block">
+          <img src={value} alt="معاينة" className="h-20 object-contain rounded" />
+        </div>
+      )}
     </div>
   );
 }
