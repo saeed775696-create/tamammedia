@@ -1,36 +1,76 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle, Eye, Mail, MessageSquare } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  CheckCircle,
+  Eye,
+  Mail,
+  MessageSquare,
+  Trash2,
+  ExternalLink,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { extractItems } from "@/lib/api/extract";
+import PageHeader from "@/components/dashboard/PageHeader";
+import LoadingState from "@/components/dashboard/LoadingState";
+import ErrorState from "@/components/dashboard/ErrorState";
+import EmptyState from "@/components/dashboard/EmptyState";
+import Modal from "@/components/dashboard/Modal";
+import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 
 type Contact = {
   id: string;
   name: string;
   email: string;
-  phone?: string;
-  service?: string;
+  phone?: string | null;
+  service?: string | null;
   message: string;
   status: string;
   createdAt: string;
 };
 
+type StatusFilter = "all" | "new" | "read" | "replied";
+
+const statusConfig = {
+  new: {
+    label: "جديد",
+    badgeClass: "bg-red-100 text-red-700",
+    dotClass: "bg-red-500 animate-pulse",
+  },
+  read: {
+    label: "مقروء",
+    badgeClass: "bg-yellow-100 text-yellow-700",
+    dotClass: "bg-yellow-500",
+  },
+  replied: {
+    label: "تم الرد",
+    badgeClass: "bg-green-100 text-green-700",
+    dotClass: "bg-green-500",
+  },
+} as const;
+
 export default function ContactsDashboard() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Contact | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [search, setSearch] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Contact | null>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
 
   const fetchContacts = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/contacts");
-      if (res.ok) {
-        const data = await res.json();
-        setContacts(extractItems<Contact>(data));
-      }
+      if (!res.ok) throw new Error("فشل تحميل الرسائل");
+      const data = await res.json();
+      setContacts(extractItems<Contact>(data));
     } catch (err) {
-      toast.error("حدث خطأ في جلب الرسائل");
+      setError(
+        err instanceof Error ? err.message : "حدث خطأ أثناء تحميل الرسائل"
+      );
     } finally {
       setLoading(false);
     }
@@ -41,56 +81,49 @@ export default function ContactsDashboard() {
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    const loadingToast = toast.loading("جاري التحديث...");
+    if (updating) return; // منع النقر المزدوج
+    setUpdating(id);
+    const loadingToast = toast.loading("جارٍ التحديث...");
     try {
       const res = await fetch(`/api/contacts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      
-      if (res.ok) {
-        setContacts((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, status } : c))
-        );
-        toast.success("تم تحديث الحالة بنجاح", { id: loadingToast });
-      } else {
-        throw new Error("فشل التحديث");
+      if (!res.ok) throw new Error("فشل التحديث");
+
+      setContacts((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status } : c))
+      );
+      if (selectedMessage?.id === id) {
+        setSelectedMessage({ ...selectedMessage, status });
       }
-    } catch (error) {
+      toast.success("تم تحديث الحالة", { id: loadingToast });
+    } catch {
       toast.error("حدث خطأ أثناء التحديث", { id: loadingToast });
+    } finally {
+      setUpdating(null);
     }
   };
 
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case "new":
-        return (
-          <span className="bg-red-100 text-red-600 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm inline-flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
-            جديد
-          </span>
-        );
-      case "read":
-        return (
-          <span className="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm inline-flex items-center gap-1">
-            <Eye size={12} />
-            مقروء
-          </span>
-        );
-      case "replied":
-        return (
-          <span className="bg-green-100 text-green-700 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm inline-flex items-center gap-1">
-            <CheckCircle size={12} />
-            تم الرد
-          </span>
-        );
-      default:
-        return (
-          <span className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm">
-            {status}
-          </span>
-        );
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    const loadingToast = toast.loading("جارٍ الحذف...");
+    try {
+      const res = await fetch(`/api/contacts/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("فشل الحذف");
+
+      setContacts((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+      if (selectedMessage?.id === deleteTarget.id) {
+        setSelectedMessage(null);
+      }
+      toast.success("تم حذف الرسالة", { id: loadingToast });
+    } catch {
+      toast.error("حدث خطأ أثناء الحذف", { id: loadingToast });
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -101,176 +134,361 @@ export default function ContactsDashboard() {
     }
   };
 
+  // Filter + search
+  const filteredContacts = useMemo(() => {
+    let result = [...contacts].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    if (statusFilter !== "all") {
+      result = result.filter((c) => c.status === statusFilter);
+    }
+
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.email.toLowerCase().includes(q) ||
+          (c.phone || "").toLowerCase().includes(q) ||
+          c.message.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [contacts, statusFilter, search]);
+
+  const counts = useMemo(() => {
+    return {
+      all: contacts.length,
+      new: contacts.filter((c) => c.status === "new").length,
+      read: contacts.filter((c) => c.status === "read").length,
+      replied: contacts.filter((c) => c.status === "replied").length,
+    };
+  }, [contacts]);
+
+  const statusBadge = (status: string) => {
+    const cfg = statusConfig[status as keyof typeof statusConfig];
+    if (!cfg)
+      return (
+        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+          {status}
+        </span>
+      );
+    return (
+      <span
+        className={`${cfg.badgeClass} px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1.5`}
+      >
+        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dotClass}`} />
+        {cfg.label}
+      </span>
+    );
+  };
+
   return (
     <div>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-[#21214f] mb-2">الرسائل الواردة</h1>
-          <p className="text-gray-500">متابعة وإدارة طلبات التواصل والخدمات</p>
-        </div>
-        <div className="bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm flex items-center gap-3">
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">الرسائل الجديدة</span>
-            <span className="text-xl font-bold text-red-500">{contacts.filter(c => c.status === "new").length}</span>
-          </div>
-          <div className="h-8 w-px bg-gray-200"></div>
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">إجمالي الرسائل</span>
-            <span className="text-xl font-bold text-[#21214f]">{contacts.length}</span>
-          </div>
+      <PageHeader
+        title="الرسائل الواردة"
+        subtitle="متابعة وإدارة طلبات التواصل والخدمات"
+        breadcrumbs={[{ label: "الرئيسية", href: "/dashboard" }, { label: "الرسائل" }]}
+      />
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {[
+          { key: "all" as const, label: "إجمالي الرسائل", color: "text-[#21214f]", bg: "bg-[#21214f]/5" },
+          { key: "new" as const, label: "جديد", color: "text-red-600", bg: "bg-red-50" },
+          { key: "read" as const, label: "مقروء", color: "text-yellow-600", bg: "bg-yellow-50" },
+          { key: "replied" as const, label: "تم الرد", color: "text-green-600", bg: "bg-green-50" },
+        ].map((s) => (
+          <button
+            key={s.key}
+            onClick={() => setStatusFilter(s.key)}
+            className={`p-4 rounded-2xl border text-right transition-all ${
+              statusFilter === s.key
+                ? "border-[#da8827] bg-white shadow-md"
+                : "border-gray-100 bg-white hover:border-gray-200"
+            }`}
+          >
+            <div className={`text-2xl font-bold ${s.color}`}>{counts[s.key]}</div>
+            <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="بحث بالاسم، البريد، الرسالة..."
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+          />
         </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#da8827]"></div>
-        </div>
-      ) : contacts.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-          <Mail size={48} className="mx-auto text-gray-300 mb-4" />
-          <p className="text-xl text-gray-500">لا توجد رسائل بعد</p>
-        </div>
+        <LoadingState text="جارٍ تحميل الرسائل..." />
+      ) : error ? (
+        <ErrorState message={error} onRetry={fetchContacts} />
+      ) : filteredContacts.length === 0 ? (
+        <EmptyState
+          icon={<Mail size={36} />}
+          title={search || statusFilter !== "all" ? "لا توجد نتائج مطابقة" : "لا توجد رسائل بعد"}
+          description={
+            search || statusFilter !== "all"
+              ? "جرّب تغيير معايير البحث أو الفلترة"
+              : "ستظهر هنا الرسائل المُرسلة من نموذج التواصل في الموقع"
+          }
+          retryLabel="تحديث"
+          onRetry={fetchContacts}
+        />
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50 text-gray-600 font-medium">
-                  <th className="p-4 whitespace-nowrap">الاسم</th>
-                  <th className="p-4 whitespace-nowrap">البريد الإلكتروني</th>
-                  <th className="p-4 whitespace-nowrap">الخدمة المطلوبة</th>
-                  <th className="p-4 whitespace-nowrap">التاريخ</th>
-                  <th className="p-4 whitespace-nowrap">الحالة</th>
-                  <th className="p-4 whitespace-nowrap text-center">الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contacts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((contact) => (
-                  <tr
-                    key={contact.id}
-                    className={`border-b border-gray-50 transition-colors ${contact.status === 'new' ? 'bg-red-50/20 hover:bg-red-50/40' : 'hover:bg-gray-50'}`}
-                  >
-                    <td className="p-4 font-bold text-[#21214f] whitespace-nowrap">{contact.name}</td>
-                    <td className="p-4 text-gray-600 whitespace-nowrap" dir="ltr">{contact.email}</td>
-                    <td className="p-4 whitespace-nowrap">
-                      {contact.service ? (
-                        <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-medium border border-blue-100">
-                          {contact.service}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-gray-500 whitespace-nowrap" dir="ltr">
-                      {new Date(contact.createdAt).toLocaleDateString("ar-EG", {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
-                    <td className="p-4 whitespace-nowrap">{statusBadge(contact.status)}</td>
-                    <td className="p-4">
-                      <div className="flex gap-2 justify-center">
-                        <button
-                          onClick={() => handleViewMessage(contact)}
-                          className="p-2 bg-gray-50 text-gray-600 hover:bg-[#21214f] hover:text-white rounded-lg transition-colors shadow-sm"
-                          title="عرض التفاصيل"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        {contact.status !== "replied" && (
-                          <button
-                            onClick={() => updateStatus(contact.id, "replied")}
-                            className="p-2 bg-green-50 text-green-600 hover:bg-green-600 hover:text-white rounded-lg transition-colors shadow-sm"
-                            title="تعليم كمردود"
-                          >
-                            <CheckCircle size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50/50 text-gray-600 font-medium">
+                    <th className="p-4 text-right whitespace-nowrap">الاسم</th>
+                    <th className="p-4 text-right whitespace-nowrap">البريد الإلكتروني</th>
+                    <th className="p-4 text-right whitespace-nowrap">الخدمة</th>
+                    <th className="p-4 text-right whitespace-nowrap">التاريخ</th>
+                    <th className="p-4 text-right whitespace-nowrap">الحالة</th>
+                    <th className="p-4 text-center whitespace-nowrap">إجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredContacts.map((contact) => (
+                    <tr
+                      key={contact.id}
+                      className={`border-b border-gray-50 transition-colors cursor-pointer ${
+                        contact.status === "new"
+                          ? "bg-red-50/30 hover:bg-red-50/50"
+                          : "hover:bg-gray-50"
+                      }`}
+                      onClick={() => handleViewMessage(contact)}
+                    >
+                      <td className="p-4 font-bold text-[#21214f] whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          {contact.status === "new" && (
+                            <span className="w-2 h-2 rounded-full bg-red-500" />
+                          )}
+                          {contact.name}
+                        </div>
+                      </td>
+                      <td className="p-4 text-gray-600 whitespace-nowrap" dir="ltr">
+                        {contact.email}
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+                        {contact.service ? (
+                          <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-medium border border-blue-100">
+                            {contact.service}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="p-4 text-gray-500 whitespace-nowrap" dir="ltr">
+                        {new Date(contact.createdAt).toLocaleDateString("ar-EG", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                      <td className="p-4 whitespace-nowrap">{statusBadge(contact.status)}</td>
+                      <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleViewMessage(contact)}
+                            className="p-2 bg-gray-50 text-gray-600 hover:bg-[#21214f] hover:text-white rounded-lg transition-colors"
+                            title="عرض التفاصيل"
+                            aria-label="عرض التفاصيل"
+                          >
+                            <Eye size={16} />
+                          </button>
+                          {contact.status !== "replied" && (
+                            <button
+                              onClick={() => updateStatus(contact.id, "replied")}
+                              disabled={updating === contact.id}
+                              className="p-2 bg-green-50 text-green-600 hover:bg-green-600 hover:text-white rounded-lg transition-colors disabled:opacity-50"
+                              title="تعليم كمردود"
+                              aria-label="تعليم كمردود"
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setDeleteTarget(contact)}
+                            className="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg transition-colors"
+                            title="حذف"
+                            aria-label="حذف"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {filteredContacts.map((contact) => (
+              <button
+                key={contact.id}
+                onClick={() => handleViewMessage(contact)}
+                className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 text-right hover:shadow-md transition-all"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {contact.status === "new" && (
+                      <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                    )}
+                    <span className="font-bold text-[#21214f] truncate">
+                      {contact.name}
+                    </span>
+                  </div>
+                  {statusBadge(contact.status)}
+                </div>
+                <p className="text-xs text-gray-500 truncate" dir="ltr">
+                  {contact.email}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {new Date(contact.createdAt).toLocaleDateString("ar-EG", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  {contact.service && ` • ${contact.service}`}
+                </p>
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Message View Modal */}
-      {selectedMessage && (
-        <div className="fixed inset-0 bg-[#21214f]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg my-8 overflow-hidden flex flex-col">
-            <div className="p-6 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#da8827]/10 flex items-center justify-center text-[#da8827]">
-                  <MessageSquare size={20} />
-                </div>
-                <h2 className="text-xl font-bold text-[#21214f]">تفاصيل الرسالة</h2>
-              </div>
-              <button 
-                onClick={() => setSelectedMessage(null)} 
-                className="text-gray-400 hover:text-red-500 transition-colors p-2 bg-white rounded-full shadow-sm"
-              >
-                <span className="font-bold text-xl leading-none">&times;</span>
-              </button>
-            </div>
-            
-            <div className="p-6 md:p-8 flex-1 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <p className="text-xs text-gray-500 mb-1">الاسم</p>
-                  <p className="font-bold text-[#21214f]">{selectedMessage.name}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <p className="text-xs text-gray-500 mb-1">الخدمة المطلوبة</p>
-                  <p className="font-bold text-[#21214f]">{selectedMessage.service || "غير محدد"}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
-                  <p className="text-xs text-gray-500 mb-1">البريد الإلكتروني</p>
-                  <a href={`mailto:${selectedMessage.email}`} className="font-bold text-blue-600 hover:underline break-all" dir="ltr">{selectedMessage.email}</a>
-                </div>
-                {selectedMessage.phone && (
-                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
-                    <p className="text-xs text-gray-500 mb-1">رقم الهاتف</p>
-                    <a href={`tel:${selectedMessage.phone}`} className="font-bold text-blue-600 hover:underline" dir="ltr">{selectedMessage.phone}</a>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">نص الرسالة:</p>
-                <div className="bg-blue-50/50 border border-blue-100 p-5 rounded-2xl text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {selectedMessage.message}
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
+      <Modal
+        open={!!selectedMessage}
+        onClose={() => setSelectedMessage(null)}
+        title="تفاصيل الرسالة"
+        size="lg"
+        footer={
+          <>
+            <button
+              onClick={() => setDeleteTarget(selectedMessage)}
+              className="px-6 py-2.5 bg-red-50 border border-red-100 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2 order-1 sm:order-none"
+            >
+              <Trash2 size={18} />
+              حذف
+            </button>
+            <button
+              onClick={() => setSelectedMessage(null)}
+              className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              إغلاق
+            </button>
+            {selectedMessage && selectedMessage.status !== "replied" && (
               <button
-                onClick={() => setSelectedMessage(null)}
-                className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                onClick={() => updateStatus(selectedMessage.id, "replied")}
+                disabled={updating === selectedMessage.id}
+                className="px-6 py-2.5 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md disabled:opacity-50 flex items-center gap-2"
               >
-                إغلاق
+                <CheckCircle size={18} />
+                تأكيد الرد
               </button>
-              {selectedMessage.status !== "replied" && (
-                <button
-                  onClick={() => {
-                    updateStatus(selectedMessage.id, "replied");
-                    setSelectedMessage({ ...selectedMessage, status: "replied" });
-                  }}
-                  className="px-6 py-2.5 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md shadow-[#da8827]/20 flex items-center gap-2"
+            )}
+          </>
+        }
+      >
+        {selectedMessage && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <p className="text-xs text-gray-500 mb-1">الاسم</p>
+                <p className="font-bold text-[#21214f]">{selectedMessage.name}</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <p className="text-xs text-gray-500 mb-1">الخدمة المطلوبة</p>
+                <p className="font-bold text-[#21214f]">
+                  {selectedMessage.service || "غير محدد"}
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <p className="text-xs text-gray-500 mb-1">البريد الإلكتروني</p>
+                <a
+                  href={`mailto:${selectedMessage.email}`}
+                  className="font-bold text-blue-600 hover:underline break-all flex items-center gap-1.5"
+                  dir="ltr"
                 >
-                  <CheckCircle size={18} />
-                  تأكيد الرد
-                </button>
+                  {selectedMessage.email}
+                  <ExternalLink size={12} className="flex-shrink-0" />
+                </a>
+              </div>
+              {selectedMessage.phone && (
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <p className="text-xs text-gray-500 mb-1">رقم الهاتف</p>
+                  <a
+                    href={`tel:${selectedMessage.phone}`}
+                    className="font-bold text-blue-600 hover:underline flex items-center gap-1.5"
+                    dir="ltr"
+                  >
+                    {selectedMessage.phone}
+                    <ExternalLink size={12} className="flex-shrink-0" />
+                  </a>
+                </div>
               )}
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 sm:col-span-2">
+                <p className="text-xs text-gray-500 mb-1">التاريخ والحالة</p>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <p className="font-bold text-[#21214f]" dir="ltr">
+                    {new Date(selectedMessage.createdAt).toLocaleString("ar-EG", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                  {statusBadge(selectedMessage.status)}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <MessageSquare size={16} />
+                نص الرسالة
+              </p>
+              <div className="bg-blue-50/50 border border-blue-100 p-5 rounded-2xl text-gray-700 whitespace-pre-wrap leading-relaxed">
+                {selectedMessage.message}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
+
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="حذف الرسالة"
+        message={`هل أنت متأكد من حذف رسالة ${deleteTarget?.name || ""}؟ لا يمكن التراجع عن هذا الإجراء.`}
+        confirmText="نعم، احذف"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
