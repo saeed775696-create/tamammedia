@@ -119,9 +119,8 @@ export default function PortfolioDashboard() {
   };
 
   const handleSave = async () => {
-    if (saving) return; // منع النقر المزدوج
+    if (saving) return;
 
-    // Validation
     if (!form.titleAr.trim()) {
       toast.error("العنوان العربي مطلوب");
       return;
@@ -187,7 +186,10 @@ export default function PortfolioDashboard() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.error?.message || "فشل رفع الصورة");
@@ -198,14 +200,12 @@ export default function PortfolioDashboard() {
       setForm((prev) => ({ ...prev, imageUrl: url }));
       toast.success("تم رفع الصورة", { id: loadingToast });
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "فشل رفع الصورة",
-        { id: loadingToast }
-      );
+      toast.error(err instanceof Error ? err.message : "فشل رفع الصورة", {
+        id: loadingToast,
+      });
     }
   };
 
-  // Filter + search
   const filteredItems = useMemo(() => {
     let result = [...items];
     if (categoryFilter !== "all") {
@@ -220,7 +220,6 @@ export default function PortfolioDashboard() {
           (i.clientName || "").toLowerCase().includes(q)
       );
     }
-    // Featured first, then by creation order (already from API)
     return result.sort((a, b) => Number(b.featured) - Number(a.featured));
   }, [items, search, categoryFilter]);
 
@@ -231,30 +230,34 @@ export default function PortfolioDashboard() {
       <PageHeader
         title="الأعمال"
         subtitle="إدارة معرض الأعمال والمشاريع"
-        breadcrumbs={[{ label: "الرئيسية", href: "/dashboard" }, { label: "الأعمال" }]}
+        breadcrumbs={[
+          { label: "الرئيسية", href: "/dashboard" },
+          { label: "الأعمال" },
+        ]}
         actions={
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 bg-[#da8827] text-white px-5 py-2.5 rounded-xl hover:bg-[#c07520] transition-all shadow-md shadow-[#da8827]/20 font-medium"
+            className="flex items-center gap-1.5 bg-[#da8827] text-white px-3.5 py-2 rounded-lg hover:bg-[#b8701e] transition-colors text-sm font-medium shadow-sm"
           >
-            <Plus size={18} />
+            <Plus size={16} strokeWidth={2.5} />
             <span className="hidden sm:inline">إضافة عمل</span>
+            <span className="sm:hidden">إضافة</span>
           </button>
         }
       />
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      {/* Filters — صف واحد أنيق */}
+      <div className="flex flex-col sm:flex-row gap-2.5 mb-5">
         <SearchInput
           value={search}
           onChange={setSearch}
           placeholder="بحث بالعنوان أو اسم العميل..."
         />
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <Filter size={16} className="text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          <Filter size={14} className="text-gray-400 flex-shrink-0 ml-1" />
           <button
             onClick={() => setCategoryFilter("all")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+            className={`px-2.5 py-1.5 rounded-md text-[12px] font-medium whitespace-nowrap transition-colors ${
               categoryFilter === "all"
                 ? "bg-[#21214f] text-white"
                 : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
@@ -269,7 +272,7 @@ export default function PortfolioDashboard() {
               <button
                 key={cat}
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-2.5 py-1.5 rounded-md text-[12px] font-medium whitespace-nowrap transition-colors ${
                   categoryFilter === cat
                     ? "bg-[#21214f] text-white"
                     : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
@@ -288,26 +291,35 @@ export default function PortfolioDashboard() {
         <ErrorState message={error} onRetry={fetchItems} />
       ) : filteredItems.length === 0 ? (
         <EmptyState
-          icon={<FolderOpen size={36} />}
-          title={search || categoryFilter !== "all" ? "لا توجد نتائج" : "لا توجد أعمال بعد"}
+          icon={<FolderOpen size={32} />}
+          title={
+            search || categoryFilter !== "all"
+              ? "لا توجد نتائج"
+              : "لا توجد أعمال بعد"
+          }
           description={
             search || categoryFilter !== "all"
               ? "جرّب تغيير معايير البحث"
               : "ابدأ بإضافة أول عمل لمعرضك"
           }
-          actionLabel={search || categoryFilter !== "all" ? undefined : "إضافة عمل"}
-          onAction={search || categoryFilter !== "all" ? undefined : openAdd}
+          actionLabel={
+            search || categoryFilter !== "all" ? undefined : "إضافة عمل"
+          }
+          onAction={
+            search || categoryFilter !== "all" ? undefined : openAdd
+          }
           retryLabel="تحديث"
           onRetry={fetchItems}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        // Grid — صور أصغر (h-32) بدلاً من h-48
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg transition-all duration-300"
+              className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-gray-200 transition-all"
             >
-              <div className="relative h-44 sm:h-48 bg-gray-100">
+              <div className="relative h-28 sm:h-32 bg-gray-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.imageUrl}
@@ -318,45 +330,45 @@ export default function PortfolioDashboard() {
                   }}
                 />
                 {item.featured && (
-                  <span className="absolute top-2 left-2 bg-[#da8827] text-white p-1.5 rounded-full shadow-md">
-                    <Star size={14} fill="white" />
+                  <span className="absolute top-1.5 right-1.5 bg-[#da8827] text-white p-1 rounded-md shadow-sm">
+                    <Star size={10} fill="white" />
                   </span>
                 )}
-                <span className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm text-xs px-2.5 py-1 rounded-full font-medium text-[#21214f] shadow-sm">
+                <span className="absolute top-1.5 left-1.5 bg-white/95 backdrop-blur-sm text-[10px] px-1.5 py-0.5 rounded font-medium text-[#21214f] shadow-sm">
                   {categoryLabels[item.category] || item.category}
                 </span>
 
                 {/* Hover actions */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
                   <button
                     onClick={() => openEdit(item)}
-                    className="p-3 bg-white/95 hover:bg-white text-[#21214f] rounded-xl transition-all shadow-md hover:scale-110"
+                    className="p-2 bg-white/95 hover:bg-white text-[#21214f] rounded-lg transition-all hover:scale-110"
                     title="تعديل"
                     aria-label="تعديل"
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={14} />
                   </button>
                   <button
                     onClick={() => setDeleteTarget(item)}
-                    className="p-3 bg-white/95 hover:bg-white text-red-600 rounded-xl transition-all shadow-md hover:scale-110"
+                    className="p-2 bg-white/95 hover:bg-white text-red-600 rounded-lg transition-all hover:scale-110"
                     title="حذف"
                     aria-label="حذف"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-bold text-gray-800 text-lg line-clamp-1">
+              <div className="p-2.5 sm:p-3">
+                <h3 className="font-semibold text-gray-800 text-[13px] sm:text-sm line-clamp-1">
                   {item.titleAr}
                 </h3>
-                <p className="text-sm text-gray-500 line-clamp-1">
+                <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5">
                   {item.titleEn}
                 </p>
                 {item.clientName && (
-                  <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                  <p className="text-[10px] text-gray-500 mt-1.5 flex items-center gap-1">
                     <span>👤</span>
-                    {item.clientName}
+                    <span className="truncate">{item.clientName}</span>
                   </p>
                 )}
               </div>
@@ -376,18 +388,18 @@ export default function PortfolioDashboard() {
             <button
               onClick={() => setShowModal(false)}
               disabled={saving}
-              className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               إلغاء
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-[#da8827] text-white text-sm font-medium rounded-lg hover:bg-[#b8701e] transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2 min-w-[120px] justify-center"
             >
               {saving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   جارٍ الحفظ...
                 </>
               ) : editingId ? (
@@ -400,28 +412,28 @@ export default function PortfolioDashboard() {
         }
       >
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                 العنوان العربي <span className="text-red-500">*</span>
               </label>
               <input
                 name="titleAr"
                 value={form.titleAr}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 placeholder="مثال: متجر فلك"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                 العنوان الإنجليزي <span className="text-red-500">*</span>
               </label>
               <input
                 name="titleEn"
                 value={form.titleEn}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 placeholder="Example: Falak Store"
                 dir="ltr"
               />
@@ -429,12 +441,12 @@ export default function PortfolioDashboard() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
               الصورة <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
-              <label className="flex items-center justify-center gap-2 cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-xl transition-colors text-sm font-medium">
-                <Plus size={16} />
+              <label className="flex items-center justify-center gap-1.5 cursor-pointer bg-gray-50 hover:bg-gray-100 border border-gray-200 px-3 py-2 rounded-lg transition-colors text-[13px] font-medium text-gray-700">
+                <Plus size={14} strokeWidth={2.5} />
                 اختر صورة
                 <input
                   type="file"
@@ -448,17 +460,17 @@ export default function PortfolioDashboard() {
                 value={form.imageUrl}
                 onChange={handleChange}
                 placeholder="أو الصق رابط الصورة"
-                className="flex-1 border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                className="flex-1 border border-gray-200 rounded-lg p-2 text-[13px] focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 dir="ltr"
               />
             </div>
             {form.imageUrl && (
-              <div className="mt-3 inline-block p-2 bg-white rounded-xl border">
+              <div className="mt-2 inline-block p-1.5 bg-gray-50 rounded-lg border border-gray-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={form.imageUrl}
                   alt="معاينة"
-                  className="h-24 w-24 object-cover rounded"
+                  className="h-16 w-16 object-cover rounded"
                   onError={(e) => {
                     e.currentTarget.style.opacity = "0.3";
                   }}
@@ -467,16 +479,16 @@ export default function PortfolioDashboard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                 التصنيف
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all bg-white"
+                className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all bg-white"
               >
                 {Object.entries(categoryLabels).map(([key, label]) => (
                   <option key={key} value={key}>
@@ -486,20 +498,20 @@ export default function PortfolioDashboard() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                 اسم العميل
               </label>
               <input
                 name="clientName"
                 value={form.clientName}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 placeholder="اختياري"
               />
             </div>
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+          <label className="flex items-center gap-2 cursor-pointer p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <input
               type="checkbox"
               name="featured"
@@ -507,15 +519,14 @@ export default function PortfolioDashboard() {
               onChange={handleChange}
               className="w-4 h-4 accent-[#da8827]"
             />
-            <span className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-              <Star size={16} className="text-[#da8827]" />
+            <span className="text-[13px] font-medium text-gray-700 flex items-center gap-1.5">
+              <Star size={14} className="text-[#da8827]" />
               مشروع مميز (يظهر في المقدمة)
             </span>
           </label>
         </div>
       </Modal>
 
-      {/* Delete confirmation */}
       <ConfirmDialog
         open={!!deleteTarget}
         title="حذف العمل"

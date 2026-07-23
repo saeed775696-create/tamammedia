@@ -7,17 +7,13 @@ import { useState } from "react";
 type Props = {
   title: string;
   subtitle?: string;
-  // breadcrumb items (optional)
   breadcrumbs?: { label: string; href?: string }[];
-  // actions to render on the left (e.g., add button)
   actions?: React.ReactNode;
 };
 
 /**
  * Page header موحد لكل صفحات dashboard
- * - عنوان + وصف
- * - breadcrumb navigation
- * - زر تحديث + actions
+ * حجم أنظف، عنوان أكبر، أزرار واضحة
  */
 export default function PageHeader({
   title,
@@ -35,14 +31,14 @@ export default function PageHeader({
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-6">
       {breadcrumbs.length > 0 && (
         <nav
           aria-label="breadcrumb"
-          className="flex items-center gap-2 text-sm text-gray-500 mb-3"
+          className="flex items-center gap-1.5 text-[12px] text-gray-400 mb-2"
         >
           {breadcrumbs.map((crumb, i) => (
-            <span key={i} className="flex items-center gap-2">
+            <span key={i} className="flex items-center gap-1.5">
               {i > 0 && <span className="text-gray-300">/</span>}
               {crumb.href ? (
                 <button
@@ -59,13 +55,13 @@ export default function PageHeader({
         </nav>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#21214f]">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#21214f]">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-gray-500 text-sm mt-1">{subtitle}</p>
+            <p className="text-gray-500 text-[13px] mt-1">{subtitle}</p>
           )}
         </div>
 
@@ -76,12 +72,9 @@ export default function PageHeader({
             disabled={refreshing}
             aria-label="تحديث"
             title="تحديث البيانات"
-            className="p-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="p-2 bg-white border border-gray-200 text-gray-500 rounded-lg hover:bg-gray-50 hover:text-[#21214f] transition-colors disabled:opacity-50"
           >
-            <RefreshCw
-              size={18}
-              className={refreshing ? "animate-spin" : ""}
-            />
+            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
           </button>
         </div>
       </div>

@@ -13,20 +13,20 @@ type Props = {
 };
 
 const sizeClasses: Record<NonNullable<Props["size"]>, string> = {
-  sm: "max-w-md",
-  md: "max-w-lg",
+  sm: "max-w-sm",
+  md: "max-w-md",
   lg: "max-w-2xl",
-  xl: "max-w-4xl",
+  xl: "max-w-3xl",
 };
 
 /**
  * Modal component احترافي مع:
  * - إغلاق بـ ESC key
  * - إغلاق عند النقر خارج الـ modal
- * - focus trap (التركيز يبقى داخل الـ modal)
  * - منع scroll في الـ background
- * - responsive على الموبايل
+ * - responsive على الموبايل (يأخذ كامل الشاشة من الأسفل)
  * - دعم RTL
+ * - أحجام أكثر منطقية
  */
 export default function Modal({
   open,
@@ -39,7 +39,6 @@ export default function Modal({
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // ESC key + body scroll lock
   useEffect(() => {
     if (!open) return;
 
@@ -50,7 +49,6 @@ export default function Modal({
     document.addEventListener("keydown", handleKey);
     document.body.style.overflow = "hidden";
 
-    // Focus the close button initially
     setTimeout(() => closeButtonRef.current?.focus(), 50);
 
     return () => {
@@ -77,16 +75,16 @@ export default function Modal({
       {/* Modal */}
       <div
         ref={modalRef}
-        className={`relative bg-white w-full ${sizeClasses[size]} max-h-[95vh] sm:max-h-[90vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col my-0 sm:my-8`}
+        className={`relative bg-white w-full ${sizeClasses[size]} max-h-[95vh] sm:max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col my-0 sm:my-8`}
         style={{
           animation: "modalSlideIn 0.2s ease-out",
         }}
       >
         {title && (
-          <div className="p-5 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
             <h2
               id="modal-title"
-              className="text-xl sm:text-2xl font-bold text-[#21214f]"
+              className="text-base sm:text-lg font-bold text-[#21214f]"
             >
               {title}
             </h2>
@@ -94,17 +92,17 @@ export default function Modal({
               ref={closeButtonRef}
               onClick={onClose}
               aria-label="إغلاق"
-              className="text-gray-400 hover:text-red-500 hover:rotate-90 transition-all p-2 bg-white rounded-full shadow-sm font-bold text-xl leading-none w-9 h-9 flex items-center justify-center"
+              className="text-gray-400 hover:text-red-500 hover:rotate-90 transition-all p-1.5 bg-white rounded-lg shadow-sm w-8 h-8 flex items-center justify-center"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         )}
 
-        <div className="overflow-y-auto flex-1 p-5 sm:p-6">{children}</div>
+        <div className="overflow-y-auto flex-1 p-5">{children}</div>
 
         {footer && (
-          <div className="p-5 sm:p-6 border-t border-gray-100 bg-gray-50 flex flex-col-reverse sm:flex-row justify-end gap-3 rounded-b-3xl">
+          <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex flex-col-reverse sm:flex-row justify-end gap-2 flex-shrink-0">
             {footer}
           </div>
         )}

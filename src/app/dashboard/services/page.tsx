@@ -161,7 +161,6 @@ export default function ServicesDashboard() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Filter + sort
   const sortedServices = useMemo(() => {
     let result = [...services];
     if (search.trim()) {
@@ -181,19 +180,23 @@ export default function ServicesDashboard() {
       <PageHeader
         title="الخدمات"
         subtitle="إدارة الخدمات التي تقدمها الشركة"
-        breadcrumbs={[{ label: "الرئيسية", href: "/dashboard" }, { label: "الخدمات" }]}
+        breadcrumbs={[
+          { label: "الرئيسية", href: "/dashboard" },
+          { label: "الخدمات" },
+        ]}
         actions={
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 bg-[#da8827] text-white px-5 py-2.5 rounded-xl hover:bg-[#c07520] transition-all shadow-md shadow-[#da8827]/20 font-medium"
+            className="flex items-center gap-1.5 bg-[#da8827] text-white px-3.5 py-2 rounded-lg hover:bg-[#b8701e] transition-colors text-sm font-medium shadow-sm"
           >
-            <Plus size={18} />
+            <Plus size={16} strokeWidth={2.5} />
             <span className="hidden sm:inline">إضافة خدمة</span>
+            <span className="sm:hidden">إضافة</span>
           </button>
         }
       />
 
-      <div className="mb-6">
+      <div className="mb-5">
         <SearchInput
           value={search}
           onChange={setSearch}
@@ -207,12 +210,10 @@ export default function ServicesDashboard() {
         <ErrorState message={error} onRetry={fetchServices} />
       ) : sortedServices.length === 0 ? (
         <EmptyState
-          icon={<Wrench size={36} />}
+          icon={<Wrench size={32} />}
           title={search ? "لا توجد نتائج" : "لا توجد خدمات بعد"}
           description={
-            search
-              ? "جرّب تغيير كلمات البحث"
-              : "ابدأ بإضافة أول خدمة لشركتك"
+            search ? "جرّب تغيير كلمات البحث" : "ابدأ بإضافة أول خدمة لشركتك"
           }
           actionLabel={search ? undefined : "إضافة خدمة"}
           onAction={search ? undefined : openAdd}
@@ -220,13 +221,14 @@ export default function ServicesDashboard() {
           onRetry={fetchServices}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        // Grid أنيق بـ 3-4 أعمدة، صور أصغر
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {sortedServices.map((service) => (
             <div
               key={service.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col"
+              className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-gray-200 transition-all flex flex-col"
             >
-              <div className="relative h-40 sm:h-44 bg-gray-50 overflow-hidden">
+              <div className="relative h-24 sm:h-28 bg-gray-50 overflow-hidden">
                 {service.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -235,41 +237,41 @@ export default function ServicesDashboard() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300 group-hover:scale-110 transition-transform duration-500">
-                    <LayoutGrid size={48} />
+                  <div className="w-full h-full flex items-center justify-center text-gray-300">
+                    <LayoutGrid size={32} />
                   </div>
                 )}
-                <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
+                <span className="absolute top-1.5 left-1.5 bg-black/60 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
                   #{service.order}
                 </span>
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
                   <button
                     onClick={() => openEdit(service)}
-                    className="p-3 bg-white/95 hover:bg-white text-[#21214f] rounded-xl transition-all shadow-md hover:scale-110"
+                    className="p-2 bg-white/95 hover:bg-white text-[#21214f] rounded-lg transition-all hover:scale-110"
                     title="تعديل"
                     aria-label="تعديل"
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={14} />
                   </button>
                   <button
                     onClick={() => setDeleteTarget(service)}
-                    className="p-3 bg-white/95 hover:bg-white text-red-600 rounded-xl transition-all shadow-md hover:scale-110"
+                    className="p-2 bg-white/95 hover:bg-white text-red-600 rounded-lg transition-all hover:scale-110"
                     title="حذف"
                     aria-label="حذف"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
-              <div className="p-4 flex-1 flex flex-col">
-                <h3 className="font-bold text-[#21214f] text-lg mb-1 line-clamp-1">
+              <div className="p-2.5 sm:p-3 flex-1 flex flex-col">
+                <h3 className="font-semibold text-[#21214f] text-[13px] sm:text-sm line-clamp-1">
                   {service.titleAr}
                 </h3>
-                <p className="text-sm text-gray-500 mb-2 line-clamp-1" dir="ltr">
+                <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5" dir="ltr">
                   {service.titleEn}
                 </p>
                 {service.descriptionAr && (
-                  <p className="text-xs text-gray-400 line-clamp-2 flex-1">
+                  <p className="text-[11px] text-gray-500 line-clamp-2 mt-1.5 flex-1">
                     {service.descriptionAr}
                   </p>
                 )}
@@ -279,7 +281,7 @@ export default function ServicesDashboard() {
         </div>
       )}
 
-      {/* Add/Edit Modal */}
+      {/* Modal */}
       <Modal
         open={showModal}
         onClose={() => setShowModal(false)}
@@ -290,18 +292,18 @@ export default function ServicesDashboard() {
             <button
               onClick={() => setShowModal(false)}
               disabled={saving}
-              className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               إلغاء
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-[#da8827] text-white text-sm font-medium rounded-lg hover:bg-[#b8701e] transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2 min-w-[120px] justify-center"
             >
               {saving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   جارٍ الحفظ...
                 </>
               ) : editingId ? (
@@ -313,8 +315,8 @@ export default function ServicesDashboard() {
           </>
         }
       >
-        <div className="space-y-6">
-          <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+        <div className="space-y-4">
+          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
             <ImageUpload
               value={form.imageUrl}
               onChange={(url) => setForm({ ...form, imageUrl: url })}
@@ -322,22 +324,21 @@ export default function ServicesDashboard() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Arabic */}
-            <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                   العنوان بالعربية <span className="text-red-500">*</span>
                 </label>
                 <input
                   name="titleAr"
                   value={form.titleAr}
                   onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                  className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                   الوصف بالعربية <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -345,11 +346,11 @@ export default function ServicesDashboard() {
                   value={form.descriptionAr}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all resize-none"
+                  className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all resize-none"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                   الترتيب
                 </label>
                 <input
@@ -359,28 +360,27 @@ export default function ServicesDashboard() {
                   onChange={(e) =>
                     setForm({ ...form, order: Number(e.target.value) })
                   }
-                  className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                  className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                   min="0"
                 />
               </div>
             </div>
 
-            {/* English */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                   العنوان بالإنجليزية <span className="text-red-500">*</span>
                 </label>
                 <input
                   name="titleEn"
                   value={form.titleEn}
                   onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                  className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                   dir="ltr"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
                   الوصف بالإنجليزية <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -388,7 +388,7 @@ export default function ServicesDashboard() {
                   value={form.descriptionEn}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all resize-none"
+                  className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all resize-none"
                   dir="ltr"
                 />
               </div>

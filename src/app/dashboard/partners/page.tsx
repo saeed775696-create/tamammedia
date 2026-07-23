@@ -164,19 +164,23 @@ export default function PartnersDashboard() {
       <PageHeader
         title="الشركاء"
         subtitle="إدارة شركاء النجاح"
-        breadcrumbs={[{ label: "الرئيسية", href: "/dashboard" }, { label: "الشركاء" }]}
+        breadcrumbs={[
+          { label: "الرئيسية", href: "/dashboard" },
+          { label: "الشركاء" },
+        ]}
         actions={
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 bg-[#da8827] text-white px-5 py-2.5 rounded-xl hover:bg-[#c07520] transition-all shadow-md shadow-[#da8827]/20 font-medium"
+            className="flex items-center gap-1.5 bg-[#da8827] text-white px-3.5 py-2 rounded-lg hover:bg-[#b8701e] transition-colors text-sm font-medium shadow-sm"
           >
-            <Plus size={18} />
+            <Plus size={16} strokeWidth={2.5} />
             <span className="hidden sm:inline">إضافة شريك</span>
+            <span className="sm:hidden">إضافة</span>
           </button>
         }
       />
 
-      <div className="mb-6">
+      <div className="mb-5">
         <SearchInput
           value={search}
           onChange={setSearch}
@@ -190,7 +194,7 @@ export default function PartnersDashboard() {
         <ErrorState message={error} onRetry={fetchPartners} />
       ) : sortedPartners.length === 0 ? (
         <EmptyState
-          icon={<Briefcase size={36} />}
+          icon={<Briefcase size={32} />}
           title={search ? "لا توجد نتائج" : "لا يوجد شركاء بعد"}
           description={
             search ? "جرّب تغيير كلمات البحث" : "ابدأ بإضافة أول شريك"
@@ -201,43 +205,44 @@ export default function PartnersDashboard() {
           onRetry={fetchPartners}
         />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+        // Grid — 3-5 أعمدة، لوجوهات أنيقة الحجم
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {sortedPartners.map((partner) => (
             <div
               key={partner.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col"
+              className="group relative bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-gray-200 transition-all flex flex-col"
             >
-              <div className="h-32 sm:h-40 bg-gray-50 flex items-center justify-center p-4 relative">
+              <div className="h-20 sm:h-24 bg-gray-50 flex items-center justify-center p-3 relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={partner.imageUrl}
                   alt={partner.name}
-                  className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110"
+                  className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.src = "/imgs/2-3.png";
                   }}
                 />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 backdrop-blur-sm">
                   <button
                     onClick={() => openEdit(partner)}
-                    className="p-2 bg-white text-[#21214f] hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
+                    className="p-1.5 bg-white text-[#21214f] hover:bg-blue-50 rounded-md transition-colors shadow-sm"
                     title="تعديل"
                     aria-label="تعديل"
                   >
-                    <Edit2 size={16} />
+                    <Edit2 size={13} />
                   </button>
                   <button
                     onClick={() => setDeleteTarget(partner)}
-                    className="p-2 bg-white text-red-600 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
+                    className="p-1.5 bg-white text-red-600 hover:bg-red-50 rounded-md transition-colors shadow-sm"
                     title="حذف"
                     aria-label="حذف"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={13} />
                   </button>
                 </div>
               </div>
-              <div className="p-3 text-center border-t border-gray-50 flex-1 flex flex-col justify-center">
-                <h3 className="font-bold text-[#21214f] text-sm sm:text-base line-clamp-1">
+              <div className="p-2 text-center border-t border-gray-50 flex-1 flex flex-col justify-center">
+                <h3 className="font-semibold text-[#21214f] text-[12px] sm:text-[13px] line-clamp-1">
                   {partner.name}
                 </h3>
                 {partner.website && (
@@ -245,9 +250,9 @@ export default function PartnersDashboard() {
                     href={partner.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-[#da8827] flex items-center justify-center gap-1 mt-1 hover:underline"
+                    className="text-[10px] text-[#da8827] flex items-center justify-center gap-1 mt-0.5 hover:underline"
                   >
-                    <ExternalLink size={10} />
+                    <ExternalLink size={9} />
                     زيارة الموقع
                   </a>
                 )}
@@ -267,18 +272,18 @@ export default function PartnersDashboard() {
             <button
               onClick={() => setShowModal(false)}
               disabled={saving}
-              className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               إلغاء
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-[#da8827] text-white font-medium rounded-xl hover:bg-[#b8701e] transition-all shadow-md disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-[#da8827] text-white text-sm font-medium rounded-lg hover:bg-[#b8701e] transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2 min-w-[120px] justify-center"
             >
               {saving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   جارٍ الحفظ...
                 </>
               ) : editingId ? (
@@ -290,8 +295,8 @@ export default function PartnersDashboard() {
           </>
         }
       >
-        <div className="space-y-5">
-          <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+        <div className="space-y-4">
+          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
             <ImageUpload
               value={form.imageUrl}
               onChange={(url) => setForm({ ...form, imageUrl: url })}
@@ -300,32 +305,32 @@ export default function PartnersDashboard() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
               اسم الشريك <span className="text-red-500">*</span>
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+              className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
               placeholder="اسم الشركة"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
               رابط الموقع (اختياري)
             </label>
             <div className="relative">
               <ExternalLink
-                size={16}
+                size={14}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
               <input
                 name="website"
                 value={form.website}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl p-2.5 pl-10 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+                className="w-full border border-gray-200 rounded-lg p-2.5 pl-9 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
                 dir="ltr"
                 placeholder="https://example.com"
               />
@@ -333,7 +338,7 @@ export default function PartnersDashboard() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-gray-700 mb-1.5">
               الترتيب
             </label>
             <input
@@ -341,7 +346,7 @@ export default function PartnersDashboard() {
               name="order"
               value={form.order}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-2.5 focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
+              className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#da8827] focus:border-transparent outline-none transition-all"
               min="0"
             />
           </div>
