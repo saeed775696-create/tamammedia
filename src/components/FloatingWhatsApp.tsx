@@ -1,35 +1,33 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { whatsappLink } from "@/config/site";
 
 export default function FloatingWhatsApp() {
   const { lang } = useLanguage();
 
   const handleClick = () => {
-    // تتبع النقرة
+    // تتبع النقرة (غير حرج إن فشل)
     fetch("/api/track/whatsapp", { method: "POST" }).catch(() => {});
-    // فتح واتساب
-    const phone = "967733579558"; // تأكد من صحة الرقم
+
     const message =
       lang === "ar"
         ? "السلام عليكم، أريد الاستفسار عن خدماتكم"
         : "Hello, I'd like to inquire about your services";
-    window.open(
-      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
+
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
   };
 
   return (
     <button
       onClick={handleClick}
       aria-label="Chat on WhatsApp"
-      title="تواصل عبر واتساب"
-      className="floating-whatsapp-btn" // فئة CSS احتياطية
+      title={lang === "ar" ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
+      className="floating-whatsapp-btn"
       style={{
         position: "fixed",
         bottom: "24px",
-        // حسب اللغة: في العربية يكون الزر على اليسار، وفي الإنجليزية على اليمين
+        // حسب اللغة: في العربية على اليسار، وفي الإنجليزية على اليمين
         [lang === "ar" ? "left" : "right"]: "24px",
         zIndex: 9999,
         width: "56px",
@@ -37,7 +35,6 @@ export default function FloatingWhatsApp() {
         borderRadius: "50%",
         background: "#25D366",
         color: "#fff",
-        fontSize: "28px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -47,7 +44,6 @@ export default function FloatingWhatsApp() {
         animation: "pulse 2s infinite",
       }}
     >
-      {/* أيقونة SVG للواتساب */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

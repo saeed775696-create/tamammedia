@@ -6,16 +6,16 @@ import ClientScripts from "@/components/ClientScripts";
 import { LanguageProvider } from "@/context/LanguageContext";
 import StructuredData from "@/components/StructuredData";
 import TawkChat from "@/components/TawkChat";
+import { siteConfig } from "@/config/site";
 
 /* =========================================================
-   التحسينات التي تمت:
-   1. دمج خط "Alexandria" بشكل أصلي عبر next/font لتحسين الأداء (بدون Layout Shift).
-   2. إضافة كائن Viewport لضبط لون متصفح الجوال (themeColor) بلون الهوية الكحلي (#21214f).
-   3. تحسينات SEO إضافية (canonical, robots).
-   4. تطبيق كلاسات عامة على body لتحسين جودة عرض الخطوط (antialiased).
+   التحسينات المطبّقة:
+   1. دمج خط "Alexandria" عبر next/font لتحسين الأداء.
+   2. كائن Viewport لضبط لون متصفح الجوال بلون الهوية (#21214f).
+   3. تحسينات SEO (canonical, robots, openGraph).
+   4. antialiased لجودة عرض الخطوط.
    ========================================================= */
 
-// تحسين تحميل خط الهوية البصرية
 const alexandria = Alexandria({
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -23,16 +23,15 @@ const alexandria = Alexandria({
   display: "swap",
 });
 
-// تخصيص لون المتصفح ليتطابق مع الهوية البصرية (الأزرق الداكن)
 export const viewport = {
   themeColor: "#21214f",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  maximumScale: 5,
 };
 
 export const metadata = {
-  metadataBase: new URL("https://tamammedia.tech"),
+  metadataBase: new URL(siteConfig.url),
 
   title: {
     default: "تمام ميديا | وكالة تسويق رقمي في اليمن",
@@ -53,12 +52,12 @@ export const metadata = {
     "حلول تسويقية اليمن",
   ],
 
-  authors: [{ name: "تمام ميديا", url: "https://tamammedia.tech" }],
+  authors: [{ name: "تمام ميديا", url: siteConfig.url }],
   creator: "تمام ميديا",
   publisher: "تمام ميديا",
 
   alternates: {
-    canonical: "https://tamammedia.tech",
+    canonical: siteConfig.url,
   },
 
   robots: {
@@ -77,7 +76,7 @@ export const metadata = {
     title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
     description:
       "وكالة تسويق رقمي متكاملة في اليمن - بناء العلامات التجارية وتطوير المواقع.",
-    url: "https://tamammedia.tech",
+    url: siteConfig.url,
     siteName: "تمام ميديا",
     locale: "ar_YE",
     type: "website",
@@ -100,7 +99,7 @@ export const metadata = {
 
   icons: {
     icon: "/imgs/favicon-32x32.png",
-    apple: "/imgs/apple-touch-icon.png", // مستحسن لأجهزة آبل
+    apple: "/imgs/favicon-32x32.png",
   },
 };
 
@@ -111,18 +110,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className={alexandria.variable}>
-      {/* 
-        تمت إضافة antialiased لجعل الخط أكثر نعومة ووضوحاً
-        و flex flex-col min-h-screen لضمان بقاء الفوتر في الأسفل دائماً 
-      */}
-      <body className={`${alexandria.className} antialiased min-h-screen flex flex-col overflow-x-hidden bg-white text-gray-900`}>
+      <body
+        className={`${alexandria.className} antialiased min-h-screen flex flex-col overflow-x-hidden bg-white text-gray-900`}
+      >
         <LanguageProvider>
           <ClientScripts />
           <LayoutHeader />
           <main className="flex-grow">{children}</main>
           <LayoutFooter />
           <StructuredData />
-          <TawkChat />   {/* بوت المحادثة المباشرة */}
+          <TawkChat />
         </LanguageProvider>
       </body>
     </html>

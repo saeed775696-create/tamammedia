@@ -1,13 +1,8 @@
 import { MetadataRoute } from "next";
+import { siteConfig } from "@/config/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://tamammedia.vercel.app";
-
-  // مثال: يمكنك لاحقاً جلب المشاريع من API وإدراجها
-  const portfolioImages = [
-    { url: "/projects/1.jpg", title: "E-commerce Redesign" },
-    { url: "/projects/2.jpg", title: "Brand Identity" },
-  ];
+  const baseUrl = siteConfig.url;
 
   return [
     {
@@ -29,12 +24,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/services/creative`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/services/tech`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/services/integrated`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/portfolio`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
-      // تضمين الصور لتحسين فهرستها
-     images: portfolioImages.map((img) => `${baseUrl}${img.url}`),
     },
     {
       url: `${baseUrl}/contact`,
