@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { portfolioService } from '@/lib/services';
 import { createPortfolioSchema } from '@/lib/validations';
-import { parsePaginationParams, ApiResponseHandler } from '@/lib/api';
+import { parsePaginationParams, ApiResponseHandler, requireAdmin } from '@/lib/api';
 
 export async function GET(req: NextRequest) {
   return ApiResponseHandler.handle(req, async () => {
@@ -12,16 +12,19 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const guard = await requireAdmin();
+  if (guard) return guard;
+
   return ApiResponseHandler.handle(req, async () => {
     const body = await req.json();
-    
-    // Convert arrays to strings if they come as arrays (due to old schema support)
+
+    // تحويل المصفوفات إلى JSON string إذا أُرسلت كمصفوفة (توافق مع الواجهة)
     if (Array.isArray(body.gallery)) body.gallery = JSON.stringify(body.gallery);
     if (Array.isArray(body.technologies)) body.technologies = JSON.stringify(body.technologies);
 
     const validatedData = createPortfolioSchema.parse(body);
     const item = await portfolioService.createItem(validatedData);
-    
+
     return item;
   }, { status: 201 });
 }

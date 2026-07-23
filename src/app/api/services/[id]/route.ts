@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { serviceService } from '@/lib/services';
 import { updateServiceSchema } from '@/lib/validations';
-import { ApiResponseHandler } from '@/lib/api';
+import { ApiResponseHandler, requireAdmin } from '@/lib/api';
 
 export async function GET(
   req: NextRequest,
@@ -17,12 +17,15 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const guard = await requireAdmin();
+  if (guard) return guard;
+
   return ApiResponseHandler.handle(req, async () => {
     const { id } = await params;
     const body = await req.json();
     const validatedData = updateServiceSchema.parse(body);
     const updated = await serviceService.updateService(id, validatedData);
-    
+
     return updated;
   });
 }
@@ -31,6 +34,9 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const guard = await requireAdmin();
+  if (guard) return guard;
+
   return ApiResponseHandler.handle(req, async () => {
     const { id } = await params;
     await serviceService.deleteService(id);

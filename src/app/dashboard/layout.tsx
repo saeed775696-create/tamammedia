@@ -10,7 +10,10 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+
+  // التحقق من الوجود AND الدور
   if (!session) redirect("/login");
+  if (session.user.role !== "admin") redirect("/login?error=forbidden");
 
   return (
     <div className="flex min-h-screen bg-[#f8f9fc]">
