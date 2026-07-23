@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { extractItems } from "@/lib/api/extract";
 
 type Contact = {
   id: string;
@@ -23,7 +24,7 @@ export default function ContactsClient({ contacts }: { contacts: Contact[] }) {
 
   const updateStatus = async (id: string, status: string) => {
     await fetch(`/api/contacts/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });

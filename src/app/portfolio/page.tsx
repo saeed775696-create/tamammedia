@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { extractItems } from "@/lib/api/extract";
 
 interface PortfolioItem {
   id: string;
@@ -36,11 +38,7 @@ export default function PortfolioPage() {
     fetch("/api/portfolio")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setItems(data);
-        } else {
-          setItems([]);
-        }
+        setItems(extractItems<PortfolioItem>(data));
       })
       .catch(() => {
         setItems([]);
@@ -122,7 +120,15 @@ export default function PortfolioPage() {
                     key={item.id}
                     className="portfolio-item"
                   >
-                    <img src={item.imageUrl} alt={item.titleAr} />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.titleAr}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    </div>
                     <div className="portfolio-overlay">
                       <h4>{lang === "ar" ? item.titleAr : item.titleEn}</h4>
                       <span>

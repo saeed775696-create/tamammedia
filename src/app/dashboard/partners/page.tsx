@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Edit2, ExternalLink, Briefcase } from "lucide-react";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/dashboard/ImageUpload";
+import { extractItems } from "@/lib/api/extract";
 
 type Partner = {
   id: string;
@@ -33,7 +34,7 @@ export default function PartnersDashboard() {
       const res = await fetch("/api/partners");
       if (res.ok) {
         const data = await res.json();
-        setPartners(Array.isArray(data) ? data : []);
+        setPartners(extractItems<Partner>(data));
       } else {
         setPartners([]);
       }
@@ -201,7 +202,6 @@ export default function PartnersDashboard() {
                 {editingId ? "تعديل بيانات الشريك" : "إضافة شريك جديد"}
               </h2>
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-red-500 transition-colors p-2 bg-white rounded-full shadow-sm">
-                <Trash2 size={20} className="hidden" />
                 <span className="font-bold text-xl leading-none">&times;</span>
               </button>
             </div>

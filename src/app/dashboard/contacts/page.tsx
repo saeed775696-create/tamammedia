@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { CheckCircle, Eye, Mail, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
+import { extractItems } from "@/lib/api/extract";
 
 type Contact = {
   id: string;
@@ -26,7 +27,7 @@ export default function ContactsDashboard() {
       const res = await fetch("/api/contacts");
       if (res.ok) {
         const data = await res.json();
-        setContacts(Array.isArray(data) ? data : []);
+        setContacts(extractItems<Contact>(data));
       }
     } catch (err) {
       toast.error("حدث خطأ في جلب الرسائل");
@@ -43,7 +44,7 @@ export default function ContactsDashboard() {
     const loadingToast = toast.loading("جاري التحديث...");
     try {
       const res = await fetch(`/api/contacts/${id}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });

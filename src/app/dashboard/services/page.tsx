@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Edit2, LayoutGrid } from "lucide-react";
 import toast from "react-hot-toast";
+import { extractItems } from "@/lib/api/extract";
 
 type Service = {
   id: string;
@@ -36,7 +37,7 @@ export default function ServicesDashboard() {
       const res = await fetch("/api/services");
       if (res.ok) {
         const data = await res.json();
-        setServices(Array.isArray(data) ? data : []);
+        setServices(extractItems<Service>(data));
       } else {
         setServices([]);
       }

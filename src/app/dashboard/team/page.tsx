@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Edit2, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/dashboard/ImageUpload";
+import { extractItems } from "@/lib/api/extract";
 
 type TeamMember = {
   id: string;
@@ -35,7 +36,7 @@ export default function TeamDashboard() {
       const res = await fetch("/api/team");
       if (res.ok) {
         const data = await res.json();
-        setMembers(Array.isArray(data) ? data : []);
+        setMembers(extractItems<TeamMember>(data));
       } else {
         setMembers([]);
       }
@@ -224,7 +225,6 @@ export default function TeamDashboard() {
                 {editingId ? "تعديل بيانات العضو" : "إضافة عضو جديد"}
               </h2>
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-red-500 transition-colors p-2 bg-white rounded-full shadow-sm">
-                <Trash2 size={20} className="hidden" />
                 <span className="font-bold text-xl leading-none">&times;</span>
               </button>
             </div>

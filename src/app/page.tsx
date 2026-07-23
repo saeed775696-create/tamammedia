@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, ArrowLeft, Sparkles, Users } from "lucide-react";
+import { extractItems } from "@/lib/api/extract";
 
 // تعريف أنواع البيانات لتجنب استخدام any
 interface TeamMember {
@@ -33,12 +34,12 @@ export default function HomePage() {
   useEffect(() => {
     fetch("/api/team")
       .then((r) => r.json())
-      .then((data) => setTeam(Array.isArray(data) ? data : []))
+      .then((data) => setTeam(extractItems<TeamMember>(data)))
       .catch(() => setTeam([]));
 
     fetch("/api/partners")
       .then((r) => r.json())
-      .then((data) => setPartners(Array.isArray(data) ? data : []))
+      .then((data) => setPartners(extractItems<Partner>(data)))
       .catch(() => setPartners([]));
   }, []);
 
@@ -70,7 +71,7 @@ export default function HomePage() {
             {/* الخدمات الإبداعية */}
             <div className="service-card">
               <img
-                src="/imgs/service imgs/creative_identity.png"
+                src="/imgs/service imgs/creative_identity.webp"
                 alt={lang === "ar" ? "الخدمات الإبداعية" : "Creative Services"}
                 className="service-card-img"
                 style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
@@ -96,7 +97,7 @@ export default function HomePage() {
             {/* الخدمات التقنية */}
             <div className="service-card">
               <img
-                src="/imgs/service imgs/app_development.png"
+                src="/imgs/service imgs/app_development.webp"
                 alt={lang === "ar" ? "الخدمات التقنية" : "Tech Services"}
                 style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
               />
@@ -121,7 +122,7 @@ export default function HomePage() {
             {/* الحلول المتكاملة */}
             <div className="service-card">
               <img
-                src="/imgs/service imgs/marketing_strategies (1).png"
+                src="/imgs/service imgs/marketing_strategies (1).webp"
                 alt={lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}
                 style={{ width: 80, height: 80, objectFit: "cover", margin: "0 auto 20px", borderRadius: 14 }}
               />
@@ -227,7 +228,7 @@ export default function HomePage() {
                     }}
                   >
                     <img
-                      src={member.imageUrl || "/imgs/2-3.png"}
+                      src={member.imageUrl || "/imgs/2-3.webp"}
                       alt={member.name}
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />

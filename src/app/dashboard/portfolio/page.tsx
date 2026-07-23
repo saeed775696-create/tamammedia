@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Plus, Trash2, Edit2, Star, Upload } from "lucide-react";
+import { extractItems } from "@/lib/api/extract";
 
 type PortfolioItem = {
   id: string;
@@ -37,7 +38,7 @@ export default function PortfolioDashboard() {
       const res = await fetch("/api/portfolio");
       if (res.ok) {
         const data = await res.json();
-        setItems(Array.isArray(data) ? data : []);
+        setItems(extractItems<PortfolioItem>(data));
       } else {
         setItems([]);
       }
