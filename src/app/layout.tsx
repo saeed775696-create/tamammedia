@@ -3,7 +3,7 @@ import { Alexandria } from "next/font/google";
 import LayoutHeader from "@/components/LayoutHeader";
 import LayoutFooter from "@/components/LayoutFooter";
 import ClientScripts from "@/components/ClientScripts";
-import { LanguageProvider } from "@/context/LanguageContext";
+import Providers from "@/components/Providers";
 import StructuredData from "@/components/StructuredData";
 import TawkChat from "@/components/TawkChat";
 import { siteConfig } from "@/config/site";
@@ -113,14 +113,14 @@ export default function RootLayout({
       <body
         className={`${alexandria.className} antialiased min-h-screen flex flex-col overflow-x-hidden bg-white text-gray-900`}
       >
-        <LanguageProvider>
+        <Providers>
           <ClientScripts />
           <LayoutHeader />
           <main className="flex-grow">{children}</main>
           <LayoutFooter />
           <StructuredData />
           <TawkChat />
-        </LanguageProvider>
+        </Providers>
       </body>
     </html>
   );

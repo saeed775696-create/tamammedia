@@ -661,3 +661,26 @@ aside span{
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   حركات الـ Modals والـ Mobile Nav
+   ============================================================ */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileNavSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

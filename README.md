@@ -140,9 +140,23 @@ src/
 ### Vercel (موصى به)
 
 1. ارفع المستودع إلى GitHub
-2. اربطه بـ Vercel
-3. أضف متغيرات البيئة في إعدادات Vercel
-4. انشر
+2. اربطه بـ Vercel: https://vercel.com/new
+3. **أضف متغيرات البيئة** في Vercel Project Settings → Environment Variables:
+
+   | المتغير | القيمة |
+   |---|---|
+   | `DATABASE_URL` | `postgresql://postgres.PROJECT_REF:PASSWORD@aws-REGION.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true` |
+   | `DIRECT_URL` | `postgresql://postgres.PROJECT_REF:PASSWORD@aws-REGION.pooler.supabase.com:5432/postgres?sslmode=require` |
+   | `NEXTAUTH_SECRET` | اضغط "Generate" أو `openssl rand -base64 32` |
+   | `NEXTAUTH_URL` | `https://your-app.vercel.app` (رابط Vercel النهائي) |
+   | `NEXT_PUBLIC_SUPABASE_URL` | `https://PROJECT_REF.supabase.co` |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | مفتاح anon من Supabase Dashboard |
+   | `SUPABASE_SERVICE_ROLE_KEY` | مفتاح service role من Supabase Dashboard |
+
+4. انشر — Vercel سيبني المشروع تلقائيًا
+
+> ⚠️ **تنبيه**: تأكد أن `NEXTAUTH_URL` يطابق رابط Vercel الفعلي (`https://your-app.vercel.app`) وليس `localhost`.
+> أضف المتغيرات لكل البيئات (Production, Preview, Development).
 
 ### Docker / Self-hosted
 
@@ -150,6 +164,22 @@ src/
 npm run build
 npm run start
 ```
+
+### حل مشكلات النشر الشائعة
+
+#### "Application error: a client-side exception has occurred"
+
+هذا الخطأ يحدث عادةً بسبب:
+1. **نقص متغيرات البيئة** على Vercel — راجع القائمة أعلاه
+2. **`NEXTAUTH_URL` خاطئ** — يجب أن يطابق رابط Vercel
+3. **`NEXTAUTH_SECRET` غير مضبوط** في الإنتاج
+
+#### صفحة بيضاء بعد تسجيل الدخول
+
+تأكد أن:
+- `NEXTAUTH_URL` يطابق الرابط الفعلي
+- `DATABASE_URL` و `DIRECT_URL` صحيحان (اختبرهما من Supabase Dashboard)
+- المتغيرات مضبوطة لـ Production environment (وليس Preview فقط)
 
 ## 📝 الترخيص
 

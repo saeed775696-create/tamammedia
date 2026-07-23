@@ -198,7 +198,10 @@ export default function DashboardNav() {
           />
 
           {/* Sidebar */}
-          <aside className="relative w-72 max-w-[85vw] bg-[#21214f] text-white flex flex-col shadow-2xl animate-in slide-in-from-right">
+          <aside
+            className="relative w-72 max-w-[85vw] bg-[#21214f] text-white flex flex-col shadow-2xl"
+            style={{ animation: "mobileNavSlideIn 0.2s ease-out" }}
+          >
             <button
               onClick={() => setMobileOpen(false)}
               aria-label="إغلاق القائمة"

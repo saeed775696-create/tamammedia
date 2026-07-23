@@ -77,7 +77,10 @@ export default function Modal({
       {/* Modal */}
       <div
         ref={modalRef}
-        className={`relative bg-white w-full ${sizeClasses[size]} max-h-[95vh] sm:max-h-[90vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col my-0 sm:my-8 animate-in slide-in-from-bottom`}
+        className={`relative bg-white w-full ${sizeClasses[size]} max-h-[95vh] sm:max-h-[90vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col my-0 sm:my-8`}
+        style={{
+          animation: "modalSlideIn 0.2s ease-out",
+        }}
       >
         {title && (
           <div className="p-5 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
