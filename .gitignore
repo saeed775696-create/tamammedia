@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (لا تُلتزم في git أبدًا)
+.env
+.env.local
+.env.development
+.env.production
+!.env.example
 
 # vercel
 .vercel
@@ -40,6 +44,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma generated
 /generated/prisma
-public/imgs/teampics/tamammedia-94b4eb870a16.json
+
+# ملفات قاعدة بيانات محلية (لو احتجنا SQLite مستقبلاً)
+*.db
+*.db-journal
+
+# مفاتيح الخدمات
 public/imgs/teampics/tamammedia-94b4eb870a16.json

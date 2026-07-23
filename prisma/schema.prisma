@@ -1,14 +1,15 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  // DIRECT_URL ضروري لـ Supabase connection pooler (PgBouncer)
+  // يُستخدم للأوامر الإدارية مثل migrations و db push
+  directUrl = env("DIRECT_URL")
 }
-
-// ... باقي النماذج (كما هي) ...
 
 model ContactSubmission {
   id        String   @id @default(cuid())
@@ -21,27 +22,36 @@ model ContactSubmission {
   status    String   @default("new")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 model PortfolioItem {
-  id            String   @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String?
-  descriptionAr String?
-  imageUrl      String   // الصورة الرئيسية
-  gallery       String?  // صور إضافية بصيغة JSON array: ["url1","url2"]
-  category      String   // "website", "ecommerce", "branding", "video", "social", "web"
-  clientName    String?
-  completionDate String? // مثال: "2025-12"
-  technologies  String?  // JSON array: ["Next.js","Tailwind"]
-  link          String?  // رابط المشروع الحي
-  videoUrl      String?  // رابط فيديو يوتيوب
-  featured      Boolean  @default(false)
-  order         Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             String   @id @default(cuid())
+  titleEn        String
+  titleAr        String
+  descriptionEn  String?
+  descriptionAr  String?
+  imageUrl       String
+  // JSON type مدعوم في PostgreSQL — أفضل من String
+  gallery        Json?
+  category       String
+  clientName     String?
+  completionDate String?
+  technologies   Json?
+  link           String?
+  videoUrl       String?
+  featured       Boolean  @default(false)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@index([order])
 }
+
 model Service {
   id            String   @id @default(cuid())
   titleEn       String
@@ -49,10 +59,12 @@ model Service {
   descriptionEn String
   descriptionAr String
   iconName      String?
-  imageUrl      String?   // أضف هذا السطر
+  imageUrl      String?
   order         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([order])
 }
 
 model PageView {
@@ -60,20 +72,26 @@ model PageView {
   path      String
   timestamp DateTime @default(now())
   language  String?
+
+  @@index([path])
+  @@index([timestamp])
 }
 
 model WhatsAppClick {
   id        String   @id @default(cuid())
   timestamp DateTime @default(now())
+
+  @@index([timestamp])
 }
 
 model User {
-  id       String  @id @default(cuid())
-  email    String  @unique
+  id       String @id @default(cuid())
+  email    String @unique
   name     String?
   password String
-  role     String  @default("admin")
+  role     String @default("admin")
 }
+
 model Partner {
   id        String   @id @default(cuid())
   name      String
@@ -82,7 +100,10 @@ model Partner {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([order])
 }
+
 model TeamMember {
   id        String   @id @default(cuid())
   name      String
@@ -92,4 +113,6 @@ model TeamMember {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([order])
 }
