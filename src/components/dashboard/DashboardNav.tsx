@@ -15,10 +15,12 @@ import {
   Menu,
   X,
   ChevronLeft,
+  FileText,
 } from "lucide-react";
 
 const links = [
   { href: "/dashboard", label: "الرئيسية", icon: LayoutDashboard },
+  { href: "/dashboard/content", label: "تحرير المحتوى", icon: FileText },
   { href: "/dashboard/portfolio", label: "الأعمال", icon: FolderOpen },
   { href: "/dashboard/services", label: "الخدمات", icon: Wrench },
   { href: "/dashboard/team", label: "الفريق", icon: Users },

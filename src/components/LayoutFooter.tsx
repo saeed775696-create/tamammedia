@@ -1,15 +1,11 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import { getAllContent } from "@/lib/content/service";
 import Footer from "./Footer";
 
-export default function LayoutFooter() {
-  const pathname = usePathname();
-
-  // إخفاء الفوتر في لوحة التحكم وصفحة الدخول
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/login")) {
-    return null;
-  }
-
-  return <Footer />;
+/**
+ * يلف الفوتر.
+ * يقرأ المحتوى من DB على الـ server ثم يمرره للـ Footer (client).
+ */
+export default async function LayoutFooter() {
+  const content = await getAllContent();
+  return <Footer content={content} />;
 }

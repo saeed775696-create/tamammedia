@@ -1,21 +1,11 @@
-"use client";
+import { getAllContent } from "@/lib/content/service";
+import LayoutHeaderClient from "./LayoutHeaderClient";
 
-import { usePathname } from "next/navigation";
-import Navbar from "./Navbar";
-import FloatingWhatsApp from "./FloatingWhatsApp";
-
-export default function LayoutHeader() {
-  const pathname = usePathname();
-
-  // إخفاء الشريط والواتساب في لوحة التحكم وصفحة الدخول
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/login")) {
-    return null;
-  }
-
-  return (
-    <>
-      <Navbar />
-      <FloatingWhatsApp />
-    </>
-  );
+/**
+ * يلف الـ Navbar والـ FloatingWhatsApp.
+ * يقرأ المحتوى من DB على الـ server.
+ */
+export default async function LayoutHeader() {
+  const content = await getAllContent();
+  return <LayoutHeaderClient content={content} />;
 }
