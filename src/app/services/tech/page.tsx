@@ -31,7 +31,7 @@ export default function TechServicePage() {
             {/* تطوير التطبيقات */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/app_development.png"
+                src="/imgs/service imgs/app_development.webp"
                 alt="تطوير التطبيقات"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -48,7 +48,7 @@ export default function TechServicePage() {
             {/* تطوير المواقع */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/web_design.png"
+                src="/imgs/service imgs/web_design.webp"
                 alt="تطوير المواقع"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -65,7 +65,7 @@ export default function TechServicePage() {
             {/* متاجر إلكترونية */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/ecommerce.png"
+                src="/imgs/service imgs/ecommerce.webp"
                 alt="متاجر إلكترونية"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -82,7 +82,7 @@ export default function TechServicePage() {
             {/* استضافة وأمن معلومات */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/hosting_security.png"
+                src="/imgs/service imgs/hosting_security.webp"
                 alt="استضافة وأمن معلومات"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />

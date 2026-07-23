@@ -17,7 +17,7 @@ const mainServices = [
   {
     id: "creative",
     href: "/services/creative",
-    icon: "/imgs/service imgs/creative_identity.png",
+    icon: "/imgs/service imgs/creative_identity.webp",
     titleAr: "الخدمات الإبداعية",
     titleEn: "Creative Services",
     descAr: "هوية بصرية، تصميم جرافيكي، إدارة سوشيال ميديا، موشن جرافيك، تصوير وإنتاج فيديو.",
@@ -26,7 +26,7 @@ const mainServices = [
   {
     id: "tech",
     href: "/services/tech",
-    icon: "/imgs/service imgs/app_development.png",
+    icon: "/imgs/service imgs/app_development.webp",
     titleAr: "الخدمات التقنية",
     titleEn: "Tech Services",
     descAr: "تطوير مواقع وتطبيقات، متاجر إلكترونية، استضافة وأمن معلومات، دعم فني.",
@@ -35,7 +35,7 @@ const mainServices = [
   {
     id: "integrated",
     href: "/services/integrated",
-    icon: "/imgs/service imgs/marketing_strategies (1).png",
+    icon: "/imgs/service imgs/marketing_strategies (1).webp",
     titleAr: "الحلول المتكاملة",
     titleEn: "Integrated Solutions",
     descAr: "خطط تسويقية، حملات رقمية وميدانية، استشارات استراتيجية، تحليل بيانات.",

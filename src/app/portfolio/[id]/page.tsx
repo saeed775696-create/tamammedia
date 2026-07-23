@@ -1,6 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+
+function parseGallery(value: unknown): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.filter((v): v is string => typeof v === "string");
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === "string");
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
 
 export default async function ProjectDetailPage({
   params,
@@ -12,20 +27,23 @@ export default async function ProjectDetailPage({
 
   if (!project) notFound();
 
-  const gallery: string[] = project.gallery ? JSON.parse(project.gallery) : [];
-  const technologies: string[] = project.technologies
-    ? JSON.parse(project.technologies)
-    : [];
+  const gallery = parseGallery(project.gallery);
+  const technologies = parseGallery(project.technologies);
 
   return (
     <div className="container py-16">
       {/* صورة رئيسية */}
       <div className="max-w-4xl mx-auto">
-        <img
-          src={project.imageUrl}
-          alt={project.titleAr}
-          className="w-full h-80 object-cover rounded-2xl shadow-lg mb-8"
-        />
+        <div className="relative w-full h-80 mb-8 rounded-2xl overflow-hidden shadow-lg">
+          <Image
+            src={project.imageUrl}
+            alt={project.titleAr}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            priority
+          />
+        </div>
 
         <h1 className="text-3xl font-bold mb-4">{project.titleAr}</h1>
         <p className="text-gray-600 mb-6">{project.descriptionAr}</p>
@@ -58,12 +76,15 @@ export default async function ProjectDetailPage({
             <h2 className="text-xl font-bold mb-4">معرض الصور</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {gallery.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt={`${project.titleAr} ${i + 1}`}
-                  className="w-full h-40 object-cover rounded"
-                />
+                <div key={i} className="relative h-40 rounded overflow-hidden">
+                  <Image
+                    src={url}
+                    alt={`${project.titleAr} ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -95,6 +116,7 @@ export default async function ProjectDetailPage({
                 src={project.videoUrl}
                 className="absolute top-0 left-0 w-full h-full rounded"
                 allowFullScreen
+                title="فيديو المشروع"
               />
             </div>
           </div>

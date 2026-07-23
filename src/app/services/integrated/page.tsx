@@ -31,7 +31,7 @@ export default function IntegratedServicePage() {
             {/* خطط تسويقية */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/marketing_strategies (1).png"
+                src="/imgs/service imgs/marketing_strategies (1).webp"
                 alt="خطط تسويقية"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -48,7 +48,7 @@ export default function IntegratedServicePage() {
             {/* حملات رقمية وميدانية */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/marketing_campaigns.png"
+                src="/imgs/service imgs/marketing_campaigns.webp"
                 alt="حملات"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -65,7 +65,7 @@ export default function IntegratedServicePage() {
             {/* تحليل بيانات */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/data_analysis.png"
+                src="/imgs/service imgs/data_analysis.webp"
                 alt="تحليل بيانات"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -82,7 +82,7 @@ export default function IntegratedServicePage() {
             {/* استشارات */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/creative_identity.png"
+                src="/imgs/service imgs/creative_identity.webp"
                 alt="استشارات"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />

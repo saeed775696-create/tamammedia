@@ -33,7 +33,7 @@ export default function CreativeServicePage() {
             {/* هوية بصرية */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/creative_identity.png"
+                src="/imgs/service imgs/creative_identity.webp"
                 alt="هوية بصرية"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -50,7 +50,7 @@ export default function CreativeServicePage() {
             {/* تصميم جرافيكي */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/graphic_design.png"
+                src="/imgs/service imgs/graphic_design.webp"
                 alt="تصميم جرافيكي"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -67,7 +67,7 @@ export default function CreativeServicePage() {
             {/* إدارة سوشيال ميديا */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/marketing_strategies (1).png"
+                src="/imgs/service imgs/marketing_strategies (1).webp"
                 alt="سوشيال ميديا"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -84,7 +84,7 @@ export default function CreativeServicePage() {
             {/* تصوير وإنتاج */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/photography.png"
+                src="/imgs/service imgs/photography.webp"
                 alt="تصوير وإنتاج"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
@@ -101,7 +101,7 @@ export default function CreativeServicePage() {
             {/* موشن جرافيك */}
             <div className="service-category">
               <img
-                src="/imgs/service imgs/motion_graphics.png"
+                src="/imgs/service imgs/motion_graphics.webp"
                 alt="موشن جرافيك"
                 style={{ width: 60, height: 60, borderRadius: 14, objectFit: "cover", marginBottom: 18 }}
               />
