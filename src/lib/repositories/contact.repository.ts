@@ -35,9 +35,13 @@ export class PrismaContactRepository implements IContactRepository {
   async create(data: CreateContactInput): Promise<ContactSubmission> {
     return prisma.contactSubmission.create({
       data: {
-        ...data,
+        name: data.name,
+        email: data.email,
         phone: data.phone || null,
         service: data.service || null,
+        message: data.message,
+        language: data.language,
+        status: data.status || 'new',
       },
     });
   }

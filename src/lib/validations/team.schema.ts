@@ -5,7 +5,7 @@ export const createTeamMemberSchema = z.object({
   role: z.string().min(1, 'Role is required'),
   bio: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
-  order: z.number().int().default(0),
+  order: z.coerce.number().int().default(0),
 });
 
 export const updateTeamMemberSchema = createTeamMemberSchema.partial();

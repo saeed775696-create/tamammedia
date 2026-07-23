@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { PortfolioItem } from '@prisma/client';
+import { PortfolioItem, Prisma } from '@prisma/client';
 import { CreatePortfolioInput, UpdatePortfolioInput } from '../validations/portfolio.schema';
 import { PaginationParams } from '../api/pagination';
 import { NotFoundError } from '../api/errors';
@@ -12,13 +12,38 @@ export interface IPortfolioRepository {
   delete(id: string): Promise<void>;
 }
 
+/**
+ * يحوّل قيمة gallery/technologies إلى JSON متوافق مع Prisma + PostgreSQL.
+ *
+ * ملاحظة: في PostgreSQL، null لـ Json type يحتاج Prisma.DbNull صراحةً.
+ * نقبل: string (JSON) | array | null | undefined
+ */
+function toJson(value: unknown): Prisma.InputJsonValue | typeof Prisma.DbNull | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return Prisma.DbNull;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) && parsed.length === 0
+        ? Prisma.DbNull
+        : (parsed as Prisma.InputJsonValue);
+    } catch {
+      return value as Prisma.InputJsonValue;
+    }
+  }
+  if (Array.isArray(value)) {
+    return value.length === 0 ? Prisma.DbNull : (value as Prisma.InputJsonValue);
+  }
+  return value as Prisma.InputJsonValue;
+}
+
 export class PrismaPortfolioRepository implements IPortfolioRepository {
   async findAll({ skip, limit }: PaginationParams): Promise<{ items: PortfolioItem[]; total: number }> {
     const [items, total] = await Promise.all([
       prisma.portfolioItem.findMany({
         skip,
         take: limit,
-        orderBy: { order: 'asc' },
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
       }),
       prisma.portfolioItem.count(),
     ]);
@@ -35,15 +60,20 @@ export class PrismaPortfolioRepository implements IPortfolioRepository {
   async create(data: CreatePortfolioInput): Promise<PortfolioItem> {
     return prisma.portfolioItem.create({
       data: {
-        ...data,
+        titleEn: data.titleEn,
+        titleAr: data.titleAr,
         descriptionEn: data.descriptionEn || null,
         descriptionAr: data.descriptionAr || null,
-        gallery: data.gallery || null,
+        imageUrl: data.imageUrl,
+        gallery: toJson(data.gallery),
+        category: data.category,
         clientName: data.clientName || null,
         completionDate: data.completionDate || null,
-        technologies: data.technologies || null,
+        technologies: toJson(data.technologies),
         link: data.link || null,
         videoUrl: data.videoUrl || null,
+        featured: data.featured,
+        order: data.order,
       },
     });
   }
@@ -54,15 +84,26 @@ export class PrismaPortfolioRepository implements IPortfolioRepository {
       throw new NotFoundError(`Portfolio item with id ${id} not found`);
     }
 
+    // بناء كائن التحديث بذكاء: نطبّق الحقول الموجودة فقط
+    const updateData: Prisma.PortfolioItemUpdateInput = {};
+    if (data.titleEn !== undefined) updateData.titleEn = data.titleEn;
+    if (data.titleAr !== undefined) updateData.titleAr = data.titleAr;
+    if (data.descriptionEn !== undefined) updateData.descriptionEn = data.descriptionEn || null;
+    if (data.descriptionAr !== undefined) updateData.descriptionAr = data.descriptionAr || null;
+    if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+    if (data.gallery !== undefined) updateData.gallery = toJson(data.gallery);
+    if (data.category !== undefined) updateData.category = data.category;
+    if (data.clientName !== undefined) updateData.clientName = data.clientName || null;
+    if (data.completionDate !== undefined) updateData.completionDate = data.completionDate || null;
+    if (data.technologies !== undefined) updateData.technologies = toJson(data.technologies);
+    if (data.link !== undefined) updateData.link = data.link || null;
+    if (data.videoUrl !== undefined) updateData.videoUrl = data.videoUrl || null;
+    if (data.featured !== undefined) updateData.featured = data.featured;
+    if (data.order !== undefined) updateData.order = data.order;
+
     return prisma.portfolioItem.update({
       where: { id },
-      data: {
-        ...data,
-        // map undefined to the existing value to allow partial updates properly via Prisma,
-        // though Prisma handles undefined by ignoring the field. 
-        // We ensure nulls are explicitly passed if provided.
-        descriptionEn: data.descriptionEn !== undefined ? data.descriptionEn : undefined,
-      },
+      data: updateData,
     });
   }
 

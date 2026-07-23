@@ -7,7 +7,7 @@ export const createServiceSchema = z.object({
   descriptionAr: z.string().min(1, 'Arabic description is required'),
   iconName: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
-  order: z.number().int().default(0),
+  order: z.coerce.number().int().default(0),
 });
 
 export const updateServiceSchema = createServiceSchema.partial();
