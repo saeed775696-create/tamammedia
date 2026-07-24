@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tamam Media — Design System Theme (Tailwind CSS v4)
+   ============================================================ */
+@theme {
+  /* ─── Brand Colors (Navy Scale) ─── */
+  --color-brand-50: #f4f6fb;
+  --color-brand-100: #e8ecf5;
+  --color-brand-200: #d0d8ea;
+  --color-brand-300: #a8b4d4;
+  --color-brand-400: #7a87b5;
+  --color-brand-500: #5a6594;
+  --color-brand-600: #464f7a;
+  --color-brand-700: #3a3f66;
+  --color-brand-800: #21214f;
+  --color-brand-900: #11112b;
+  --color-brand-950: #0a0a1a;
+
+  /* ─── Accent Colors (Orange Scale) ─── */
+  --color-accent-50: #fef8ee;
+  --color-accent-100: #fcefd6;
+  --color-accent-200: #f8dbac;
+  --color-accent-300: #f3c178;
+  --color-accent-400: #eda042;
+  --color-accent-500: #da8827;
+  --color-accent-600: #c4711d;
+  --color-accent-700: #a3571a;
+  --color-accent-800: #85451c;
+  --color-accent-900: #6d3a1a;
+  --color-accent-950: #3b1c0b;
+
+  /* ─── Surface Colors ─── */
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+
+  /* ─── Shadows ─── */
+  --shadow-card: 0 4px 40px -2px rgba(15, 23, 42, 0.05), 0 0 3px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover: 0 20px 50px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  --shadow-sidebar: 4px 0 30px rgba(15, 23, 42, 0.1);
+  --shadow-accent: 0 10px 30px -5px rgba(218, 136, 39, 0.4);
+  --shadow-glass: inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+
+  /* ─── Border Radii ─── */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* ─── Animations ─── */
+  --animate-fade-in: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-right: slide-right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+}
+
+/* ============================================================
+   Dark Mode Variables
+   ============================================================ */
+.dark {
+  /* ─── Surface Colors (Dark Mode) ─── */
+  /* Reversing the surface scales for dark mode to keep usage the same:
+     bg-surface-50 will now mean a dark color, etc. */
+  --color-surface-50: #13131b;
+  --color-surface-100: #1b1b24;
+  --color-surface-200: #232330;
+  --color-surface-300: #2b2b3b;
+  --color-surface-400: #3c3c50;
+  --color-surface-500: #4f4f66;
+  --color-surface-600: #656580;
+  --color-surface-700: #7d7d9a;
+  --color-surface-800: #9797b5;
+  --color-surface-900: #b5b5d1;
+
+  /* Adjust brand and text colors for better contrast */
+  --color-brand-900: #f4f6fb; /* Use light text for dark mode */
+  --color-brand-50: #0a0a1a;  /* Very dark for light variants */
+
+  /* Base background */
+  background: var(--color-surface-50);
+}
+
+/* ─── Keyframes ─── */
+@keyframes fade-in {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
+@keyframes slide-up {
+   from { opacity: 0; transform: translateY(20px); }
+   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-right {
+   from { transform: translateX(-100%); }
+   to { transform: translateX(0); }
+}
+@keyframes float {
+   0%, 100% { transform: translateY(0); }
+   50% { transform: translateY(-12px); }
+}
+@keyframes pulse-glow {
+   0%, 100% { transform: scale(1); }
+   50% { transform: scale(1.08); }
+}
+@keyframes shimmer {
+   0% { transform: translateX(-100%); }
+   100% { transform: translateX(100%); }
+}
+@keyframes marquee {
+   from { transform: translateX(0); }
+   to { transform: translateX(calc(-100% - 1.5rem)); }
+}
+
+/* ─── Custom Utilities ─── */
+@utility clip-polygon-top-right {
+   clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+@utility animate-marquee {
+   animation: marquee 30s linear infinite;
+}
+
+/* ============================================================
+   Global Base Reset
+   ============================================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  font-family: 'Alexandria', sans-serif;
+  color: var(--color-brand-900);
+  line-height: 1.7;
+  overflow-x: hidden;
+  background: var(--color-surface-50);
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+ul { list-style: none; }
+
+/* ============================================================
+   Accessibility: Reduced Motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
