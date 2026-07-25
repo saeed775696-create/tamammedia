@@ -3,7 +3,7 @@ import { IServiceRepository } from '../repositories/service.repository';
 import { CreateServiceInput, UpdateServiceInput } from '../validations/service.schema';
 import { PaginationParams } from '../api/pagination';
 
-export class ServiceService extends BaseService<any, CreateServiceInput, UpdateServiceInput> {
+export class ServiceService extends BaseService<Record<string, unknown>, CreateServiceInput, UpdateServiceInput> {
   constructor(repository: IServiceRepository) {
     super(repository, 'service');
   }

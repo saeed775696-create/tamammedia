@@ -4,7 +4,7 @@ import { CreateContactInput, UpdateContactInput } from '../validations/contact.s
 import { PaginationParams } from '../api/pagination';
 import { logger } from '../logger';
 
-export class ContactService extends BaseService<any, CreateContactInput, UpdateContactInput> {
+export class ContactService extends BaseService<Record<string, unknown>, CreateContactInput, UpdateContactInput> {
   constructor(repository: IContactRepository) {
     super(repository, 'contact submission');
   }

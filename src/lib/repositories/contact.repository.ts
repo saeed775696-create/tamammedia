@@ -7,6 +7,8 @@ import { NotFoundError } from '../api/errors';
 export interface IContactRepository {
   findAll(params: PaginationParams): Promise<{ items: ContactSubmission[]; total: number }>;
   findById(id: string): Promise<ContactSubmission | null>;
+  findRecent(limit: number): Promise<ContactSubmission[]>;
+  count(status?: string): Promise<number>;
   create(data: CreateContactInput): Promise<ContactSubmission>;
   updateStatus(id: string, data: UpdateContactInput): Promise<ContactSubmission>;
   update(id: string, data: UpdateContactInput): Promise<ContactSubmission>;
@@ -25,6 +27,19 @@ export class PrismaContactRepository implements IContactRepository {
     ]);
 
     return { items, total };
+  }
+
+  async findRecent(limit: number): Promise<ContactSubmission[]> {
+    return prisma.contactSubmission.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async count(status?: string): Promise<number> {
+    return prisma.contactSubmission.count({
+      where: status ? { status } : undefined,
+    });
   }
 
   async findById(id: string): Promise<ContactSubmission | null> {

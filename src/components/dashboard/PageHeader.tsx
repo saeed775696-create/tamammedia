@@ -31,7 +31,7 @@ export default function PageHeader({
       {breadcrumbs.length > 0 && (
         <nav
           aria-label="breadcrumb"
-          className="flex items-center gap-1.5 text-[13px] text-surface-400 mb-4 font-medium"
+          className="flex items-center gap-1.5 text-body-sm text-surface-400 mb-6 font-medium"
         >
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1.5">
@@ -39,30 +39,32 @@ export default function PageHeader({
               {crumb.href ? (
                 <button
                   onClick={() => router.push(crumb.href!)}
-                  className="hover:text-accent-500 transition-colors"
+                  className="hover:text-accent-500 transition-colors text-body-sm"
                 >
                   {crumb.label}
                 </button>
               ) : (
-                <span className="text-accent-600 bg-accent-50/50 px-2.5 py-0.5 rounded-md border border-accent-100">{crumb.label}</span>
+                <span className="text-accent-600 bg-accent-50/50 px-3 py-1 rounded-lg border border-accent-100 text-body-sm font-semibold">
+                  {crumb.label}
+                </span>
               )}
             </span>
           ))}
         </nav>
       )}
 
-      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white/60 backdrop-blur-2xl p-8 rounded-3xl border border-surface-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white/60 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl border border-surface-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         {/* Decorative glow wrapped safely */}
         <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
           <div className="absolute -start-20 -top-20 w-40 h-40 bg-accent-400/10 rounded-full blur-3xl" />
         </div>
         
         <div className="relative z-10">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-900 px-1">
+          <h1 className="text-h3 font-extrabold text-brand-900">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-surface-500 text-[14px] mt-2 font-medium px-1">{subtitle}</p>
+            <p className="text-body text-surface-500 mt-2 font-medium">{subtitle}</p>
           )}
         </div>
 

@@ -1,7 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import { PrismaPortfolioRepository } from "@/lib/repositories/portfolio.repository";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+
+const portfolioRepository = new PrismaPortfolioRepository();
 
 function parseGallery(value: unknown): string[] {
   if (!value) return [];
@@ -23,7 +25,7 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await prisma.portfolioItem.findUnique({ where: { id } });
+  const project = await portfolioRepository.findById(id);
 
   if (!project) notFound();
 
@@ -31,112 +33,113 @@ export default async function ProjectDetailPage({
   const technologies = parseGallery(project.technologies);
 
   return (
-    <div className="mx-auto max-w-[1200px] px-5 py-16">
-      {/* صورة رئيسية */}
-      <div className="max-w-4xl mx-auto">
-        <div className="relative w-full h-80 mb-8 rounded-2xl overflow-hidden shadow-lg">
-          <Image
-            src={project.imageUrl}
-            alt={project.titleAr}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-            priority
-          />
-        </div>
+    <div className="bg-surface-50 min-h-screen">
+      <div className="container-site pt-32 pb-20 md:pb-28">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative w-full aspect-media mb-10 rounded-2xl overflow-hidden shadow-lg border border-surface-200/60">
+            <Image
+              src={project.imageUrl}
+              alt={project.titleAr}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              priority
+            />
+          </div>
 
-        <h1 className="text-3xl font-bold mb-4">{project.titleAr}</h1>
-        <p className="text-gray-600 mb-6">{project.descriptionAr}</p>
+          <h1 className="text-h1 text-brand-900 mb-5">{project.titleAr}</h1>
+          <p className="text-body-lg text-surface-600 leading-loose mb-10 max-w-prose">{project.descriptionAr}</p>
 
-        {/* معلومات سريعة */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {project.clientName && (
-            <div className="bg-gray-50 p-3 rounded">
-              <span className="text-xs text-gray-500">العميل</span>
-              <p className="font-semibold">{project.clientName}</p>
+          {/* معلومات سريعة */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 mb-12">
+            {project.clientName && (
+              <div className="card-base p-4 md:p-5">
+                <span className="text-label text-surface-500">العميل</span>
+                <p className="font-semibold text-brand-900 mt-1">{project.clientName}</p>
+              </div>
+            )}
+            {project.completionDate && (
+              <div className="card-base p-4 md:p-5">
+                <span className="text-label text-surface-500">تاريخ الإنجاز</span>
+                <p className="font-semibold text-brand-900 mt-1">{project.completionDate}</p>
+              </div>
+            )}
+            {project.category && (
+              <div className="card-base p-4 md:p-5">
+                <span className="text-label text-surface-500">التصنيف</span>
+                <p className="font-semibold text-brand-900 mt-1">{project.category}</p>
+              </div>
+            )}
+          </div>
+
+          {/* معرض الصور */}
+          {gallery.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-h3 text-brand-900 mb-6">معرض الصور</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+                {gallery.map((url, i) => (
+                  <div key={i} className="relative aspect-card rounded-xl overflow-hidden shadow-sm border border-surface-200/60">
+                    <Image
+                      src={url}
+                      alt={`${project.titleAr} ${i + 1}`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          {project.completionDate && (
-            <div className="bg-gray-50 p-3 rounded">
-              <span className="text-xs text-gray-500">تاريخ الإنجاز</span>
-              <p className="font-semibold">{project.completionDate}</p>
+
+          {/* التقنيات */}
+          {technologies.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-h3 text-brand-900 mb-6">التقنيات المستخدمة</h2>
+              <div className="flex flex-wrap gap-2.5">
+                {technologies.map((tech, i) => (
+                  <span
+                    key={i}
+                    className="bg-white border border-surface-200 px-4 py-1.5 rounded-full text-body-sm font-medium text-brand-800"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
-          {project.category && (
-            <div className="bg-gray-50 p-3 rounded">
-              <span className="text-xs text-gray-500">التصنيف</span>
-              <p className="font-semibold">{project.category}</p>
+
+          {/* فيديو */}
+          {project.videoUrl && (
+            <div className="mb-12">
+              <h2 className="text-h3 text-brand-900 mb-6">فيديو المشروع</h2>
+              <div className="relative aspect-media rounded-2xl overflow-hidden shadow-md border border-surface-200/60">
+                <iframe
+                  src={project.videoUrl}
+                  className="absolute inset-0 w-full h-full"
+                  allowFullScreen
+                  title="فيديو المشروع"
+                />
+              </div>
             </div>
           )}
-        </div>
 
-        {/* معرض الصور */}
-        {gallery.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">معرض الصور</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {gallery.map((url, i) => (
-                <div key={i} className="relative h-40 rounded overflow-hidden">
-                  <Image
-                    src={url}
-                    alt={`${project.titleAr} ${i + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* التقنيات */}
-        {technologies.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">التقنيات المستخدمة</h2>
-            <div className="flex flex-wrap gap-2">
-              {technologies.map((tech, i) => (
-                <span
-                  key={i}
-                  className="bg-gray-100 px-3 py-1 rounded-full text-sm"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* فيديو */}
-        {project.videoUrl && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">فيديو المشروع</h2>
-            <div className="relative pb-[56.25%] h-0">
-              <iframe
-                src={project.videoUrl}
-                className="absolute top-0 left-0 w-full h-full rounded"
-                allowFullScreen
-                title="فيديو المشروع"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* أزرار الإجراء */}
-        <div className="flex gap-4 mt-8">
-{project.link && (
+          {/* أزرار الإجراء */}
+          <div className="flex flex-wrap gap-4 pt-4">
+            {project.link && (
               <a
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-accent-500 text-brand-950 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-accent-400 transition-all inline-flex items-center justify-center min-h-[50px]"
+                className="btn-md btn-primary inline-flex"
               >
                 زيارة المشروع
               </a>
             )}
-            <Link href="/contact" className="bg-transparent text-brand-900 border-2 border-brand-900 font-bold py-3 px-8 rounded-xl hover:bg-brand-900 hover:text-white transition-all inline-flex items-center justify-center min-h-[50px]">
+            <Link href="/contact" className="btn-md btn-outline inline-flex">
               طلب خدمة مماثلة
             </Link>
+          </div>
         </div>
       </div>
     </div>

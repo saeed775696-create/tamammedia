@@ -7,6 +7,7 @@ import { NotFoundError } from '../api/errors';
 export interface IPartnerRepository {
   findAll(params: PaginationParams): Promise<{ items: Partner[]; total: number }>;
   findById(id: string): Promise<Partner | null>;
+  count(): Promise<number>;
   create(data: CreatePartnerInput): Promise<Partner>;
   update(id: string, data: UpdatePartnerInput): Promise<Partner>;
   delete(id: string): Promise<void>;
@@ -30,6 +31,10 @@ export class PrismaPartnerRepository implements IPartnerRepository {
     return prisma.partner.findUnique({
       where: { id },
     });
+  }
+
+  async count(): Promise<number> {
+    return prisma.partner.count();
   }
 
   async create(data: CreatePartnerInput): Promise<Partner> {

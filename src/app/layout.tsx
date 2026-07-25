@@ -1,10 +1,20 @@
 import "./globals.css";
+import { Cairo } from "next/font/google";
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  display: "swap",
+  variable: "--font-cairo",
+});
+
 import LayoutHeader from "@/components/LayoutHeader";
 import LayoutFooter from "@/components/LayoutFooter";
 import ClientScripts from "@/components/ClientScripts";
 import Providers from "@/components/Providers";
 import StructuredData from "@/components/StructuredData";
 import TawkChat from "@/components/TawkChat";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import BackToTop from "@/components/ui/BackToTop";
 import { siteConfig } from "@/config/site";
 
 /* =========================================================
@@ -101,20 +111,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className="font-[Alexandria,sans-serif] antialiased min-h-screen flex flex-col overflow-x-hidden bg-white text-gray-900"
+        className={`${cairo.className} antialiased min-h-screen flex flex-col overflow-x-hidden bg-surface-50 text-brand-900`}
       >
         <Providers>
           <ClientScripts />
+          <ScrollProgress />
           <LayoutHeader />
           <main className="flex-grow">{children}</main>
           <LayoutFooter />
+          <BackToTop />
           <StructuredData />
           <TawkChat />
         </Providers>

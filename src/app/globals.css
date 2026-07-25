@@ -1,34 +1,58 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Tamam Media — Design System Theme (Tailwind CSS v4)
+   Tamam Media — Enhanced Design System (Tailwind CSS v4)
    ============================================================ */
 @theme {
-  /* ─── Brand Colors (Navy Scale) ─── */
-  --color-brand-50: #f4f6fb;
-  --color-brand-100: #e8ecf5;
-  --color-brand-200: #d0d8ea;
-  --color-brand-300: #a8b4d4;
-  --color-brand-400: #7a87b5;
-  --color-brand-500: #5a6594;
-  --color-brand-600: #464f7a;
-  --color-brand-700: #3a3f66;
-  --color-brand-800: #21214f;
-  --color-brand-900: #11112b;
-  --color-brand-950: #0a0a1a;
+  /* ─── Brand Colors (Navy Scale - Enhanced) ─── */
+  --color-brand-50: #f8f9fc;
+  --color-brand-100: #f0f2f8;
+  --color-brand-200: #e1e5f0;
+  --color-brand-300: #c2c8e0;
+  --color-brand-400: #959bc4;
+  --color-brand-500: #6b73a4;
+  --color-brand-600: #525a8c;
+  --color-brand-700: #404574;
+  --color-brand-800: #2d325c;
+  --color-brand-900: #1c2044;
+  --color-brand-950: #0f1230;
 
-  /* ─── Accent Colors (Orange Scale) ─── */
-  --color-accent-50: #fef8ee;
-  --color-accent-100: #fcefd6;
-  --color-accent-200: #f8dbac;
-  --color-accent-300: #f3c178;
-  --color-accent-400: #eda042;
-  --color-accent-500: #da8827;
-  --color-accent-600: #c4711d;
-  --color-accent-700: #a3571a;
-  --color-accent-800: #85451c;
-  --color-accent-900: #6d3a1a;
-  --color-accent-950: #3b1c0b;
+  /* ─── Accent Colors (Orange Scale - Enhanced) ─── */
+  --color-accent-50: #fff9f0;
+  --color-accent-100: #feeed8;
+  --color-accent-200: #fdd8b0;
+  --color-accent-300: #fbb983;
+  --color-accent-400: #f99554;
+  --color-accent-500: #f5782d;
+  --color-accent-600: #e35f1e;
+  --color-accent-700: #c44b19;
+  --color-accent-800: #a43d1a;
+  --color-accent-900: #88331b;
+  --color-accent-950: #4d1a0c;
+
+  /* ─── Success Colors ─── */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+
+  /* ─── Warning Colors ─── */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
 
   /* ─── Surface Colors ─── */
   --color-surface-50: #f8fafc;
@@ -65,6 +89,26 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-slide-in-end: slide-in-end 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ─── Spacing Scale (4px grid) ─── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ─── Transitions ─── */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ============================================================
@@ -107,20 +151,282 @@
    to { transform: translateX(0); }
 }
 @keyframes float {
-   0%, 100% { transform: translateY(0); }
-   50% { transform: translateY(-12px); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
 }
 @keyframes pulse-glow {
-   0%, 100% { transform: scale(1); }
-   50% { transform: scale(1.08); }
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
 }
 @keyframes shimmer {
-   0% { transform: translateX(-100%); }
-   100% { transform: translateX(100%); }
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
+/* Seamless loop: strips contain >= 2 identical halves and use per-item
+   margins (me-*) instead of a parent flex gap, so -50% is exact. */
 @keyframes marquee {
    from { transform: translateX(0); }
-   to { transform: translateX(calc(-100% - 1.5rem)); }
+   to { transform: translateX(-50%); }
+}
+@keyframes slide-in-end {
+   from { transform: translateX(100%); }
+   to { transform: translateX(0); }
+}
+
+/* ─── Enhanced Gradient Utilities ─── */
+@utility gradient-overlay {
+   background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 80%);
+}
+
+@utility gradient-overlay-light {
+   background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 50%, transparent 70%);
+}
+
+@utility gradient-brand {
+  background: linear-gradient(135deg, var(--color-brand-800) 0%, var(--color-brand-600) 50%, var(--color-brand-400) 100%);
+}
+
+@utility gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent-600) 0%, var(--color-accent-400) 50%, var(--color-accent-300) 100%);
+}
+
+@utility gradient-premium {
+  background: linear-gradient(135deg, var(--color-brand-900) 0%, var(--color-brand-700) 30%, var(--color-accent-500) 70%, var(--color-accent-300) 100%);
+}
+
+@utility gradient-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%);
+}
+
+@utility gradient-glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ─── Smooth Transitions ─── */
+@utility transition-smooth {
+   transition: all var(--transition-base);
+}
+
+@utility transition-fast {
+   transition: all var(--transition-fast);
+}
+
+/* ─── Enhanced Typography Scale (Cairo-optimized, Arabic-friendly) ─── */
+/* NOTE: Arabic script must never use negative/tight letter-spacing —
+   it visually breaks letter joining. All headings use tracking-normal. */
+@utility text-display {
+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-normal leading-[1.15] md:leading-[1.1];
+}
+@utility text-h1 {
+  @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-normal leading-[1.2] md:leading-[1.15];
+}
+@utility text-h2 {
+  @apply text-xl sm:text-2xl md:text-3xl font-bold tracking-normal leading-[1.25] md:leading-[1.2];
+}
+@utility text-h3 {
+  @apply text-lg sm:text-xl md:text-2xl font-semibold tracking-normal leading-[1.3] md:leading-[1.25];
+}
+@utility text-h4 {
+  @apply text-base sm:text-lg md:text-xl font-semibold tracking-normal leading-[1.35] md:leading-[1.3];
+}
+@utility text-h5 {
+  @apply text-sm sm:text-base md:text-lg font-semibold tracking-normal leading-[1.4];
+}
+@utility text-h6 {
+  @apply text-xs sm:text-sm md:text-base font-semibold tracking-normal leading-[1.4];
+}
+
+/* Enhanced Body text scale — Arabic needs looser line-height */
+@utility text-body-xl {
+  @apply text-base md:text-lg leading-loose tracking-normal;
+}
+@utility text-body-lg {
+  @apply text-sm md:text-base leading-loose tracking-normal;
+}
+@utility text-body {
+  @apply text-sm leading-relaxed tracking-normal;
+}
+@utility text-body-sm {
+  @apply text-xs leading-relaxed tracking-normal;
+}
+@utility text-body-xs {
+  @apply text-[10px] leading-relaxed tracking-normal;
+}
+
+/* Enhanced Caption/label scale */
+@utility text-caption-xl {
+  @apply text-[10px] md:text-xs font-medium leading-normal tracking-wider uppercase;
+}
+@utility text-caption {
+  @apply text-[9px] md:text-[10px] font-medium leading-normal tracking-wider uppercase;
+}
+@utility text-label-xl {
+  @apply text-xs md:text-sm font-medium leading-normal tracking-wide;
+}
+@utility text-label {
+  @apply text-[10px] md:text-xs font-medium leading-normal tracking-wide;
+}
+@utility text-label-sm {
+  @apply text-[9px] md:text-[10px] font-medium leading-normal tracking-wide;
+}
+
+/* ─── Spacing Scale ─── */
+@utility space-y-xs { @apply space-y-1; }
+@utility space-y-sm { @apply space-y-2; }
+@utility space-y-md { @apply space-y-4; }
+@utility space-y-lg { @apply space-y-6; }
+@utility space-y-xl { @apply space-y-8; }
+@utility space-y-2xl { @apply space-y-12; }
+@utility space-y-3xl { @apply space-y-16; }
+
+@utility gap-xs { @apply gap-1; }
+@utility gap-sm { @apply gap-2; }
+@utility gap-md { @apply gap-4; }
+@utility gap-lg { @apply gap-6; }
+@utility gap-xl { @apply gap-8; }
+@utility gap-2xl { @apply gap-10; }
+
+@utility p-xs { @apply p-2; }
+@utility p-sm { @apply p-3; }
+@utility p-md { @apply p-4; }
+@utility p-lg { @apply p-6; }
+@utility p-xl { @apply p-8; }
+@utility p-2xl { @apply p-10; }
+
+/* ─── Enhanced Component Base Styles ─── */
+@utility card-base {
+  @apply rounded-2xl border border-surface-200/40 gradient-card text-brand-900 shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition-all duration-500 hover:shadow-[0_16px_40px_rgba(15,23,42,0.1)] hover:-translate-y-1 overflow-hidden;
+}
+@utility card-base-glass {
+  @apply rounded-2xl gradient-glass text-white shadow-[0_20px_60px_rgba(0,0,0,0.2)] backdrop-blur-xl transition-all duration-500 hover:shadow-[0_30px_80px_rgba(0,0,0,0.3)] hover:-translate-y-2 border border-white/20;
+}
+@utility card-padding { @apply p-6 md:p-8; }
+@utility card-padding-sm { @apply p-4 md:p-6; }
+@utility card-padding-lg { @apply p-8 md:p-10; }
+@utility card-padding-xl { @apply p-10 md:p-12; }
+
+@utility input-base {
+  @apply flex h-10 w-full rounded-lg border border-surface-200/80 bg-surface-50/50 px-3 py-2 text-xs text-brand-900 shadow-sm transition-all duration-200 placeholder:text-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50 focus-visible:border-accent-500 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-50;
+}
+@utility input-error { @apply border-red-500 focus-visible:ring-red-500/50 focus-visible:border-red-500; }
+
+@utility btn-base {
+  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 disabled:pointer-events-none disabled:opacity-50 active:scale-95;
+}
+@utility btn-xs { @apply h-8 px-3.5 text-xs; }
+@utility btn-sm { @apply h-10 px-4.5 text-sm; }
+@utility btn-md { @apply h-12 px-6 text-base; }
+@utility btn-lg { @apply h-14 px-8 text-lg; }
+@utility btn-xl { @apply h-16 px-10 text-xl; }
+@utility btn-icon-sm { @apply h-10 w-10; }
+@utility btn-icon-md { @apply h-12 w-12; }
+@utility btn-icon-lg { @apply h-14 w-14; }
+
+/* Button variants */
+@utility btn-primary {
+  @apply gradient-accent text-white shadow-[0_8px_20px_rgba(var(--accent-500),0.3)] hover:shadow-[0_12px_30px_rgba(var(--accent-500),0.4)] hover:-translate-y-1;
+}
+
+@utility btn-secondary {
+  @apply gradient-brand text-white shadow-[0_8px_20px_rgba(var(--brand-800),0.2)] hover:shadow-[0_12px_30px_rgba(var(--brand-800),0.3)] hover:-translate-y-1;
+}
+
+@utility btn-outline {
+  @apply bg-transparent border-2 border-brand-300 text-brand-700 hover:bg-brand-50 hover:border-brand-500 hover:text-brand-900;
+}
+
+@utility btn-ghost {
+  @apply bg-transparent text-brand-600 hover:bg-brand-50 hover:text-brand-900;
+}
+
+@utility badge-base {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+}
+
+@utility modal-base {
+  @apply relative z-50 w-full max-h-[90vh] rounded-xl bg-white/95 backdrop-blur-xl shadow-modal overflow-hidden flex flex-col border border-surface-200/50 transform transition-all duration-300;
+}
+
+/* ─── Section Spacing (Enhanced) ─── */
+@utility section-base {
+  @apply py-20 md:py-28 lg:py-32 xl:py-36;
+}
+@utility section-base-lg {
+  @apply py-16 md:py-24 lg:py-28 xl:py-32;
+}
+@utility section-base-md {
+  @apply py-16 md:py-20 lg:py-24 xl:py-28;
+}
+@utility section-base-sm {
+  @apply py-12 md:py-16 lg:py-20 xl:py-24;
+}
+@utility section-base-xs {
+  @apply py-8 md:py-12 lg:py-16 xl:py-20;
+}
+
+/* Section background variants */
+@utility section-bg-brand {
+  @apply bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 text-white;
+}
+
+@utility section-bg-light {
+  @apply bg-gradient-to-br from-surface-50 via-white to-surface-50;
+}
+
+/* ─── Prose max-width for readability ─── */
+@utility max-w-prose {
+  max-width: 65ch;
+}
+
+/* ─── Site Layout (unified container + rhythm) ─── */
+@utility container-site {
+  @apply mx-auto max-w-7xl px-5 sm:px-6 lg:px-8;
+}
+
+@utility section-y {
+  @apply py-20 md:py-28 lg:py-32;
+}
+
+@utility section-y-md {
+  @apply py-16 md:py-24 lg:py-28;
+}
+
+@utility section-header {
+  @apply text-center max-w-2xl mx-auto mb-14 md:mb-16 lg:mb-20;
+}
+
+@utility section-eyebrow {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full gradient-glass text-brand-900 font-medium text-label-xl mb-6 backdrop-blur-sm border border-brand-300/20 shadow-sm;
+}
+
+@utility aspect-media {
+  aspect-ratio: 16 / 10;
+}
+
+@utility aspect-card {
+  aspect-ratio: 4 / 3;
+}
+
+@utility aspect-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+/* Pseudo-elements cannot be defined as @utility in Tailwind v4.
+   Using a standalone class with the ::before pattern instead. */
+.section-bg-pattern {
+  position: relative;
+  background-color: var(--color-surface-50);
+  overflow: hidden;
+}
+.section-bg-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  background-image: radial-gradient(var(--color-brand-500) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 /* ─── Custom Utilities ─── */
@@ -142,23 +448,29 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;
-}
-
-body {
-  font-family: 'Alexandria', sans-serif;
-  color: var(--color-brand-900);
-  line-height: 1.7;
-  overflow-x: hidden;
-  background: var(--color-surface-50);
-  font-size: 1rem;
+  scroll-padding-top: 5.5rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
+/* Use dvh for better mobile viewport handling */
+@utility min-h-screen {
+  min-height: 100dvh;
+}
+
+body {
+  font-family: var(--font-cairo), 'Cairo', 'Tajawal', sans-serif;
+  color: var(--color-brand-900);
+  line-height: 1.75;
+  overflow-x: hidden;
+  background: var(--color-surface-50);
+  font-size: 1rem;
+  /* No global letter-spacing: harmful for Arabic script legibility */
+}
+
 img { max-width: 100%; height: auto; display: block; }
-a { text-decoration: none; color: inherit; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+a { text-decoration: none; color: inherit; transition: all var(--transition-base); }
 ul { list-style: none; }
 
 /* ============================================================

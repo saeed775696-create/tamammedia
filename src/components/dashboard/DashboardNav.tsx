@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { useEffect, useState, useContext } from "react"
 import { DashboardContext } from "@/app/dashboard/DashboardProvider"
 import { cn } from "@/lib/utils"

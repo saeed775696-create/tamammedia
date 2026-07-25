@@ -8,4 +8,8 @@ const beforeCreate = (body: Record<string, unknown>) => {
   return body;
 };
 
-export const { GET, POST } = createCollectionRoutes(portfolioService, createPortfolioSchema, beforeCreate);
+import { NextRequest } from 'next/server';
+
+const routes = createCollectionRoutes(portfolioService, createPortfolioSchema, beforeCreate);
+export async function GET(req: NextRequest) { return routes.GET(req); }
+export async function POST(req: NextRequest) { return routes.POST(req); }

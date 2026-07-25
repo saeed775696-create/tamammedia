@@ -21,13 +21,13 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[surface-50] p-6">
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 p-6">
       <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center">
         <div className="w-20 h-20 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-500 mb-5">
           <AlertTriangle size={40} />
         </div>
 
-        <h1 className="text-2xl font-bold text-[brand-900] mb-2">
+        <h1 className="text-2xl font-bold text-brand-900 mb-2">
           حدث خطأ غير متوقع
         </h1>
         <p className="text-gray-500 mb-6 leading-relaxed">
@@ -47,7 +47,7 @@ export default function Error({
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-6 py-2.5 bg-[accent-500] text-white font-medium rounded-xl hover:bg-[accent-700] transition-all shadow-md flex items-center justify-center gap-2"
+            className="px-6 py-2.5 bg-accent-500 text-white font-medium rounded-xl hover:bg-accent-700 transition-all shadow-md flex items-center justify-center gap-2"
           >
             <RefreshCw size={18} />
             إعادة المحاولة

@@ -3,9 +3,18 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { whatsappLink } from "@/config/site";
 
+/* =========================================================================
+   FloatingWhatsApp — the site's ONLY WhatsApp float
+   =========================================================================
+   - Physical LEFT side (left-5/6) in both languages:
+     the Tawk.to chat bubble owns the bottom-right corner, so stacking
+     our widgets on the left guarantees zero overlap in RTL and LTR.
+   - BackToTop (ui/BackToTop.tsx) stacks directly above this button.
+   - z-[90]: below the navbar (1000) and mobile drawer, above content.
+   ========================================================================= */
+
 export default function FloatingWhatsApp() {
   const { lang } = useLanguage();
-  const isRtl = lang === "ar";
 
   const handleClick = () => {
     fetch("/api/track/whatsapp", { method: "POST" }).catch(() => {});
@@ -23,8 +32,7 @@ export default function FloatingWhatsApp() {
       onClick={handleClick}
       aria-label="Chat on WhatsApp"
       title={lang === "ar" ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
-      className="fixed bottom-6 z-50 w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] flex items-center justify-center hover:scale-110 transition-transform animate-pulse-glow"
-      style={{ [isRtl ? "left" : "right"]: "1.5rem" }}
+      className="fixed bottom-5 sm:bottom-6 left-5 sm:left-6 z-[90] w-14 h-14 bg-[#25D366] hover:bg-[#1ebe5b] text-white rounded-full shadow-[0_8px_24px_rgba(37,211,102,0.35)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.45)] flex items-center justify-center hover:scale-110 hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

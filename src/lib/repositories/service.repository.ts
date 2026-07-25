@@ -7,6 +7,7 @@ import { NotFoundError } from '../api/errors';
 export interface IServiceRepository {
   findAll(params: PaginationParams): Promise<{ items: Service[]; total: number }>;
   findById(id: string): Promise<Service | null>;
+  count(): Promise<number>;
   create(data: CreateServiceInput): Promise<Service>;
   update(id: string, data: UpdateServiceInput): Promise<Service>;
   delete(id: string): Promise<void>;
@@ -30,6 +31,10 @@ export class PrismaServiceRepository implements IServiceRepository {
     return prisma.service.findUnique({
       where: { id },
     });
+  }
+
+  async count(): Promise<number> {
+    return prisma.service.count();
   }
 
   async create(data: CreateServiceInput): Promise<Service> {

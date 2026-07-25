@@ -7,6 +7,7 @@ import { NotFoundError } from '../api/errors';
 export interface IPortfolioRepository {
   findAll(params: PaginationParams): Promise<{ items: PortfolioItem[]; total: number }>;
   findById(id: string): Promise<PortfolioItem | null>;
+  count(): Promise<number>;
   create(data: CreatePortfolioInput): Promise<PortfolioItem>;
   update(id: string, data: UpdatePortfolioInput): Promise<PortfolioItem>;
   delete(id: string): Promise<void>;
@@ -55,6 +56,10 @@ export class PrismaPortfolioRepository implements IPortfolioRepository {
     return prisma.portfolioItem.findUnique({
       where: { id },
     });
+  }
+
+  async count(): Promise<number> {
+    return prisma.portfolioItem.count();
   }
 
   async create(data: CreatePortfolioInput): Promise<PortfolioItem> {

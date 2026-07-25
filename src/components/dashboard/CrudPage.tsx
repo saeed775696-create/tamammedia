@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { Plus, Search, Filter } from "lucide-react"
+import { Plus, Search } from "lucide-react"
 import { useCrud } from "@/hooks/useCrud"
 import PageHeader from "@/components/dashboard/PageHeader"
 import LoadingState from "@/components/dashboard/LoadingState"
@@ -114,7 +114,7 @@ export function CrudPage<T extends { id: string | number }>({
       />
 
       {(searchFields || renderFilters) && (
-        <div className="flex flex-col md:flex-row gap-4 mb-8 bg-surface-50 p-3 rounded-2xl border border-surface-200">
+        <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 rounded-2xl bg-surface-50 border border-surface-200">
           {searchFields && (
             <div className="relative flex-1 group">
               <div className="absolute inset-y-0 end-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-brand-500 transition-colors">

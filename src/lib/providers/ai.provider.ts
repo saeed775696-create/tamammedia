@@ -5,6 +5,12 @@ export interface IAIProvider {
   analyzeImage(imageUrl: string, prompt: string): Promise<string>;
 }
 
+/**
+ * مزوّد وهمي للتطوير والاختبار —
+ * يُرجع ردوداً متوقعة بدون استدعاء أي خدمة خارجية.
+ * عند إضافة مزوّد حقيقي مستقبلاً (OpenAI وغيره)،
+ * نفّذ IAIProvider وحدّث AIProviderFactory.
+ */
 export class MockAIProvider implements IAIProvider {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async generateText(prompt: string, _systemPrompt?: string): Promise<string> {
@@ -16,22 +22,6 @@ export class MockAIProvider implements IAIProvider {
   async analyzeImage(imageUrl: string, _prompt: string): Promise<string> {
     logger.info('Mocking AI image analysis', { imageUrl });
     return `Mock image analysis for ${imageUrl}`;
-  }
-}
-
-export class OpenAIProvider implements IAIProvider {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async generateText(prompt: string, _systemPrompt?: string): Promise<string> {
-    logger.info('Generating text with OpenAI', { promptLength: prompt.length });
-    // TODO: Implement actual OpenAI call
-    throw new Error('OpenAI Provider not yet implemented');
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async analyzeImage(imageUrl: string, _prompt: string): Promise<string> {
-    logger.info('Analyzing image with OpenAI', { imageUrl });
-    // TODO: Implement actual OpenAI vision call
-    throw new Error('OpenAI Vision Provider not yet implemented');
   }
 }
 

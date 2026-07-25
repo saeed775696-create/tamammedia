@@ -1,4 +1,8 @@
-import { prisma } from "@/lib/prisma"
+import { PrismaContactRepository } from "@/lib/repositories/contact.repository"
+import { PrismaPortfolioRepository } from "@/lib/repositories/portfolio.repository"
+import { PrismaTeamRepository } from "@/lib/repositories/team.repository"
+import { PrismaServiceRepository } from "@/lib/repositories/service.repository"
+import { PrismaPartnerRepository } from "@/lib/repositories/partner.repository"
 import {
   FolderOpen,
   MessageSquare,
@@ -16,6 +20,12 @@ import Link from "next/link"
 import PageHeader from "@/components/dashboard/PageHeader"
 import { Card } from "@/components/ui/Card"
 
+const contactRepository = new PrismaContactRepository()
+const portfolioRepository = new PrismaPortfolioRepository()
+const teamRepository = new PrismaTeamRepository()
+const serviceRepository = new PrismaServiceRepository()
+const partnerRepository = new PrismaPartnerRepository()
+
 export default async function DashboardPage() {
   const [
     leadsCount,
@@ -26,16 +36,13 @@ export default async function DashboardPage() {
     partnersCount,
     recentLeads,
   ] = await Promise.all([
-    prisma.contactSubmission.count(),
-    prisma.contactSubmission.count({ where: { status: "new" } }),
-    prisma.portfolioItem.count(),
-    prisma.teamMember.count(),
-    prisma.service.count(),
-    prisma.partner.count(),
-    prisma.contactSubmission.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-    }),
+    contactRepository.count(),
+    contactRepository.count("new"),
+    portfolioRepository.count(),
+    teamRepository.count(),
+    serviceRepository.count(),
+    partnerRepository.count(),
+    contactRepository.findRecent(5),
   ])
 
   const stats = [

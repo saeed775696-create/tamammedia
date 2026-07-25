@@ -3,7 +3,7 @@ import { IPortfolioRepository } from '../repositories/portfolio.repository';
 import { CreatePortfolioInput, UpdatePortfolioInput } from '../validations/portfolio.schema';
 import { PaginationParams } from '../api/pagination';
 
-export class PortfolioService extends BaseService<any, CreatePortfolioInput, UpdatePortfolioInput> {
+export class PortfolioService extends BaseService<Record<string, unknown>, CreatePortfolioInput, UpdatePortfolioInput> {
   constructor(repository: IPortfolioRepository) {
     super(repository, 'portfolio item');
   }

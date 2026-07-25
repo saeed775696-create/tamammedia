@@ -42,10 +42,10 @@ export default function Pagination({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-      <p className="text-sm text-gray-500">
-        عرض <span className="font-semibold text-gray-700">{start}</span> -{" "}
-        <span className="font-semibold text-gray-700">{end}</span> من{" "}
-        <span className="font-semibold text-gray-700">{total}</span>
+      <p className="text-body-sm text-surface-500">
+        عرض <span className="font-semibold text-brand-900">{start}</span> -{" "}
+        <span className="font-semibold text-brand-900">{end}</span> من{" "}
+        <span className="font-semibold text-brand-900">{total}</span>
       </p>
 
       {totalPages > 1 && (
@@ -54,24 +54,24 @@ export default function Pagination({
             onClick={() => onPageChange(page - 1)}
             disabled={page === 1}
             aria-label="الصفحة السابقة"
-            className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 rounded-xl border border-surface-200 bg-white hover:bg-surface-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronRight size={18} />
           </button>
 
           {pagesWithEllipsis.map((p, i) =>
             p === "..." ? (
-              <span key={`ellipsis-${i}`} className="px-3 text-gray-400">
+              <span key={`ellipsis-${i}`} className="px-3 text-surface-400 text-body-sm">
                 ...
               </span>
             ) : (
               <button
                 key={p}
                 onClick={() => onPageChange(p as number)}
-                className={`min-w-[40px] h-10 rounded-lg font-medium text-sm transition-all ${
+                className={`min-w-[44px] h-10 rounded-xl font-semibold text-body-sm transition-all ${
                   p === page
-                    ? "bg-[accent-500] text-white shadow-md shadow-[accent-500]/20"
-                    : "border border-gray-200 bg-white hover:bg-gray-50"
+                    ? "bg-accent-500 text-white shadow-md shadow-accent-500/20"
+                    : "border border-surface-200 bg-white hover:bg-surface-50 text-brand-900"
                 }`}
               >
                 {p}
@@ -83,7 +83,7 @@ export default function Pagination({
             onClick={() => onPageChange(page + 1)}
             disabled={page === totalPages}
             aria-label="الصفحة التالية"
-            className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 rounded-xl border border-surface-200 bg-white hover:bg-surface-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronLeft size={18} />
           </button>

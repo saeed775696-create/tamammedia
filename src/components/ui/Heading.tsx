@@ -9,12 +9,12 @@ export function Heading({ className, level = 2, ...props }: HeadingProps) {
   const Tag = `h${level}` as React.ElementType;
   
   const levels = {
-    1: "text-4xl font-extrabold tracking-tight lg:text-5xl",
-    2: "text-3xl font-bold tracking-tight",
-    3: "text-2xl font-semibold tracking-tight",
-    4: "text-xl font-semibold tracking-tight",
-    5: "text-lg font-semibold tracking-tight",
-    6: "text-base font-semibold tracking-tight",
+    1: "text-h1",
+    2: "text-h2",
+    3: "text-h3",
+    4: "text-h4",
+    5: "text-h5",
+    6: "text-h6",
   };
 
   return <Tag className={cn(levels[level], "text-brand-900", className)} {...props} />;

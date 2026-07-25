@@ -3,7 +3,7 @@ import { IPartnerRepository } from '../repositories/partner.repository';
 import { CreatePartnerInput, UpdatePartnerInput } from '../validations/partner.schema';
 import { PaginationParams } from '../api/pagination';
 
-export class PartnerService extends BaseService<any, CreatePartnerInput, UpdatePartnerInput> {
+export class PartnerService extends BaseService<Record<string, unknown>, CreatePartnerInput, UpdatePartnerInput> {
   constructor(repository: IPartnerRepository) {
     super(repository, 'partner');
   }

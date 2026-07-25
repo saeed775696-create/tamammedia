@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Input } from "@/components/ui/Input";
 
 type Props = {
   value: string;
@@ -70,13 +71,13 @@ export default function ImageUpload({ value, onChange, label }: Props) {
   return (
     <div>
       {label && (
-        <label className="block text-[13px] font-bold text-surface-700 mb-2">
+        <label className="block text-label font-bold text-surface-700 mb-2">
           {label}
         </label>
       )}
       <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
         <label
-          className={`flex items-center justify-center gap-2 px-4 h-12 rounded-2xl border cursor-pointer transition-all duration-300 w-full sm:w-auto shrink-0 ${
+          className={`flex items-center justify-center gap-2 px-4 h-11 rounded-xl border cursor-pointer transition-all duration-300 w-full sm:w-auto shrink-0 ${
             uploading
               ? "bg-surface-100 text-surface-400 border-surface-200"
               : "bg-white hover:bg-surface-50 border-surface-200 text-brand-900 shadow-sm hover:shadow"
@@ -85,12 +86,12 @@ export default function ImageUpload({ value, onChange, label }: Props) {
           {uploading ? (
             <>
               <Loader2 size={16} className="animate-spin text-accent-500" />
-              <span className="text-sm font-medium">جاري الرفع...</span>
+              <span className="text-body-sm font-medium">جاري الرفع...</span>
             </>
           ) : (
             <>
               <Upload size={16} className="text-surface-500" />
-              <span className="text-sm font-bold">اختر صورة</span>
+              <span className="text-body-sm font-bold">اختر صورة</span>
             </>
           )}
           <input
@@ -102,12 +103,12 @@ export default function ImageUpload({ value, onChange, label }: Props) {
           />
         </label>
         <div className="relative w-full">
-          <input
+          <Input
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="أو الصق رابط الصورة مباشرة هنا..."
-            className="flex h-12 w-full rounded-2xl border border-surface-200/80 bg-surface-50/50 px-4 py-2 text-[14px] text-brand-900 shadow-sm transition-all duration-300 placeholder:text-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50 focus-visible:border-accent-500 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-50"
+            className="text-body-sm"
             dir="ltr"
           />
         </div>

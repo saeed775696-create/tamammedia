@@ -7,6 +7,7 @@ import { NotFoundError } from '../api/errors';
 export interface ITeamRepository {
   findAll(params: PaginationParams): Promise<{ items: TeamMember[]; total: number }>;
   findById(id: string): Promise<TeamMember | null>;
+  count(): Promise<number>;
   create(data: CreateTeamMemberInput): Promise<TeamMember>;
   update(id: string, data: UpdateTeamMemberInput): Promise<TeamMember>;
   delete(id: string): Promise<void>;
@@ -30,6 +31,10 @@ export class PrismaTeamRepository implements ITeamRepository {
     return prisma.teamMember.findUnique({
       where: { id },
     });
+  }
+
+  async count(): Promise<number> {
+    return prisma.teamMember.count();
   }
 
   async create(data: CreateTeamMemberInput): Promise<TeamMember> {

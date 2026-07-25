@@ -3,7 +3,7 @@ import { ITeamRepository } from '../repositories/team.repository';
 import { CreateTeamMemberInput, UpdateTeamMemberInput } from '../validations/team.schema';
 import { PaginationParams } from '../api/pagination';
 
-export class TeamService extends BaseService<any, CreateTeamMemberInput, UpdateTeamMemberInput> {
+export class TeamService extends BaseService<Record<string, unknown>, CreateTeamMemberInput, UpdateTeamMemberInput> {
   constructor(repository: ITeamRepository) {
     super(repository, 'team member');
   }
