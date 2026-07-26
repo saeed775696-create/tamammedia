@@ -14,6 +14,7 @@ export interface PublicPortfolioItem {
   imageUrl: string;
   category: string;
   clientName?: string;
+  link?: string;
   featured: boolean;
 }
 
@@ -30,6 +31,7 @@ async function readPortfolioList(): Promise<PublicPortfolioItem[]> {
       imageUrl: true,
       category: true,
       clientName: true,
+      link: true,
       featured: true,
     },
   });
@@ -39,12 +41,13 @@ async function readPortfolioList(): Promise<PublicPortfolioItem[]> {
     descriptionEn: item.descriptionEn ?? undefined,
     descriptionAr: item.descriptionAr ?? undefined,
     clientName: item.clientName ?? undefined,
+    link: item.link ?? undefined,
   }));
 }
 
 const getCachedPortfolioList = unstable_cache(
   readPortfolioList,
-  ["portfolio-list-v1"],
+  ["portfolio-list-v2"],
   { revalidate: 3600, tags: [PORTFOLIO_CONTENT_CACHE_TAG] }
 );
 

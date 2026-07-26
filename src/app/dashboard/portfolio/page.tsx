@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Trash2, Edit2, Star, FolderOpen, Filter, Image as ImageIcon, Users } from "lucide-react"
+import { Trash2, Edit2, Star, FolderOpen, Filter, Image as ImageIcon, Users, ExternalLink } from "lucide-react"
 import toast from "react-hot-toast"
 import { CrudPage } from "@/components/dashboard/CrudPage"
 import { Modal } from "@/components/ui/Modal"
@@ -20,6 +20,7 @@ type PortfolioItem = {
   imageUrl: string
   category: string
   clientName?: string | null
+  link?: string | null
   featured: boolean
 }
 
@@ -32,7 +33,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default function PortfolioDashboard() {
-  const [form, setForm] = useState({ titleEn: "", titleAr: "", imageUrl: "", category: "branding", clientName: "", featured: false })
+  const [form, setForm] = useState({ titleEn: "", titleAr: "", imageUrl: "", category: "branding", clientName: "", link: "", featured: false })
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [isUploading, setIsUploading] = useState(false)
 
@@ -72,8 +73,8 @@ export default function PortfolioDashboard() {
       emptyActionLabel="إضافة عمل جديد"
       searchPlaceholder="ابحث بعنوان العمل أو اسم العميل..."
       searchFields={["titleAr", "titleEn", "clientName"]}
-      onOpenAdd={() => setForm({ titleEn: "", titleAr: "", imageUrl: "", category: "branding", clientName: "", featured: false })}
-      onOpenEdit={(item) => setForm({ titleEn: item.titleEn, titleAr: item.titleAr, imageUrl: item.imageUrl, category: item.category, clientName: item.clientName || "", featured: item.featured })}
+      onOpenAdd={() => setForm({ titleEn: "", titleAr: "", imageUrl: "", category: "branding", clientName: "", link: "", featured: false })}
+      onOpenEdit={(item) => setForm({ titleEn: item.titleEn, titleAr: item.titleAr, imageUrl: item.imageUrl, category: item.category, clientName: item.clientName || "", link: item.link || "", featured: item.featured })}
       renderFilters={() => (
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 md:pb-0 scrollbar-hide px-1">
           <Filter size={14} className="text-surface-400 shrink-0 ms-1 hidden md:block" />
@@ -157,6 +158,25 @@ export default function PortfolioDashboard() {
               </div>
             </div>
             <div className="bg-white p-4 rounded-xl border border-surface-100 shadow-sm space-y-3">
+              <label className="flex items-center gap-1.5 text-label font-bold text-surface-700">
+                <ExternalLink size={13} className="text-accent-500" />
+                رابط موقع المشروع
+                <span className="text-surface-400 font-normal">(اختياري)</span>
+              </label>
+              <Input
+                name="link"
+                type="url"
+                value={form.link}
+                onChange={(e) => setForm({ ...form, link: e.target.value })}
+                placeholder="https://example.com"
+                dir="ltr"
+                className="bg-surface-50 focus:bg-white"
+              />
+              <Text variant="caption">
+                عند إضافة الرابط ستفتح بطاقة المشروع الموقع الخارجي في تبويب جديد.
+              </Text>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-surface-100 shadow-sm space-y-3">
               <h5 className="text-caption font-extrabold text-surface-400 uppercase tracking-wider mb-1.5 border-b border-surface-100 pb-1.5 flex items-center gap-1.5"><ImageIcon size={13} className="text-accent-500" /> صورة المشروع <span className="text-red-500">*</span></h5>
               <div className="flex flex-col sm:flex-row gap-3 items-start">
                 <div className="flex-1 w-full space-y-2">
@@ -198,7 +218,22 @@ export default function PortfolioDashboard() {
             </label>
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t border-surface-100">
               <Button variant="outline" onClick={() => crud.setIsAddModalOpen(false)} disabled={crud.isSubmitting} className="min-w-[110px]">إلغاء الأمر</Button>
-              <Button variant="primary" onClick={crud.handleSave} isLoading={crud.isSubmitting} className="min-w-[140px] shadow-sm shadow-brand-500/20">{crud.editItem ? "حفظ التعديلات" : "إضافة المشروع"}</Button>
+              <Button
+                variant="primary"
+                onClick={async () => {
+                  const saved = crud.editItem
+                    ? await crud.updateItem(crud.editItem.id, form, true)
+                    : await crud.createItem(form, true)
+
+                  if (saved) {
+                    crud.setIsAddModalOpen(false)
+                  }
+                }}
+                isLoading={crud.isSubmitting}
+                className="min-w-[140px] shadow-sm shadow-brand-500/20"
+              >
+                {crud.editItem ? "حفظ التعديلات" : "إضافة المشروع"}
+              </Button>
             </div>
           </div>
         </Modal>

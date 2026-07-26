@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Sparkles, Star } from "lucide-react";
 import DirectionArrow from "@/components/DirectionArrow";
 import PageHero from "@/components/PageHero";
+import { isSafeExternalUrl } from "@/lib/utils";
 
 // نوع مبسّط يُمرَّر من الـ Server Component
 export interface PortfolioItemData {
@@ -18,6 +19,7 @@ export interface PortfolioItemData {
   imageUrl: string;
   category: string;
   clientName?: string;
+  link?: string;
   featured: boolean;
 }
 
@@ -117,36 +119,51 @@ export default function PortfolioContent({
 
               {/* Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 md:gap-8">
-                {sortedItems.map((item) => (
-                  <Link href={`/portfolio/${item.id}`} key={item.id} className="group block relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 aspect-card bg-white">
-                    <Image src={item.imageUrl} alt={lang === "ar" ? item.titleAr : item.titleEn} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" quality={65} />
+                {sortedItems.map((item) => {
+                  const externalUrl = isSafeExternalUrl(item.link) ? item.link : null;
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  return (
+                    <Link
+                      href={externalUrl ?? `/portfolio/${item.id}`}
+                      key={item.id}
+                      target={externalUrl ? "_blank" : undefined}
+                      rel={externalUrl ? "noopener noreferrer" : undefined}
+                      aria-label={
+                        externalUrl
+                          ? `${lang === "ar" ? "زيارة موقع" : "Visit"} ${lang === "ar" ? item.titleAr : item.titleEn}`
+                          : undefined
+                      }
+                      className="group block relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 aspect-card bg-white"
+                    >
+                      <Image src={item.imageUrl} alt={lang === "ar" ? item.titleAr : item.titleEn} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" quality={65} />
 
-                    <div className="absolute bottom-0 left-0 w-full p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-block px-3 py-1 text-xs font-bold text-white bg-white/20 backdrop-blur-md rounded-full border border-white/20">
-                          {lang === "ar"
-                            ? categoryLabels[item.category]?.ar || item.category
-                            : categoryLabels[item.category]?.en || item.category}
-                        </span>
-                        {item.featured && (
-                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-500/20 backdrop-blur-md border border-accent-500/30 text-accent-500" title={lang === "ar" ? "مميز" : "Featured"}>
-                            <Star size={12} className="fill-current" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                      <div className="absolute bottom-0 left-0 w-full p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-block px-3 py-1 text-xs font-bold text-white bg-white/20 backdrop-blur-md rounded-full border border-white/20">
+                            {lang === "ar"
+                              ? categoryLabels[item.category]?.ar || item.category
+                              : categoryLabels[item.category]?.en || item.category}
                           </span>
+                          {item.featured && (
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-500/20 backdrop-blur-md border border-accent-500/30 text-accent-500" title={lang === "ar" ? "مميز" : "Featured"}>
+                              <Star size={12} className="fill-current" />
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-accent-500 transition-colors line-clamp-2 leading-snug">
+                          {lang === "ar" ? item.titleAr : item.titleEn}
+                        </h3>
+                        {item.clientName && (
+                          <p className="text-slate-300 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 leading-relaxed mt-1">
+                            {lang === "ar" ? "العميل:" : "Client:"} {item.clientName}
+                          </p>
                         )}
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-accent-500 transition-colors line-clamp-2 leading-snug">
-                        {lang === "ar" ? item.titleAr : item.titleEn}
-                      </h3>
-                      {item.clientName && (
-                        <p className="text-slate-300 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 leading-relaxed mt-1">
-                          {lang === "ar" ? "العميل:" : "Client:"} {item.clientName}
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             </>
           )}
