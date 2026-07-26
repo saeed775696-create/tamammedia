@@ -107,49 +107,49 @@ function DesktopServiceConstellation({
   const nodeIcons = [Palette, Code2, Megaphone, ShoppingBag, Layers3, Workflow];
   const nodeThemes = [
     {
-      accent: "text-orange-200",
-      border: "border-orange-200/80",
-      soft: "border-orange-300/30",
-      tint: "bg-orange-400/10",
-      glow: "shadow-[0_0_42px_rgba(251,146,60,0.38)]",
+      accent: "text-orange-300",
+      border: "border-orange-400/75",
+      soft: "border-orange-500/35",
+      tint: "bg-orange-700/16",
+      glow: "shadow-[0_0_42px_rgba(234,88,12,0.42)]",
     },
     {
-      accent: "text-cyan-200",
-      border: "border-cyan-200/80",
-      soft: "border-cyan-300/30",
-      tint: "bg-cyan-400/10",
-      glow: "shadow-[0_0_42px_rgba(34,211,238,0.34)]",
+      accent: "text-cyan-300",
+      border: "border-cyan-400/75",
+      soft: "border-cyan-500/35",
+      tint: "bg-cyan-700/16",
+      glow: "shadow-[0_0_42px_rgba(8,145,178,0.38)]",
     },
     {
-      accent: "text-violet-200",
-      border: "border-violet-200/80",
-      soft: "border-violet-300/30",
-      tint: "bg-violet-400/10",
-      glow: "shadow-[0_0_42px_rgba(167,139,250,0.36)]",
+      accent: "text-violet-300",
+      border: "border-violet-400/75",
+      soft: "border-violet-500/35",
+      tint: "bg-violet-700/16",
+      glow: "shadow-[0_0_42px_rgba(124,58,237,0.40)]",
     },
     {
-      accent: "text-emerald-200",
-      border: "border-emerald-200/80",
-      soft: "border-emerald-300/30",
-      tint: "bg-emerald-400/10",
-      glow: "shadow-[0_0_42px_rgba(52,211,153,0.32)]",
+      accent: "text-emerald-300",
+      border: "border-emerald-400/75",
+      soft: "border-emerald-500/35",
+      tint: "bg-emerald-700/16",
+      glow: "shadow-[0_0_42px_rgba(5,150,105,0.36)]",
     },
     {
-      accent: "text-rose-200",
-      border: "border-rose-200/80",
-      soft: "border-rose-300/30",
-      tint: "bg-rose-400/10",
-      glow: "shadow-[0_0_42px_rgba(251,113,133,0.34)]",
+      accent: "text-rose-300",
+      border: "border-rose-400/75",
+      soft: "border-rose-500/35",
+      tint: "bg-rose-700/16",
+      glow: "shadow-[0_0_42px_rgba(225,29,72,0.38)]",
     },
     {
-      accent: "text-sky-200",
-      border: "border-sky-200/80",
-      soft: "border-sky-300/30",
-      tint: "bg-sky-400/10",
-      glow: "shadow-[0_0_42px_rgba(56,189,248,0.34)]",
+      accent: "text-sky-300",
+      border: "border-sky-400/75",
+      soft: "border-sky-500/35",
+      tint: "bg-sky-700/16",
+      glow: "shadow-[0_0_42px_rgba(2,132,199,0.38)]",
     },
   ];
-  const signalColors = ["#fdba74", "#67e8f9", "#c4b5fd", "#6ee7b7", "#fda4af"];
+  const signalColors = ["#f97316", "#06b6d4", "#8b5cf6", "#10b981", "#f43f5e"];
   const paths = slots.slice(1).map(curvedNetworkPath);
 
   return (
@@ -158,25 +158,25 @@ function DesktopServiceConstellation({
       className="pointer-events-none absolute inset-y-0 end-3 hidden w-[40%] max-w-[550px] items-center lg:flex xl:end-8"
     >
       <div className="relative h-[460px] w-full overflow-visible xl:h-[540px]">
-        <div className="absolute top-[12%] start-[15%] size-40 rounded-full bg-violet-500/15 blur-[70px]" aria-hidden="true" />
-        <div className="absolute end-[8%] bottom-[10%] size-44 rounded-full bg-cyan-400/15 blur-[75px]" aria-hidden="true" />
-        <div className="absolute inset-[24%] rounded-full bg-orange-400/15 blur-[65px]" aria-hidden="true" />
+        <div className="absolute top-[12%] start-[15%] size-40 rounded-full bg-violet-700/20 blur-[70px]" aria-hidden="true" />
+        <div className="absolute end-[8%] bottom-[10%] size-44 rounded-full bg-cyan-700/18 blur-[75px]" aria-hidden="true" />
+        <div className="absolute inset-[24%] rounded-full bg-orange-600/18 blur-[65px]" aria-hidden="true" />
         <div className="absolute top-1/2 left-1/2 size-48 -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-300/10 shadow-[0_0_95px_rgba(103,232,249,0.18)]" aria-hidden="true" />
 
         <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="constellation-line" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="rgba(196,181,253,0.12)" />
-              <stop offset="28%" stopColor="rgba(103,232,249,0.7)" />
-              <stop offset="52%" stopColor="rgba(253,186,116,0.95)" />
-              <stop offset="76%" stopColor="rgba(253,164,175,0.7)" />
-              <stop offset="100%" stopColor="rgba(110,231,183,0.18)" />
+              <stop offset="0%" stopColor="rgba(139,92,246,0.18)" />
+              <stop offset="28%" stopColor="rgba(6,182,212,0.72)" />
+              <stop offset="52%" stopColor="rgba(249,115,22,0.9)" />
+              <stop offset="76%" stopColor="rgba(244,63,94,0.68)" />
+              <stop offset="100%" stopColor="rgba(16,185,129,0.22)" />
             </linearGradient>
             <radialGradient id="constellation-core">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.85)" />
-              <stop offset="28%" stopColor="rgba(253,186,116,0.75)" />
-              <stop offset="62%" stopColor="rgba(167,139,250,0.34)" />
-              <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+              <stop offset="0%" stopColor="rgba(255,255,255,0.72)" />
+              <stop offset="28%" stopColor="rgba(249,115,22,0.72)" />
+              <stop offset="62%" stopColor="rgba(124,58,237,0.40)" />
+              <stop offset="100%" stopColor="rgba(6,182,212,0)" />
             </radialGradient>
             <filter id="constellation-glow" x="-100%" y="-100%" width="300%" height="300%">
               <feGaussianBlur stdDeviation="0.8" result="blur" />
@@ -208,7 +208,7 @@ function DesktopServiceConstellation({
           <circle cx="50" cy="50" r="1.2" fill="#fef3c7" filter="url(#constellation-glow)" />
         </svg>
 
-        <div className="absolute top-2 end-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/65">
+        <div className="absolute top-2 end-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/70">
           <span className="size-1.5 rounded-full bg-gradient-to-r from-orange-300 via-violet-300 to-cyan-300 shadow-[0_0_14px_rgba(103,232,249,0.85)]" />
           {lang === "ar" ? "منظومة خدمات متكاملة" : "Integrated service system"}
         </div>
@@ -242,17 +242,17 @@ function DesktopServiceConstellation({
               <div
                 className={`absolute inset-0 rounded-[30%] border backdrop-blur-xl transition-colors duration-700 ${
                   isCentral
-                    ? `${theme.border} bg-brand-950/80 ${theme.glow}`
-                    : `${theme.soft} bg-brand-950/68 shadow-[0_14px_34px_rgba(15,23,42,0.35)]`
+                    ? `${theme.border} bg-brand-950/90 ${theme.glow}`
+                    : `${theme.soft} bg-brand-950/80 shadow-[0_14px_34px_rgba(15,23,42,0.42)]`
                 }`}
               />
 
               <div className="relative z-10 flex h-full flex-col items-center justify-center px-2 text-center text-white">
-                <span className={`absolute top-2 end-2 text-[8px] font-bold tabular-nums ${isCentral ? theme.accent : "text-white/35"}`}>
+                <span className={`absolute top-2 end-2 text-[9px] font-bold tabular-nums ${isCentral ? theme.accent : "text-white/40"}`}>
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <Icon size={isCentral ? 24 : 19} className={theme.accent} strokeWidth={1.7} />
-                <p className={`mt-2 line-clamp-2 font-bold leading-snug ${isCentral ? "text-[11px] xl:text-xs" : "text-[9px] xl:text-[10px]"}`}>
+                <p className={`mt-2 line-clamp-2 font-bold leading-[1.35] ${isCentral ? "text-xs xl:text-[13px]" : "text-[10px] xl:text-[11px]"}`}>
                   {lang === "ar" ? node.ar : node.en}
                 </p>
               </div>
