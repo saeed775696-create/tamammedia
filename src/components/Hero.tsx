@@ -293,7 +293,7 @@ export default function Hero() {
       <div className={`pointer-events-none absolute inset-0 ${contentGradient}`} aria-hidden="true" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(255,255,255,0.14),transparent_35%)]" aria-hidden="true" />
 
-      <div className="container-site relative z-10 flex min-h-[100dvh] w-full items-center pt-24 pb-20 md:pt-32 md:pb-28">
+      <div className="container-site relative z-10 flex min-h-[100dvh] w-full items-center pt-24 pb-20 md:pt-20 md:pb-28">
         <DesktopServiceConstellation cards={hero.cards} lang={lang} />
 
         <div className="flex w-full max-w-3xl flex-col items-center text-center lg:max-w-[53%] lg:items-start lg:text-start">
