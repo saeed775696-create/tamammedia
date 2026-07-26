@@ -43,13 +43,13 @@ export default function Footer() {
       </div>
 
       {/* ── Main Container ── */}
-      <div className="container-site pt-16 sm:pt-20 pb-8 sm:pb-10">
+      <div className="container-site pt-16 sm:pt-20 lg:pt-14 pb-8 sm:pb-10 lg:pb-7">
         {/* ============================================================
             TOP SECTION — Brand, Socials & Contact Info
             ============================================================ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 pb-12 sm:pb-14 border-b border-white/10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 pb-12 sm:pb-14 lg:pb-10 border-b border-white/10">
           {/* ── Brand Info (5 cols on lg) ── */}
-          <div className="lg:col-span-5 space-y-6 sm:space-y-7">
+          <div className="lg:col-span-5 space-y-6 sm:space-y-7 lg:space-y-5">
             {/* Logo + Name — same real brand mark as the Navbar */}
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 shrink-0">
@@ -230,7 +230,7 @@ export default function Footer() {
         {/* ============================================================
             MIDDLE SECTION — 4-Column Link Grid
             ============================================================ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 py-12 sm:py-14 border-b border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-8 py-12 sm:py-14 lg:py-10 border-b border-white/10">
           {/* ── Quick Links ── */}
           <div>
             <button
@@ -398,7 +398,7 @@ export default function Footer() {
               {lang === "ar" ? "ابدأ مشروعك" : "Start Your Project"}
             </h4>
             {/* Desktop CTA */}
-            <div className="hidden lg:block bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-3 sm:space-y-4">
+            <div className="hidden lg:block bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-4 space-y-3 sm:space-y-4 lg:space-y-3">
               <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
                 {lang === "ar"
                   ? "هل لديك مشروع في ذهنك؟ دعنا نساعدك في تحويل فكرتك إلى واقع رقمي مميز."
@@ -475,7 +475,7 @@ export default function Footer() {
             BOTTOM SECTION — Copyright Bar
             flex-col on mobile, flex-row justify-between on sm+
             ============================================================ */}
-        <div className="pt-8 sm:pt-10 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-white/40">
+        <div className="pt-8 sm:pt-10 lg:pt-7 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-white/40">
           <p className="text-center sm:text-start">
             © {new Date().getFullYear()}{" "}
             <span className="text-white/60 font-medium">
