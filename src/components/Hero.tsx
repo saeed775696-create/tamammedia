@@ -313,13 +313,23 @@ export default function Hero() {
             {lang === "ar" ? hero.descriptionAr : hero.descriptionEn}
           </p>
 
-          <Link
-            href="/services"
-            className="btn-base btn-md btn-hero-outline inline-flex w-full items-center justify-center border-white/45 bg-brand-950/20 text-sm shadow-lg backdrop-blur-sm hover:border-white hover:bg-white/15 sm:w-auto md:text-base"
-          >
-            {lang === "ar" ? hero.secondaryCtaAr : hero.secondaryCtaEn}
-            <DirectionArrow size={20} />
-          </Link>
+          <div className="flex w-full items-center justify-center gap-3 lg:justify-start">
+            <Link
+              href="/contact"
+              className="btn-base btn-md btn-primary hidden items-center justify-center text-sm lg:inline-flex md:text-base"
+            >
+              {lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}
+              <DirectionArrow size={20} />
+            </Link>
+
+            <Link
+              href="/services"
+              className="btn-base btn-md btn-hero-outline inline-flex w-full items-center justify-center border-white/45 bg-brand-950/20 text-sm shadow-lg backdrop-blur-sm hover:border-white hover:bg-white/15 sm:w-auto md:text-base"
+            >
+              {lang === "ar" ? hero.secondaryCtaAr : hero.secondaryCtaEn}
+              <DirectionArrow size={20} />
+            </Link>
+          </div>
 
           <HeroStats stats={hero.stats} lang={lang} />
         </div>
