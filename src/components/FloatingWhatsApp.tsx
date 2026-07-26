@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { whatsappLink } from "@/config/site";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 /* =========================================================================
    FloatingWhatsApp — the site's ONLY WhatsApp float
@@ -15,6 +15,7 @@ import { whatsappLink } from "@/config/site";
 
 export default function FloatingWhatsApp() {
   const { lang } = useLanguage();
+  const { contact, social } = useSiteSettings();
 
   const handleClick = () => {
     fetch("/api/track/whatsapp", { method: "POST" }).catch(() => {});
@@ -24,7 +25,9 @@ export default function FloatingWhatsApp() {
         ? "السلام عليكم، أريد الاستفسار عن خدماتكم"
         : "Hello, I'd like to inquire about your services";
 
-    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+    const base = social.whatsapp || `https://wa.me/${contact.phone}`;
+    const separator = base.includes("?") ? "&" : "?";
+    window.open(`${base}${separator}text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 
   return (

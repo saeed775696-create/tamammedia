@@ -2,6 +2,15 @@
 
 import { createContext, ReactNode, useState, useEffect, useCallback } from "react"
 
+function getInitialDarkMode() {
+  if (typeof window === "undefined") return false
+
+  const storedTheme = localStorage.getItem("dashboardTheme")
+  if (storedTheme === "dark") return true
+  if (storedTheme === "light") return false
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false
+}
+
 interface DashboardContextProps {
   isDarkMode: boolean
   toggleDarkMode: () => void
@@ -15,21 +24,9 @@ interface DashboardContextProps {
 export const DashboardContext = createContext<DashboardContextProps | undefined>(undefined)
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-
-  useEffect(() => {
-    // Check local storage for user preference on mount
-    const storedTheme = localStorage.getItem("dashboardTheme")
-    if (storedTheme === "dark") {
-      setIsDarkMode(true)
-    } else if (storedTheme === "light") {
-      setIsDarkMode(false)
-    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setIsDarkMode(true)
-    }
-  }, [])
 
   useEffect(() => {
     // Apply theme to document

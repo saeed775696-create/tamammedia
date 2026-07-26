@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { BaseService } from '@/lib/services/base.service';
-import { parsePaginationParams, ApiResponseHandler, requireAdmin } from '@/lib/api';
+import { parsePaginationParams, ApiResponseHandler, requireEditor } from '@/lib/api';
 
 /**
  * توليد معالجي GET و POST للمجموعة (collection)
@@ -24,7 +24,7 @@ export function createCollectionRoutes<T, TCreate extends Record<string, unknown
     },
 
     async POST(req: NextRequest) {
-      const guard = await requireAdmin();
+      const guard = await requireEditor();
       if (guard) return guard;
 
       return ApiResponseHandler.handle(req, async () => {
@@ -66,7 +66,7 @@ export function createSingleRoutes<T, TUpdate extends Record<string, unknown>>(
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> }
     ) {
-      const guard = await requireAdmin();
+      const guard = await requireEditor();
       if (guard) return guard;
 
       return ApiResponseHandler.handle(req, async () => {
@@ -85,7 +85,7 @@ export function createSingleRoutes<T, TUpdate extends Record<string, unknown>>(
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> }
     ) {
-      const guard = await requireAdmin();
+      const guard = await requireEditor();
       if (guard) return guard;
 
       return ApiResponseHandler.handle(req, async () => {

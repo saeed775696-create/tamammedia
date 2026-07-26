@@ -13,35 +13,49 @@ import {
   MessageSquare,
   Briefcase,
   Users,
+  Settings,
+  UserRoundCog,
+  KeyRound,
   LogOut,
   X,
 } from "lucide-react"
 
-const links = [
-  { href: "/dashboard", label: "نظرة عامة", icon: LayoutDashboard },
-  { href: "/dashboard/portfolio", label: "الأعمال", icon: FolderOpen },
-  { href: "/dashboard/services", label: "الخدمات", icon: Wrench },
-  { href: "/dashboard/team", label: "الفريق", icon: Users },
-  { href: "/dashboard/partners", label: "الشركاء", icon: Briefcase },
+type DashboardRole = "admin" | "editor"
+
+const links: { href: string; label: string; icon: typeof LayoutDashboard; roles: DashboardRole[]; badgeKey?: "contacts" }[] = [
+  { href: "/dashboard", label: "نظرة عامة", icon: LayoutDashboard, roles: ["admin", "editor"] },
+  { href: "/dashboard/portfolio", label: "الأعمال", icon: FolderOpen, roles: ["admin", "editor"] },
+  { href: "/dashboard/services", label: "الخدمات", icon: Wrench, roles: ["admin", "editor"] },
+  { href: "/dashboard/team", label: "الفريق", icon: Users, roles: ["admin", "editor"] },
+  { href: "/dashboard/partners", label: "الشركاء", icon: Briefcase, roles: ["admin", "editor"] },
+  { href: "/dashboard/settings", label: "إعدادات الموقع", icon: Settings, roles: ["admin"] },
+  { href: "/dashboard/users", label: "المستخدمون والصلاحيات", icon: UserRoundCog, roles: ["admin"] },
+  { href: "/dashboard/account", label: "حسابي وأمان", icon: KeyRound, roles: ["admin", "editor"] },
   {
     href: "/dashboard/contacts",
     label: "الرسائل",
     icon: MessageSquare,
+    roles: ["admin"],
     badgeKey: "contacts",
   },
-] as const
+]
 
-export default function DashboardNav() {
+const noop = () => {}
+
+export default function DashboardNav({ role }: { role: string }) {
   const pathname = usePathname()
   const [contactsCount, setContactsCount] = useState(0)
   const [loggingOut, setLoggingOut] = useState(false)
   const dashboardContext = useContext(DashboardContext)
   const isSidebarCollapsed = dashboardContext?.isSidebarCollapsed ?? false
   const mobileOpen = dashboardContext?.isMobileSidebarOpen ?? false
-  const closeMobileSidebar = dashboardContext?.closeMobileSidebar ?? (() => {})
+  const closeMobileSidebar = dashboardContext?.closeMobileSidebar ?? noop
+  const isAdmin = role === "admin"
+  const visibleLinks = links.filter((link) => link.roles.includes(role as DashboardRole))
 
   // Fetch unread contacts count periodically
   useEffect(() => {
+    if (!isAdmin) return
     const fetchCount = async () => {
       try {
         const res = await fetch("/api/contacts")
@@ -62,12 +76,55 @@ export default function DashboardNav() {
     fetchCount()
     const interval = setInterval(fetchCount, 60_000)
     return () => clearInterval(interval)
-  }, [pathname])
+  }, [pathname, isAdmin])
 
   useEffect(() => {
     closeMobileSidebar()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
+
+  useEffect(() => {
+    let active = true
+    const checkAccount = async () => {
+      try {
+        const response = await fetch("/api/account/session", { cache: "no-store" })
+        const payload = await response.json().catch(() => null)
+        if (!active) return
+        if (!response.ok) {
+          await signOut({ callbackUrl: "/login?error=access-revoked" })
+          return
+        }
+        if (payload?.data?.mustChangePassword) {
+          await signOut({ callbackUrl: "/login?passwordReset=1" })
+        }
+      } catch {
+        // A network failure should not sign a legitimate user out.
+      }
+    }
+    void checkAccount()
+    const interval = window.setInterval(() => void checkAccount(), 30_000)
+    return () => {
+      active = false
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMobileSidebar()
+    }
+
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", onKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [mobileOpen, closeMobileSidebar])
 
   const handleSignOut = async () => {
     if (loggingOut) return
@@ -76,7 +133,7 @@ export default function DashboardNav() {
   }
 
   const renderSidebar = (collapsed: boolean) => (
-    <div className="flex h-full flex-col bg-brand-950 text-white transition-all duration-300 relative overflow-hidden">
+    <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-950 text-white transition-all duration-300">
       {/* Subtle glowing orb in background */}
       <div className="absolute top-0 start-0 w-full h-64 bg-gradient-to-b from-brand-800/20 to-transparent pointer-events-none" />
       {/* Brand Section */}
@@ -99,8 +156,8 @@ export default function DashboardNav() {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 space-y-2 overflow-y-auto px-6 py-4 custom-scrollbar">
-        {links.map((link) => {
+      <nav className="custom-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain px-6 py-4">
+        {visibleLinks.map((link) => {
           const isActive = pathname === link.href || pathname?.startsWith(link.href + "/") && link.href !== "/dashboard"
           const badge = "badgeKey" in link && link.badgeKey === "contacts" && contactsCount > 0 ? contactsCount : null
           const Icon = link.icon
@@ -199,7 +256,12 @@ export default function DashboardNav() {
             onClick={() => closeMobileSidebar()}
           />
 
-          <aside className="relative h-full w-[280px] max-w-[85vw] bg-brand-950 shadow-2xl animate-slide-right flex flex-col">
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="قائمة لوحة التحكم"
+            className="relative flex h-[100dvh] min-h-0 w-[280px] max-w-[85vw] flex-col overflow-hidden bg-brand-950 shadow-2xl animate-slide-right"
+          >
             <button
               onClick={() => closeMobileSidebar()}
               aria-label="إغلاق القائمة"
@@ -207,7 +269,7 @@ export default function DashboardNav() {
             >
               <X size={20} />
             </button>
-            <div className="h-full w-full overflow-hidden">
+            <div className="h-full min-h-0 w-full overflow-hidden">
                {renderSidebar(false)}
             </div>
           </aside>

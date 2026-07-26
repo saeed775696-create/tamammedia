@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button"
 import { IconButton } from "@/components/ui/IconButton"
 import { Input } from "@/components/ui/Input"
 import ImageUpload from "@/components/dashboard/ImageUpload"
+import { isSafeExternalUrl } from "@/lib/utils"
 
 type Partner = {
   id: string
@@ -51,8 +52,8 @@ export default function PartnersDashboard() {
                 <IconButton variant="secondary" icon={<Edit2 size={14} />} onClick={onEdit} aria-label="تعديل" />
                 <IconButton variant="danger" icon={<Trash2 size={14} />} onClick={onDelete} aria-label="حذف" />
               </div>
-              {partner.website && (
-                <a href={partner.website} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-white bg-white/20 px-3 py-1.5 rounded-lg hover:bg-white/30 transition-colors flex items-center gap-1.5">
+              {isSafeExternalUrl(partner.website) && (
+                <a href={partner.website ?? undefined} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-white bg-white/20 px-3 py-1.5 rounded-lg hover:bg-white/30 transition-colors flex items-center gap-1.5">
                   <ExternalLink size={12} />
                   زيارة الموقع
                 </a>

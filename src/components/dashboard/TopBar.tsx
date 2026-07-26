@@ -15,6 +15,9 @@ const routeNames: Record<string, string> = {
   "/dashboard/team": "الفريق",
   "/dashboard/partners": "الشركاء",
   "/dashboard/contacts": "الرسائل",
+  "/dashboard/settings": "إعدادات الموقع",
+  "/dashboard/users": "المستخدمون والصلاحيات",
+  "/dashboard/account": "حسابي وأمان",
 }
 
 export default function TopBar() {

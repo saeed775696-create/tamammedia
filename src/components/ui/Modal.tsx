@@ -32,33 +32,63 @@ export function Modal({
   className,
   ...props
 }: ModalProps) {
-  const [isRendered, setIsRendered] = React.useState(isOpen)
-
-  React.useEffect(() => {
-    if (isOpen) setIsRendered(true)
-  }, [isOpen])
+  const dialogRef = React.useRef<HTMLDivElement>(null)
+  const titleId = React.useId()
+  const descriptionId = React.useId()
 
   React.useEffect(() => {
     if (!isOpen) return
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const focusableSelector = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',')
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+        return
+      }
+
+      if (e.key !== "Tab" || !dialogRef.current) return
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(focusableSelector)
+      )
+      if (focusable.length === 0) {
+        e.preventDefault()
+        dialogRef.current.focus()
+        return
+      }
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
 
-    document.addEventListener("keydown", handleEscape)
+    document.addEventListener("keydown", handleKeyDown)
     document.body.style.overflow = "hidden"
+    dialogRef.current?.focus()
 
     return () => {
-      document.removeEventListener("keydown", handleEscape)
+      document.removeEventListener("keydown", handleKeyDown)
       document.body.style.overflow = ""
+      previouslyFocused?.focus()
     }
   }, [isOpen, onClose])
 
-  const handleAnimationEnd = () => {
-    if (!isOpen) setIsRendered(false)
-  }
-
-  if (!isRendered) return null
+  if (!isOpen) return null
 
   return (
     <div
@@ -66,10 +96,10 @@ export function Modal({
         "fixed inset-0 z-50 flex items-center justify-center p-3 transition-opacity duration-200",
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
-      onTransitionEnd={handleAnimationEnd}
     >
       {/* Backdrop */}
       <div
+        ref={dialogRef}
         className={cn(
           "fixed inset-0 bg-brand-950/50 backdrop-blur-sm transition-opacity duration-200",
           isOpen ? "opacity-100" : "opacity-0"
@@ -87,6 +117,9 @@ export function Modal({
         )}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
         {...props}
       >
         {/* Header */}
@@ -95,17 +128,18 @@ export function Modal({
           !title && !description && "hidden"
         )}>
           {title && (
-            <h2 className="text-h5 font-bold tracking-tight text-brand-900 pe-6">
+            <h2 id={titleId} className="text-h5 font-bold tracking-tight text-brand-900 pe-6">
               {title}
             </h2>
           )}
           {description && (
-            <p className="text-body-xs text-surface-500 font-medium">{description}</p>
+            <p id={descriptionId} className="text-body-xs text-surface-500 font-medium">{description}</p>
           )}
         </div>
 
         {/* Close Button */}
         <button
+          type="button"
           onClick={onClose}
           className="absolute top-3 end-3 rounded-full p-1.5 bg-surface-50/50 hover:bg-red-50 hover:text-red-500 text-surface-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 z-10"
         >

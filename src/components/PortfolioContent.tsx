@@ -31,7 +31,13 @@ const categoryLabels: Record<string, { en: string; ar: string }> = {
   ecommerce: { en: "E-Commerce", ar: "متجر إلكتروني" },
 };
 
-export default function PortfolioContent({ items }: { items: PortfolioItemData[] }) {
+export default function PortfolioContent({
+  items,
+  showHero = true,
+}: {
+  items: PortfolioItemData[];
+  showHero?: boolean;
+}) {
   const { lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -49,7 +55,7 @@ export default function PortfolioContent({ items }: { items: PortfolioItemData[]
   return (
     <div className="bg-slate-50 min-h-screen">
       {/* ─── Hero Banner ─── */}
-      <PageHero
+      {showHero && <PageHero
         badge={lang === "ar" ? "إبداع يتحدث عن نفسه" : "Creativity Speaks for Itself"}
         title={lang === "ar" ? "معرض أعمالنا" : "Our Portfolio"}
         description={
@@ -61,7 +67,7 @@ export default function PortfolioContent({ items }: { items: PortfolioItemData[]
           { label: lang === "ar" ? "الرئيسية" : "Home", href: "/" },
           { label: lang === "ar" ? "أعمالنا" : "Portfolio" },
         ]}
-      />
+      />}
 
       {/* ─── Portfolio Grid Section ─── */}
       <section className="section-y relative z-10 bg-slate-50">

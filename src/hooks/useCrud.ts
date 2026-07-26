@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect, useCallback } from "react"
 import toast from "react-hot-toast"
 
@@ -5,6 +7,8 @@ export interface CrudOptions {
   endpoint: string
   itemName: string
   onSuccess?: () => void
+  /** عدد العناصر لكل صفحة (0 = جلب الكل) */
+  pageSize?: number
 }
 
 export function useCrud<T extends { id: string | number }>(options: CrudOptions) {
@@ -12,7 +16,9 @@ export function useCrud<T extends { id: string | number }>(options: CrudOptions)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editItem, setEditItem] = useState<T | null>(null)
@@ -21,12 +27,23 @@ export function useCrud<T extends { id: string | number }>(options: CrudOptions)
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
-      const res = await fetch(options.endpoint)
+      const pageSize = options.pageSize ?? 0
+      const url = pageSize > 0
+        ? `${options.endpoint}?page=${currentPage}&limit=${pageSize}`
+        : options.endpoint
+      const res = await fetch(url)
       if (!res.ok) throw new Error(`فشل تحميل ${options.itemName}`)
       const json = await res.json()
       // handle common API response structures
       const items = json.data?.items || json.items || json.data || json
       setData(Array.isArray(items) ? items : [])
+      if (json.meta?.pagination?.total != null) {
+        setTotalItems(json.meta.pagination.total)
+      } else if (json.data?.total != null) {
+        setTotalItems(json.data.total)
+      } else if (json.total != null) {
+        setTotalItems(json.total)
+      }
       setError(null)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "حدث خطأ غير معروف"
@@ -35,10 +52,14 @@ export function useCrud<T extends { id: string | number }>(options: CrudOptions)
     } finally {
       setIsLoading(false)
     }
-  }, [options.endpoint, options.itemName])
+  }, [options.endpoint, options.itemName, options.pageSize, currentPage])
 
   useEffect(() => {
-    fetchData()
+    const frameId = window.requestAnimationFrame(() => {
+      void fetchData()
+    })
+
+    return () => window.cancelAnimationFrame(frameId)
   }, [fetchData])
 
   const createItem = async (formData: FormData | Record<string, unknown>, isJson = false) => {
@@ -126,5 +147,8 @@ export function useCrud<T extends { id: string | number }>(options: CrudOptions)
     createItem,
     updateItem,
     removeItem,
+    currentPage,
+    setCurrentPage,
+    totalItems,
   }
 }

@@ -24,7 +24,7 @@ export default function ImageUpload({ value, onChange, label }: Props) {
     if (!file) return;
 
     // فحص نوع الملف
-    if (!file.type.startsWith("image/")) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       toast.error("يُسمح برفع الصور فقط");
       return;
     }
@@ -96,7 +96,7 @@ export default function ImageUpload({ value, onChange, label }: Props) {
           )}
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             onChange={handleUpload}
             className="hidden"
             disabled={uploading}

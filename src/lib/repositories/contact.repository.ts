@@ -57,7 +57,7 @@ export class PrismaContactRepository implements IContactRepository {
         service: data.service || null,
         message: data.message,
         language: data.language,
-        status: data.status || 'new',
+        status: 'new',
       },
     });
   }

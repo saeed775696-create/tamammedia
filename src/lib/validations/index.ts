@@ -3,3 +3,6 @@ export * from './service.schema';
 export * from './team.schema';
 export * from './partner.schema';
 export * from './contact.schema';
+export * from './url.schema';
+export * from './site-settings.schema';
+export * from './user.schema';

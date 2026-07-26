@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import {
   ChevronDown,
   Menu,
@@ -27,6 +28,7 @@ import {
 
 export default function Navbar() {
   const { lang, setLang } = useLanguage();
+  const { branding, hero } = useSiteSettings();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -66,38 +68,49 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [mobileOpen]);
+
   const toggleLang = () => setLang(lang === "ar" ? "en" : "ar");
   const closeMobile = () => setMobileOpen(false);
   const isActive = (path: string) => pathname === path;
 
   return (
     <nav
-      className={`fixed top-0 start-0 w-full z-[1000] transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-[1000] w-full transition-all duration-500 ${
         scrolled
           ? "bg-white/90 backdrop-blur-xl shadow-[0_4px_24px_rgba(15,23,42,0.08)] border-b border-surface-200/50"
           : "bg-white/70 backdrop-blur-lg border-b border-transparent"
       }`}
     >
-      <div className="container-site">
-        <div className="flex items-center justify-between h-16 md:h-[72px]">
+      <div className="container-site min-w-0">
+        <div className="flex h-16 min-w-0 items-center justify-between md:h-[72px]">
           {/* ── Logo (Start) ── */}
           <Link
             href="/"
-            className="flex items-center gap-3 shrink-0"
+            className="flex shrink-0 items-center gap-3"
             onClick={closeMobile}
           >
             <div className="relative w-10 h-10 md:w-11 md:h-11 bg-white rounded-full shadow-sm flex items-center justify-center p-1">
               <Image
-                src="/imgs/2-3.png"
+                src={branding.logoUrl}
                 width={40}
                 height={40}
                 className="w-full h-auto object-contain"
-                alt="Tamam Media"
+                alt={branding.nameEn}
                 priority
               />
             </div>
             <span className="font-bold text-lg md:text-xl text-brand-900 hidden sm:block">
-              {lang === "ar" ? "تمام ميديا" : "Tamam Media"}
+              {lang === "ar" ? branding.nameAr : branding.nameEn}
             </span>
           </Link>
 
@@ -262,7 +275,7 @@ export default function Navbar() {
               href="/contact"
               className="bg-brand-800 text-white font-bold px-5 py-2.5 rounded-full text-[13px] md:text-sm ms-2 inline-flex items-center gap-1.5 hover:bg-brand-900 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all whitespace-nowrap"
             >
-              {lang === "ar" ? "اطلب خدمة" : "Get a Quote"}
+              {lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}
               <ArrowLeft
                 size={16}
                 className={lang === "ar" ? "" : "rotate-180"}
@@ -272,9 +285,12 @@ export default function Navbar() {
 
           {/* ── Mobile Hamburger Button ── */}
           <button
+            type="button"
             className="block lg:hidden p-2 text-brand-900 bg-slate-100 rounded-full active:scale-90 transition-transform"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -291,8 +307,15 @@ export default function Navbar() {
           />
 
           {/* Slide-in Drawer from logical end */}
-          <div className="fixed top-0 end-0 h-full w-[300px] max-w-[85vw] bg-white z-[999] lg:hidden shadow-2xl overflow-y-auto animate-slide-in-end">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100">
+          <div
+            id="mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation"
+            tabIndex={-1}
+            className="fixed inset-y-0 end-0 z-[999] flex h-[100dvh] max-h-[100dvh] w-[300px] max-w-[85vw] flex-col overflow-hidden bg-white shadow-2xl animate-slide-in-end lg:hidden"
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 p-4">
               <Link
                 href="/"
                 className="flex items-center gap-3"
@@ -300,18 +323,19 @@ export default function Navbar() {
               >
                 <div className="relative w-9 h-9 bg-white rounded-full shadow-sm flex items-center justify-center p-1">
                   <Image
-                    src="/imgs/2-3.png"
+                    src={branding.logoUrl}
                     width={36}
                     height={36}
                     className="w-full h-auto object-contain"
-                    alt="Tamam Media"
+                    alt={branding.nameEn}
                   />
                 </div>
                 <span className="font-bold text-lg text-brand-900">
-                  {lang === "ar" ? "تمام ميديا" : "Tamam Media"}
+                  {lang === "ar" ? branding.nameAr : branding.nameEn}
                 </span>
               </Link>
               <button
+                type="button"
                 onClick={closeMobile}
                 className="p-2 text-slate-500 hover:text-brand-900 rounded-full hover:bg-slate-100 transition-colors"
                 aria-label="Close menu"
@@ -320,7 +344,7 @@ export default function Navbar() {
               </button>
             </div>
 
-            <div className="flex flex-col p-4 gap-1">
+            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain p-4 pb-8">
               <Link
                 href="/"
                 onClick={closeMobile}
@@ -401,6 +425,7 @@ export default function Navbar() {
 
               {/* Language Toggle */}
               <button
+                type="button"
                 onClick={() => {
                   toggleLang();
                   closeMobile();

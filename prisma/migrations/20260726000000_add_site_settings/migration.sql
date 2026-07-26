@@ -1,0 +1,3 @@
+-- The production database already provides `SiteSetting` as a key/value table.
+-- Global content is stored by the application under the `site-content` key,
+-- so no database DDL is required here.

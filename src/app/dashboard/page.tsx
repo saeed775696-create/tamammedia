@@ -19,6 +19,7 @@ import {
 import Link from "next/link"
 import PageHeader from "@/components/dashboard/PageHeader"
 import { Card } from "@/components/ui/Card"
+import { getActiveUser } from "@/lib/api"
 
 const contactRepository = new PrismaContactRepository()
 const portfolioRepository = new PrismaPortfolioRepository()
@@ -26,7 +27,34 @@ const teamRepository = new PrismaTeamRepository()
 const serviceRepository = new PrismaServiceRepository()
 const partnerRepository = new PrismaPartnerRepository()
 
+function EditorDashboard() {
+  const actions = [
+    { label: "إدارة الأعمال", desc: "أضف المشاريع وعدّل معرض الأعمال", href: "/dashboard/portfolio", icon: FolderOpen },
+    { label: "إدارة الخدمات", desc: "حدّث الخدمات التي يقدمها الموقع", href: "/dashboard/services", icon: Wrench },
+    { label: "إدارة الفريق", desc: "حدّث أعضاء فريق العمل", href: "/dashboard/team", icon: Users },
+    { label: "إدارة الشركاء", desc: "حدّث شعارات وروابط الشركاء", href: "/dashboard/partners", icon: Briefcase },
+  ]
+
+  return (
+    <div className="space-y-8 pb-10">
+      <PageHeader title="مساحة التحرير" subtitle="يمكنك إدارة المحتوى المنشور. إعدادات الموقع والرسائل والحسابات متاحة للمدير فقط." />
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {actions.map((action) => (
+          <Link key={action.href} href={action.href} className="group rounded-3xl border border-surface-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 transition group-hover:scale-110"><action.icon size={23} /></div>
+            <h2 className="font-extrabold text-brand-900">{action.label}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-surface-500">{action.desc}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default async function DashboardPage() {
+  const user = await getActiveUser()
+  if (user?.role === "editor") return <EditorDashboard />
+
   const [
     leadsCount,
     newLeadsCount,

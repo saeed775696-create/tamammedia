@@ -1,65 +1,102 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // وضع standalone مخصص لـ Docker/container deployments.
-  // على Vercel لا يؤثر (Vercel يتعامل مع البناء بنفسه).
-  output: "standalone",
+const configuredImageHosts = (process.env.NEXT_IMAGE_REMOTE_HOSTS || "")
+  .split(",")
+  .map((host) => host.trim().toLowerCase())
+  .filter(Boolean);
 
-  // السماح بتحميل الصور من أي مصدر HTTPS.
-  // ملاحظة: لوحة التحكم تسمح للمسؤول بلصق رابط أي صورة يدويًا
-  // (ImageUpload / الحقول اليدوية في صفحات portfolio, services, team, partners)،
-  // وليس فقط روابط Supabase. حصر remotePatterns على نطاقات معدودة كان يتسبب
-  // بانهيار next/image ("hostname is not configured") في صفحات الأعمال
-  // والخدمات العامة كلما استخدم المسؤول رابط صورة من مصدر خارج القائمة.
+const supabaseImageHost = (() => {
+  try {
+    return process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+      : undefined;
+  } catch {
+    return undefined;
+  }
+})();
+
+// The current homepage uses Unsplash editorial imagery. Additional providers
+// must be explicitly listed in NEXT_IMAGE_REMOTE_HOSTS.
+const remoteImageHosts = [...new Set([
+  supabaseImageHost,
+  "images.unsplash.com",
+  ...configuredImageHosts,
+].filter(Boolean))] as string[];
+
+const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "**" }],
-    // تحسين أداء الصور
+    // Limit server-side image fetching to explicitly trusted hosts.
+    remotePatterns: remoteImageHosts.map((hostname) => ({ protocol: "https", hostname })),
+    dangerouslyAllowSVG: false,
+    contentDispositionType: "attachment",
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // دعم صيغ الصور الحديثة
-    formats: ['image/webp', 'image/avif'],
-    // تحسين التخزين المؤقت للصور
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
-
-  // تحسينات الأداء
   experimental: {
-    // Enable optimized font loading
     optimizeCss: true,
-    // Enable optimized image loading
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ["lucide-react"],
   },
-
-  // رؤوس أمان أساسية
   async headers() {
     return [
       {
-        // رؤوس الأمان تُطبق على كل المسارات (بدون كاش — الصفحات ديناميكية)
         source: "/(.*)",
         headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
+          ...(process.env.NODE_ENV === "production"
+            ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" }]
+            : []),
         ],
       },
+      // `robots.txt` is advisory and must never be the only protection for
+      // sensitive routes. Send an enforceable crawler directive on every
+      // dashboard and authentication response as well.
       {
-        // الكاش الدائم (immutable) يُحصر على ملفات البناء الثابتة فقط
-        // (أسماؤها تحتوي hash فلا تتغير إلا مع بناء جديد)
-        source: "/_next/static/(.*)",
+        source: "/dashboard/:path*",
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
           },
         ],
       },
       {
-        // الصور العامة — كاش طويل لكن قابل لإعادة التحقق
-        // (حتى تظهر الصور المُحدّثة من لوحة التحكم)
+        source: "/login",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
+          },
+        ],
+      },
+      {
+        source: "/forgot-password",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
+          },
+        ],
+      },
+      {
+        source: "/change-password",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet, noimageindex",
+          },
+        ],
+      },
+      {
         source: "/imgs/(.*)",
         headers: [
           {

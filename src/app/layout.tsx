@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Cairo } from "next/font/google";
+import { connection } from "next/server";
+import { headers } from "next/headers";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -16,6 +18,11 @@ import TawkChat from "@/components/TawkChat";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import BackToTop from "@/components/ui/BackToTop";
 import { siteConfig } from "@/config/site";
+import { getSiteSettings } from "@/lib/site-settings.server";
+
+// Global content is administered at runtime, so the layout must not be frozen
+// into the production build before the current settings can be read.
+export const dynamic = "force-dynamic";
 
 /* =========================================================
    التحسينات المطبّقة:
@@ -105,25 +112,37 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Content comes from the dashboard and must be rendered per request rather
+  // than captured as a static fallback during the production build.
+  await connection();
+  const nonce = (await headers()).get("x-nonce") || undefined;
+  const settings = await getSiteSettings();
+
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
-        className={`${cairo.className} antialiased min-h-screen flex flex-col overflow-x-hidden bg-surface-50 text-brand-900`}
+        className={`${cairo.className} antialiased min-h-screen flex flex-col bg-surface-50 text-brand-900`}
       >
-        <Providers>
+        <a
+          href="#main-content"
+          className="sr-only fixed start-4 top-4 z-[1100] rounded-lg bg-brand-900 px-4 py-2 font-bold text-white shadow-lg focus:not-sr-only focus:outline-none focus:ring-4 focus:ring-accent-400"
+        >
+          الانتقال إلى المحتوى
+        </a>
+        <Providers settings={settings}>
           <ClientScripts />
           <ScrollProgress />
           <LayoutHeader />
-          <main className="flex-grow">{children}</main>
+          <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
           <LayoutFooter />
           <BackToTop />
-          <StructuredData />
-          <TawkChat />
+          <StructuredData nonce={nonce} />
+          <TawkChat nonce={nonce} />
         </Providers>
       </body>
     </html>

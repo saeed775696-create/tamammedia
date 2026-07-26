@@ -1,9 +1,10 @@
 import { z } from 'zod';
+import { externalUrlSchema, imageUrlSchema } from './url.schema';
 
 export const createPartnerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  imageUrl: z.string().min(1, 'Image URL is required'),
-  website: z.string().url().optional().nullable().or(z.literal('')),
+  imageUrl: imageUrlSchema,
+  website: externalUrlSchema.optional().nullable().or(z.literal('')),
   order: z.coerce.number().int().default(0),
 });
 

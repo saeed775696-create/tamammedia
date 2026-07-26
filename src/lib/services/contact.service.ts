@@ -18,7 +18,7 @@ export class ContactService extends BaseService<Record<string, unknown>, CreateC
   }
 
   async submitContact(data: CreateContactInput) {
-    logger.info('Creating contact submission', { email: data.email });
+    logger.info('Creating contact submission');
     // Additional logic like sending an email notification can go here
     return this.repository.create(data as unknown as Record<string, unknown>);
   }

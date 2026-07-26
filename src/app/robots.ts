@@ -6,7 +6,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/dashboard/", "/login"],
+      // Administrative and authentication routes must never be discovered from
+      // crawl directives. Authentication still protects these routes; robots is
+      // an additional discovery-control layer, not an access-control mechanism.
+      disallow: [
+        "/api/",
+        "/dashboard/",
+        "/login",
+        "/forgot-password",
+        "/change-password",
+      ],
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
   };

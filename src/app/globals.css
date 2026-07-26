@@ -382,7 +382,10 @@
 
 /* ─── Site Layout (unified container + rhythm) ─── */
 @utility container-site {
-  @apply mx-auto max-w-7xl px-5 sm:px-6 lg:px-8;
+  max-width: var(--container-7xl);
+  margin-left: max(0px, calc((100% - var(--container-7xl)) / 2));
+  margin-right: max(0px, calc((100% - var(--container-7xl)) / 2));
+  @apply px-4 sm:px-6 lg:px-8;
 }
 
 @utility section-y {
@@ -437,41 +440,35 @@
    animation: marquee 30s linear infinite;
 }
 
-/* ============================================================
-   Global Base Reset
-   ============================================================ */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@layer base {
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 5.5rem;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  body {
+    overflow-x: clip;
+    font-family: var(--font-cairo), 'Cairo', 'Tajawal', sans-serif;
+    color: var(--color-brand-900);
+    line-height: 1.75;
+    background: var(--color-surface-50);
+    font-size: 1rem;
+    /* No global letter-spacing: harmful for Arabic script legibility */
+  }
+
+  img { max-width: 100%; height: auto; display: block; }
+  a { text-decoration: none; color: inherit; transition: all var(--transition-base); }
+  ul { list-style: none; }
 }
 
 /* Use dvh for better mobile viewport handling */
 @utility min-h-screen {
   min-height: 100dvh;
 }
-
-body {
-  font-family: var(--font-cairo), 'Cairo', 'Tajawal', sans-serif;
-  color: var(--color-brand-900);
-  line-height: 1.75;
-  overflow-x: hidden;
-  background: var(--color-surface-50);
-  font-size: 1rem;
-  /* No global letter-spacing: harmful for Arabic script legibility */
-}
-
-img { max-width: 100%; height: auto; display: block; }
-a { text-decoration: none; color: inherit; transition: all var(--transition-base); }
-ul { list-style: none; }
 
 /* ============================================================
    Accessibility: Reduced Motion

@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
  * ملاحظة: تم إزالة aggregateRating الوهمي لأن Google تعاقب على التقييمات
  * غير الموثقة بخفض الترتيب.
  */
-export default function StructuredData() {
+export default function StructuredData({ nonce }: { nonce?: string }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -42,6 +42,7 @@ export default function StructuredData() {
   return (
     <script
       type="application/ld+json"
+      nonce={nonce}
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
   );

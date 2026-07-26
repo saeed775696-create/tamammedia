@@ -2,6 +2,7 @@ import { PrismaPortfolioRepository } from "@/lib/repositories/portfolio.reposito
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { isSafeExternalUrl } from "@/lib/utils";
 
 const portfolioRepository = new PrismaPortfolioRepository();
 
@@ -31,6 +32,8 @@ export default async function ProjectDetailPage({
 
   const gallery = parseGallery(project.gallery);
   const technologies = parseGallery(project.technologies);
+  const safeVideoUrl = isSafeExternalUrl(project.videoUrl) ? project.videoUrl : null;
+  const safeProjectLink = isSafeExternalUrl(project.link) ? project.link : null;
 
   return (
     <div className="bg-surface-50 min-h-screen">
@@ -110,14 +113,16 @@ export default async function ProjectDetailPage({
           )}
 
           {/* فيديو */}
-          {project.videoUrl && (
+          {safeVideoUrl && (
             <div className="mb-12">
               <h2 className="text-h3 text-brand-900 mb-6">فيديو المشروع</h2>
               <div className="relative aspect-media rounded-2xl overflow-hidden shadow-md border border-surface-200/60">
                 <iframe
-                  src={project.videoUrl}
+                  src={safeVideoUrl}
                   className="absolute inset-0 w-full h-full"
                   allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   title="فيديو المشروع"
                 />
               </div>
@@ -126,9 +131,9 @@ export default async function ProjectDetailPage({
 
           {/* أزرار الإجراء */}
           <div className="flex flex-wrap gap-4 pt-4">
-            {project.link && (
+            {safeProjectLink && (
               <a
-                href={project.link}
+                href={safeProjectLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-md btn-primary inline-flex"

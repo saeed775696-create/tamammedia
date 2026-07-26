@@ -85,11 +85,75 @@ model WhatsAppClick {
 }
 
 model User {
-  id       String @id @default(cuid())
-  email    String @unique
-  name     String?
-  password String
-  role     String @default("admin")
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  name                  String?
+  password              String
+  role                  String    @default("admin")
+  isActive              Boolean   @default(true)
+  mustChangePassword    Boolean   @default(false)
+  sessionVersion        Int       @default(0)
+  lastLoginAt           DateTime?
+  passwordChangedAt     DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+
+  @@index([role, isActive])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorId      String
+  targetUserId String?
+  action       String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([actorId])
+  @@index([targetUserId])
+  @@index([createdAt])
+}
+
+model PasswordResetCode {
+  id        String   @id @default(cuid())
+  userId    String
+  email     String
+  codeHash  String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([email, createdAt])
+  @@index([expiresAt])
+}
+
+// Shared fixed-window counters. The application hashes every logical key before
+// storing it, so IP addresses and email addresses never appear in this table.
+model RateLimitBucket {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
+
+model EmailChangeCode {
+  id           String   @id @default(cuid())
+  userId       String
+  currentEmail String
+  newEmail     String
+  codeHash     String
+  attempts     Int      @default(0)
+  expiresAt    DateTime
+  consumedAt   DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([newEmail, createdAt])
+  @@index([expiresAt])
 }
 
 model Partner {
@@ -115,4 +179,17 @@ model TeamMember {
   updatedAt DateTime @updatedAt
 
   @@index([order])
+}
+
+// This table already exists in production and stores key/value configuration.
+// Global content is stored under the `site-content` key as a JSON document.
+model SiteSetting {
+  id        String   @id
+  key       String   @unique
+  value     String?
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([category])
 }

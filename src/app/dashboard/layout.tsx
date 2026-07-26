@@ -1,25 +1,38 @@
-import { getServerSession } from "next-auth";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+import { getActiveUser } from "@/lib/api";
 import DashboardNav from "@/components/dashboard/DashboardNav";
 import TopBar from "@/components/dashboard/TopBar";
 import { DashboardProvider } from "@/app/dashboard/DashboardProvider";
 import { Toaster } from "react-hot-toast";
+
+// Dashboard data and the authenticated session are always request-specific.
+export const dynamic = "force-dynamic";
+
+// This is defense in depth alongside the HTTP header in next.config.ts. The
+// dashboard must remain out of search results even if a crawler reaches it.
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const user = await getActiveUser();
 
-  if (!session) redirect("/login");
-  if (session.user.role !== "admin") redirect("/login?error=forbidden");
+  if (!user) redirect("/login?error=access-revoked");
+  if (user.mustChangePassword) redirect("/change-password");
 
   return (
     <DashboardProvider>
       <div className="flex h-screen bg-brand-950 text-brand-900 font-sans selection:bg-accent-500/20 selection:text-accent-500 overflow-hidden">
-        <DashboardNav />
+        <DashboardNav role={user.role} />
         <div className="flex-1 flex flex-col min-w-0 lg:p-4 transition-all duration-300 h-screen">
           <div className="flex-1 flex flex-col bg-surface-50 lg:rounded-[2.5rem] overflow-y-auto overflow-x-hidden relative shadow-2xl border border-white/10 ring-1 ring-black/5">
             <TopBar />

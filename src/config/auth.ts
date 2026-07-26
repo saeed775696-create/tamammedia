@@ -17,6 +17,12 @@ const parsed = envSchema.safeParse({
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 });
 
+if (!parsed.success && process.env.NODE_ENV === 'production') {
+  throw new Error(
+    'NEXTAUTH_SECRET must be configured in production. Generate one with: openssl rand -base64 32'
+  );
+}
+
 if (!parsed.success && process.env.NODE_ENV === 'development') {
   console.warn(
     '⚠️  NEXTAUTH_SECRET غير مضبوط. استخدم: openssl rand -base64 32'

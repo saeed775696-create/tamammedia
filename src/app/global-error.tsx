@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, AlertTriangle } from "lucide-react";
 
 /**
  * صفحة 500 — تُعرض عند فشل الـ server-side rendering
@@ -9,9 +9,16 @@ import { Home } from "lucide-react";
 export default function GlobalError() {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>خطأ في الخادم — تمام ميديا</title>
+      </head>
       <body className="min-h-screen flex items-center justify-center bg-surface-50 p-6">
         <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center">
-          <div className="text-6xl mb-4">⚠️</div>
+          <div className="w-20 h-20 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-500 mb-5">
+            <AlertTriangle size={40} />
+          </div>
           <h1 className="text-2xl font-bold text-brand-900 mb-2">
             خطأ في الخادم
           </h1>

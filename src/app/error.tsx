@@ -4,10 +4,6 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { RefreshCw, Home, AlertTriangle } from "lucide-react";
 
-/**
- * Error boundary — يلتقط أي خطأ في الـ client components
- * ويعرض صفحة خطأ ودية بدلاً من الشاشة البيضاء.
- */
 export default function Error({
   error,
   reset,
@@ -16,8 +12,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // تسجيل الخطأ (يمكن إرساله إلى Sentry لاحقًا)
-    console.error("Dashboard error:", error);
+    console.error("[Client Error]:", error);
   }, [error]);
 
   return (

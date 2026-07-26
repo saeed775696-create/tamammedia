@@ -4,8 +4,10 @@ import Hero from "@/components/Hero";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { ArrowRight, Sparkles, Users } from "lucide-react";
 import DirectionArrow from "@/components/DirectionArrow";
+import { isSafeExternalUrl } from "@/lib/utils";
 
 /* =========================================================================
    HomeContent — Refined UI/UX Overhaul
@@ -37,17 +39,19 @@ export interface HomePartner {
 interface HomeContentProps {
   team: HomeTeamMember[];
   partners: HomePartner[];
+  includeHero?: boolean;
 }
 
-export default function HomeContent({ team, partners }: HomeContentProps) {
+export default function HomeContent({ team, partners, includeHero = true }: HomeContentProps) {
   const { lang } = useLanguage();
+  const { homeAbout } = useSiteSettings();
 
   return (
     <>
       {/* =================================================================
           HERO
           ================================================================= */}
-      <Hero />
+      {includeHero && <Hero />}
 
       {/* =================================================================
           SERVICES — Generous Grid (1→2→3 columns)
@@ -284,20 +288,13 @@ export default function HomeContent({ team, partners }: HomeContentProps) {
             <div className="relative z-10">
               <div className="section-eyebrow mb-6">
                 <Users size={16} className="text-accent-500" />
-                {lang === "ar" ? "من نحن" : "About Us"}
+                {lang === "ar" ? homeAbout.eyebrowAr : homeAbout.eyebrowEn}
               </div>
               <h2 className="text-h1 text-brand-900 mb-6 leading-tight">
-                {lang === "ar"
-                  ? "شريكك الاستراتيجي في"
-                  : "Your Strategic Partner in"}{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-accent-500 to-accent-400">
-                  {lang === "ar" ? "النمو الرقمي" : "Digital Growth"}
-                </span>
+                {lang === "ar" ? homeAbout.titleAr : homeAbout.titleEn}
               </h2>
               <p className="text-body-lg text-surface-600 leading-loose mb-8 max-w-prose">
-                {lang === "ar"
-                  ? "تمام ميديا هي وكالة تسويق رقمي متكاملة، نجمع بين الإبداع الفني والخبرة التقنية لنقدم حلولاً مبتكرة تصنع الفارق الحقيقي لعلامتك التجارية في السوق."
-                  : "Tamam Media is an integrated digital marketing agency. We combine artistic creativity with technical expertise to deliver innovative solutions that make a real difference for your brand."}
+                {lang === "ar" ? homeAbout.descriptionAr : homeAbout.descriptionEn}
               </p>
 
               {/* Checkmark List — more spacing */}
@@ -461,7 +458,7 @@ export default function HomeContent({ team, partners }: HomeContentProps) {
               {lang === "ar" ? "لا يوجد شركاء بعد." : "No partners yet."}
             </p>
           ) : (
-            <div className="relative w-full overflow-hidden py-4" dir="ltr">
+            <div className="relative w-full overflow-hidden py-4" dir="ltr" style={{ overflowX: 'hidden', overflowY: 'visible' }}>
               {/* Fade edges — softer */}
               <div className="absolute inset-y-0 start-0 w-12 sm:w-20 md:w-36 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
               <div className="absolute inset-y-0 end-0 w-12 sm:w-20 md:w-36 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
@@ -472,9 +469,10 @@ export default function HomeContent({ team, partners }: HomeContentProps) {
                   (partner, index) => (
                     <a
                       key={`${partner.id}-${index}`}
-                      href={partner.website || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={isSafeExternalUrl(partner.website) ? partner.website : undefined}
+                      target={isSafeExternalUrl(partner.website) ? "_blank" : undefined}
+                      rel={isSafeExternalUrl(partner.website) ? "noopener noreferrer" : undefined}
+                      aria-label={partner.website ? `Visit ${partner.name}` : partner.name}
                       className="group flex items-center justify-center w-32 sm:w-36 md:w-44 h-16 sm:h-20 md:h-24 me-8 md:me-14 bg-white rounded-xl shadow-sm border border-surface-100 hover:shadow-md hover:-translate-y-1 hover:border-brand-200 transition-all duration-300 shrink-0 p-4"
                     >
                       <div className="relative w-full h-full">

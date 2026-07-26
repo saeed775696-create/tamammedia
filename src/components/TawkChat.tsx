@@ -2,11 +2,12 @@
 
 import Script from "next/script";
 
-export default function TawkChat() {
+export default function TawkChat({ nonce }: { nonce?: string }) {
   return (
     <Script
       id="tawk-chat"
       strategy="afterInteractive"
+      nonce={nonce}
       dangerouslySetInnerHTML={{
         __html: `
           var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();

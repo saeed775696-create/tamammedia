@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { translations, Lang } from "@/i18n/translations";
 
 type LangContextType = {
@@ -11,17 +11,29 @@ type LangContextType = {
 
 const LanguageContext = createContext<LangContextType | null>(null);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Lang>("ar");
+function getStoredLanguage(): Lang {
+  if (typeof window === "undefined") return "ar";
+  const saved = localStorage.getItem("lang");
+  return saved === "ar" || saved === "en" ? saved : "ar";
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem("lang");
-    if (saved === "ar" || saved === "en") {
-      setLang(saved);
-    } else {
-      localStorage.setItem("lang", "ar");
-    }
-  }, []);
+function subscribeToLanguage(callback: () => void) {
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === "lang") callback();
+  };
+
+  window.addEventListener("storage", handleStorage);
+  return () => window.removeEventListener("storage", handleStorage);
+}
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const storedLang = useSyncExternalStore<Lang>(
+    subscribeToLanguage,
+    getStoredLanguage,
+    () => "ar"
+  );
+  const [selectedLang, setSelectedLang] = useState<Lang | null>(null);
+  const lang = selectedLang ?? storedLang;
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -30,7 +42,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [lang]);
 
   const changeLang = (l: Lang) => {
-    setLang(l);
+    setSelectedLang(l);
     localStorage.setItem("lang", l);
   };
 

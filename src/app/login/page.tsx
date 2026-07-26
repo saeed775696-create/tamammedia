@@ -19,8 +19,12 @@ function LoginForm() {
   const [error, setError] = useState(
     errorParam === "forbidden"
       ? "ليس لديك صلاحية الوصول للوحة التحكم"
-      : ""
+      : errorParam === "access-revoked"
+        ? "تم إيقاف وصول هذا الحساب. راجع مدير النظام."
+        : ""
   );
+  const passwordChanged = searchParams.get("passwordChanged") === "1";
+  const passwordReset = searchParams.get("passwordReset") === "1";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,6 +134,12 @@ function LoginForm() {
                 <p className="text-red-700 text-sm font-bold leading-relaxed">{error}</p>
               </div>
             )}
+            {(passwordChanged || passwordReset) && !error && (
+              <div className="mb-8 flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                <ShieldAlert size={20} className="mt-0.5 shrink-0 text-emerald-600" />
+                <p className="text-sm font-bold leading-relaxed text-emerald-700">{passwordChanged ? "تم تغيير كلمة المرور بنجاح. سجّل الدخول بكلمة المرور الجديدة." : "تمت إعادة تعيين كلمة المرور من قبل المدير. استخدم كلمة المرور المؤقتة الجديدة."}</p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-3">
@@ -167,6 +177,9 @@ function LoginForm() {
                   >
                     كلمة المرور
                   </label>
+                  <Link href="/forgot-password" className="text-xs font-bold text-accent-600 hover:text-accent-800">
+                    نسيت كلمة المرور؟
+                  </Link>
                 </div>
                 <div className="relative group">
                   <Lock

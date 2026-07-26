@@ -2,6 +2,8 @@
 
 import { SessionProvider } from "next-auth/react";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
+import type { SiteSettings } from "@/types/site-settings";
 
 /**
  * يجمع كل الـ context providers في مكان واحد.
@@ -13,10 +15,18 @@ import { LanguageProvider } from "@/context/LanguageContext";
  * LanguageProvider مطلوب لـ:
  * - useLanguage() في كل الصفحات العامة
  */
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  settings,
+  children,
+}: {
+  settings: SiteSettings;
+  children: React.ReactNode;
+}) {
   return (
     <SessionProvider>
-      <LanguageProvider>{children}</LanguageProvider>
+      <SiteSettingsProvider settings={settings}>
+        <LanguageProvider>{children}</LanguageProvider>
+      </SiteSettingsProvider>
     </SessionProvider>
   );
 }

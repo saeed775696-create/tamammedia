@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import {
   ChevronDown,
   MapPin,
@@ -27,6 +27,7 @@ import {
 
 export default function Footer() {
   const { lang } = useLanguage();
+  const { branding, contact, social, footer } = useSiteSettings();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   const toggleSection = (section: string) => {
@@ -53,36 +54,32 @@ export default function Footer() {
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 shrink-0">
                 <Image
-                  src="/imgs/2-3.png"
+                  src={branding.logoUrl}
                   width={40}
                   height={40}
                   className="w-full h-auto object-contain"
-                  alt="Tamam Media"
+                  alt={branding.nameEn}
                 />
               </div>
               <div className="min-w-0">
                 <h3 className="text-lg sm:text-xl font-bold text-white truncate">
-                  {lang === "ar" ? "تمام ميديا" : "Tamam Media"}
+                  {lang === "ar" ? branding.nameAr : branding.nameEn}
                 </h3>
                 <p className="text-[11px] sm:text-xs text-white/50 tracking-wide">
-                  {lang === "ar"
-                    ? "حلول رقمية متكاملة"
-                    : "Integrated Digital Solutions"}
+                  {lang === "ar" ? branding.taglineAr : branding.taglineEn}
                 </p>
               </div>
             </div>
 
             {/* Description */}
             <p className="text-white/60 leading-relaxed text-sm sm:text-[15px] max-w-lg">
-              {lang === "ar"
-                ? "شركة يمنية متخصصة في الحلول الرقمية والتسويقية المتكاملة. نقدم خدمات إبداعية وتقنية تساعد عملاءنا على النمو والتميز في العالم الرقمي."
-                : "A Yemeni company specialized in integrated digital and marketing solutions. We provide creative and technical services that help our clients grow and excel in the digital world."}
+              {lang === "ar" ? footer.descriptionAr : footer.descriptionEn}
             </p>
 
             {/* Social Links */}
             <div className="flex flex-wrap gap-3">
               <a
-                href={siteConfig.social.facebook}
+                href={social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Facebook"
@@ -99,7 +96,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href={siteConfig.social.instagram}
+                href={social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Instagram"
@@ -116,7 +113,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href={siteConfig.social.linkedin}
+                href={social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="LinkedIn"
@@ -133,7 +130,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href={siteConfig.social.whatsapp}
+                href={social.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="WhatsApp"
@@ -157,7 +154,7 @@ export default function Footer() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-5">
               {/* Email — items-start for proper icon/text alignment */}
               <a
-                href={`mailto:${siteConfig.email}`}
+                href={`mailto:${contact.email}`}
                 className="flex items-start gap-3 sm:gap-4 group"
               >
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-white transition-all duration-300 shrink-0 mt-0.5">
@@ -171,14 +168,14 @@ export default function Footer() {
                     className="text-xs sm:text-sm text-white/80 group-hover:text-white transition-colors truncate"
                     dir="ltr"
                   >
-                    {siteConfig.email}
+                    {contact.email}
                   </p>
                 </div>
               </a>
 
               {/* Phone — items-start for proper icon/text alignment */}
               <a
-                href={`tel:+${siteConfig.phone}`}
+                href={`tel:+${contact.phone}`}
                 className="flex items-start gap-3 sm:gap-4 group"
               >
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-white transition-all duration-300 shrink-0 mt-0.5">
@@ -192,7 +189,7 @@ export default function Footer() {
                     className="text-xs sm:text-sm text-white/80 group-hover:text-white transition-colors truncate"
                     dir="ltr"
                   >
-                    {siteConfig.phoneDisplay}
+                    {contact.phoneDisplay}
                   </p>
                 </div>
               </a>
@@ -207,9 +204,7 @@ export default function Footer() {
                     {lang === "ar" ? "الموقع" : "Location"}
                   </p>
                   <p className="text-xs sm:text-sm text-white/80 truncate">
-                    {lang === "ar"
-                      ? siteConfig.location.ar
-                      : siteConfig.location.en}
+                    {lang === "ar" ? contact.locationAr : contact.locationEn}
                   </p>
                 </div>
               </div>
@@ -224,9 +219,7 @@ export default function Footer() {
                     {lang === "ar" ? "ساعات العمل" : "Working Hours"}
                   </p>
                   <p className="text-xs sm:text-sm text-white/80 truncate">
-                    {lang === "ar"
-                      ? "الأحد - الخميس: ٩ ص - ٦ م"
-                      : "Sun - Thu: 9 AM - 6 PM"}
+                    {lang === "ar" ? contact.workingHoursAr : contact.workingHoursEn}
                   </p>
                 </div>
               </div>
@@ -486,7 +479,7 @@ export default function Footer() {
           <p className="text-center sm:text-start">
             © {new Date().getFullYear()}{" "}
             <span className="text-white/60 font-medium">
-              {lang === "ar" ? "تمام ميديا | Tamam Media" : "Tamam Media"}
+              {lang === "ar" ? `${branding.nameAr} | ${branding.nameEn}` : branding.nameEn}
             </span>{" "}
             - {lang === "ar" ? "جميع الحقوق محفوظة" : "All rights reserved"}
           </p>
@@ -495,16 +488,16 @@ export default function Footer() {
               {lang === "ar" ? "تصميم وتطوير" : "Designed by"}
             </span>
             <span className="text-accent-500 font-semibold">
-              {siteConfig.designerName}
+              {footer.designerName}
             </span>
             <span className="hidden sm:inline">|</span>
             <a
-              href={`tel:+${siteConfig.designerPhone}`}
+              href={`tel:+${footer.designerPhone}`}
               className="text-white/50 hover:text-accent-500 transition-colors inline-flex items-center gap-1"
               dir="ltr"
             >
               <Phone size={10} className="sm:w-3 sm:h-3" />
-              {siteConfig.designerPhoneDisplay}
+              {footer.designerPhoneDisplay}
             </a>
           </p>
         </div>

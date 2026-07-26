@@ -52,8 +52,8 @@ export function useEntityCrud<T extends { id: string | number }, TForm extends R
         const msg = requiredFieldErrors?.[field] || `حقل ${String(field)} مطلوب`
         toast.error(msg)
         return false
- }
- }
+      }
+    }
     return true
   }
 

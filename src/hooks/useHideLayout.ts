@@ -8,5 +8,5 @@ import { usePathname } from "next/navigation"
  */
 export function useHideLayout(): boolean {
   const pathname = usePathname()
-  return pathname.startsWith("/dashboard") || pathname.startsWith("/login")
+  return pathname.startsWith("/dashboard") || pathname.startsWith("/login") || pathname.startsWith("/change-password") || pathname.startsWith("/forgot-password")
 }
