@@ -226,21 +226,26 @@ export default function SiteSettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle>بطاقات الهيرو المتحركة</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle>صورة البانر وعُقد شبكة الخدمات</CardTitle>
+                  <p className="mt-1 text-xs leading-relaxed text-surface-500">تظهر الصورة الأولى خلفيةً للبانر، بينما تمثل العناوين جميعها عُقد شبكة الخدمات المتحركة على الشاشات الكبيرة.</p>
+                </CardHeader>
                 <CardContent className="grid gap-6 lg:grid-cols-2">
                   {settings.hero.cards.map((card, index) => (
                     <div key={index} className="space-y-4 rounded-2xl border border-surface-200 bg-surface-50/60 p-4">
-                      <div className="flex items-center gap-2 text-sm font-extrabold text-brand-900"><ImageIcon size={17} /> البطاقة {index + 1}</div>
-                      <ImageUpload
-                        label="الصورة"
-                        value={card.imageUrl}
-                        onChange={(imageUrl) => {
-                          const cards = settings.hero.cards.map((item, itemIndex) => itemIndex === index ? { ...item, imageUrl } : item);
-                          update("hero", { cards });
-                        }}
-                      />
+                      <div className="flex items-center gap-2 text-sm font-extrabold text-brand-900"><ImageIcon size={17} /> {index === 0 ? "العقدة الأولى وصورة البانر" : `عقدة الشبكة ${index + 1}`}</div>
+                      {index === 0 && (
+                        <ImageUpload
+                          label="صورة خلفية البانر"
+                          value={card.imageUrl}
+                          onChange={(imageUrl) => {
+                            const cards = settings.hero.cards.map((item, itemIndex) => itemIndex === index ? { ...item, imageUrl } : item);
+                            update("hero", { cards });
+                          }}
+                        />
+                      )}
                       <LanguageFields
-                        label="العنوان"
+                        label="اسم الخدمة أو العمل"
                         ar={card.ar}
                         en={card.en}
                         onArChange={(ar) => update("hero", { cards: settings.hero.cards.map((item, itemIndex) => itemIndex === index ? { ...item, ar } : item) })}
