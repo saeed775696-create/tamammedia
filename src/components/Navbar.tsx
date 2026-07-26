@@ -38,6 +38,7 @@ export default function Navbar() {
   // Scroll detection for sticky background transition
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30);
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -82,13 +83,31 @@ export default function Navbar() {
   const toggleLang = () => setLang(lang === "ar" ? "en" : "ar");
   const closeMobile = () => setMobileOpen(false);
   const isActive = (path: string) => pathname === path;
+  const usesDarkHero =
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/contact" ||
+    pathname === "/services" ||
+    pathname.startsWith("/services/") ||
+    pathname === "/portfolio";
+  const darkAtTop = !scrolled && usesDarkHero;
+  const desktopLinkClasses = (active: boolean) =>
+    `text-[15px] font-semibold px-4 py-2.5 rounded-full transition-colors ${
+      darkAtTop
+        ? active
+          ? "bg-white/15 text-white"
+          : "text-white/75 hover:bg-white/10 hover:text-white"
+        : active
+          ? "bg-brand-800/5 text-brand-800"
+          : "text-slate-600 hover:bg-slate-100 hover:text-brand-900"
+    }`;
 
   return (
     <nav
       className={`fixed inset-x-0 top-0 z-[1000] w-full transition-all duration-500 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-xl shadow-[0_4px_24px_rgba(15,23,42,0.08)] border-b border-surface-200/50"
-          : "bg-white/70 backdrop-blur-lg border-b border-transparent"
+        darkAtTop
+          ? "border-b border-white/10 bg-brand-950/45 shadow-[0_8px_30px_rgba(15,18,48,0.12)] backdrop-blur-xl"
+          : "bg-white/90 backdrop-blur-xl shadow-[0_4px_24px_rgba(15,23,42,0.08)] border-b border-surface-200/50"
       }`}
     >
       <div className="container-site min-w-0">
@@ -109,7 +128,11 @@ export default function Navbar() {
                 priority
               />
             </div>
-            <span className="font-bold text-lg md:text-xl text-brand-900 hidden sm:block">
+            <span
+              className={`hidden text-lg font-bold transition-colors duration-500 sm:block md:text-xl ${
+                darkAtTop ? "text-white" : "text-brand-900"
+              }`}
+            >
               {lang === "ar" ? branding.nameAr : branding.nameEn}
             </span>
           </Link>
@@ -119,22 +142,14 @@ export default function Navbar() {
             {/* Nav Links */}
             <Link
               href="/"
-              className={`text-[15px] font-semibold px-4 py-2.5 rounded-full transition-colors ${
-                isActive("/")
-                  ? "bg-brand-800/5 text-brand-800"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-brand-900"
-              }`}
+              className={desktopLinkClasses(isActive("/"))}
             >
               {lang === "ar" ? "الرئيسية" : "Home"}
             </Link>
 
             <Link
               href="/about"
-              className={`text-[15px] font-semibold px-4 py-2.5 rounded-full transition-colors ${
-                isActive("/about")
-                  ? "bg-brand-800/5 text-brand-800"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-brand-900"
-              }`}
+              className={desktopLinkClasses(isActive("/about"))}
             >
               {lang === "ar" ? "من نحن" : "About"}
             </Link>
@@ -148,11 +163,9 @@ export default function Navbar() {
             >
               <Link
                 href="/services"
-                className={`text-[15px] font-semibold px-4 py-2.5 rounded-full transition-colors inline-flex items-center gap-1 ${
-                  isActive("/services") || servicesOpen
-                    ? "bg-brand-800/5 text-brand-800"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-brand-900"
-                }`}
+                className={`${desktopLinkClasses(
+                  pathname.startsWith("/services") || servicesOpen
+                )} inline-flex items-center gap-1`}
               >
                 {lang === "ar" ? "خدماتنا" : "Services"}
                 <ChevronDown
@@ -245,22 +258,26 @@ export default function Navbar() {
 
             <Link
               href="/portfolio"
-              className={`text-[15px] font-semibold px-4 py-2.5 rounded-full transition-colors ${
-                isActive("/portfolio")
-                  ? "bg-brand-800/5 text-brand-800"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-brand-900"
-              }`}
+              className={desktopLinkClasses(isActive("/portfolio"))}
             >
               {lang === "ar" ? "أعمالنا" : "Portfolio"}
             </Link>
 
             {/* Divider */}
-            <div className="w-px h-6 bg-slate-200 mx-3" />
+            <div
+              className={`mx-3 h-6 w-px transition-colors duration-500 ${
+                darkAtTop ? "bg-white/20" : "bg-slate-200"
+              }`}
+            />
 
             {/* ── Language Switcher ── */}
             <button
               onClick={toggleLang}
-              className="text-[13px] font-bold px-3 py-2 text-slate-500 hover:text-brand-900 transition-colors cursor-pointer rounded-full hover:bg-slate-100"
+              className={`cursor-pointer rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${
+                darkAtTop
+                  ? "text-white/75 hover:bg-white/10 hover:text-white"
+                  : "text-slate-500 hover:bg-slate-100 hover:text-brand-900"
+              }`}
               aria-label={
                 lang === "ar"
                   ? "Switch to English"
@@ -273,7 +290,7 @@ export default function Navbar() {
             {/* ── CTA Button (End) ── */}
             <Link
               href="/contact"
-              className="bg-brand-800 text-white font-bold px-5 py-2.5 rounded-full text-[13px] md:text-sm ms-2 inline-flex items-center gap-1.5 hover:bg-brand-900 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all whitespace-nowrap"
+              className="ms-2 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent-500 px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_8px_22px_rgba(245,120,45,0.28)] transition-all hover:-translate-y-0.5 hover:bg-accent-600 hover:shadow-[0_10px_26px_rgba(245,120,45,0.36)] md:text-sm"
             >
               {lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}
               <ArrowLeft
@@ -286,7 +303,11 @@ export default function Navbar() {
           {/* ── Mobile Hamburger Button ── */}
           <button
             type="button"
-            className="block lg:hidden p-2 text-brand-900 bg-slate-100 rounded-full active:scale-90 transition-transform"
+            className={`block rounded-full p-2 transition-all active:scale-90 lg:hidden ${
+              darkAtTop
+                ? "bg-white/10 text-white hover:bg-white/15"
+                : "bg-slate-100 text-brand-900"
+            }`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
