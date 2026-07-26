@@ -1,7 +1,12 @@
 import { NextRequest } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { BaseService } from '@/lib/services/base.service';
 import { parsePaginationParams, ApiResponseHandler, requireEditor } from '@/lib/api';
+
+function expireCacheTags(cacheTags: readonly string[]) {
+  cacheTags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
+}
 
 /**
  * توليد معالجي GET و POST للمجموعة (collection)
@@ -12,7 +17,8 @@ import { parsePaginationParams, ApiResponseHandler, requireEditor } from '@/lib/
 export function createCollectionRoutes<T, TCreate extends Record<string, unknown>>(
   service: BaseService<T, TCreate, unknown>,
   createSchema: z.ZodType<TCreate>,
-  beforeCreate?: (body: Record<string, unknown>) => Record<string, unknown>
+  beforeCreate?: (body: Record<string, unknown>) => Record<string, unknown>,
+  cacheTags: readonly string[] = []
 ) {
   return {
     async GET(req: NextRequest) {
@@ -34,6 +40,7 @@ export function createCollectionRoutes<T, TCreate extends Record<string, unknown
         }
         const validatedData = createSchema.parse(body);
         const item = await service.create(validatedData);
+        expireCacheTags(cacheTags);
         return item;
       }, { status: 201 });
     },
@@ -49,7 +56,8 @@ export function createCollectionRoutes<T, TCreate extends Record<string, unknown
 export function createSingleRoutes<T, TUpdate extends Record<string, unknown>>(
   service: BaseService<T, unknown, TUpdate>,
   updateSchema: z.ZodType<TUpdate>,
-  beforeUpdate?: (body: Record<string, unknown>) => Record<string, unknown>
+  beforeUpdate?: (body: Record<string, unknown>) => Record<string, unknown>,
+  cacheTags: readonly string[] = []
 ) {
   return {
     async GET(
@@ -77,6 +85,7 @@ export function createSingleRoutes<T, TUpdate extends Record<string, unknown>>(
         }
         const validatedData = updateSchema.parse(body);
         const updated = await service.update(id, validatedData);
+        expireCacheTags(cacheTags);
         return updated;
       });
     },
@@ -91,6 +100,7 @@ export function createSingleRoutes<T, TUpdate extends Record<string, unknown>>(
       return ApiResponseHandler.handle(req, async () => {
         const { id } = await params;
         await service.delete(id);
+        expireCacheTags(cacheTags);
         return { success: true };
       });
     },

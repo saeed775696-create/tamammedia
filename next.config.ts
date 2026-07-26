@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     formats: ["image/webp", "image/avif"],
+    // Hero cards are intentionally served at a lighter quality; this is the
+    // only non-default quality permitted by Next.js' image optimizer.
+    qualities: [65, 75],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   experimental: {

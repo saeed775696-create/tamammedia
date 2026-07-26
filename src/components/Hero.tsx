@@ -63,6 +63,7 @@ export default function Hero() {
                     className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700 group-hover:scale-105"
                     alt={item.en}
                     sizes="(max-width: 640px) 180px, (max-width: 768px) 220px, 260px"
+                    quality={65}
                   />
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/60 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500" />

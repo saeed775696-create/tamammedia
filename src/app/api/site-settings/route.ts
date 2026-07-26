@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { revalidatePath } from "next/cache";
 import { ApiResponseHandler, requireAdmin } from "@/lib/api";
 import { saveSiteSettings, getSiteSettings } from "@/lib/site-settings.server";
 import { siteSettingsSchema } from "@/lib/validations";
@@ -18,10 +17,6 @@ export async function PUT(request: NextRequest) {
   return ApiResponseHandler.handle(request, async () => {
     const settings = siteSettingsSchema.parse(await request.json());
     const saved = await saveSiteSettings(settings);
-
-    ["/", "/about", "/contact", "/services", "/portfolio"].forEach((path) =>
-      revalidatePath(path)
-    );
 
     return saved;
   }, { successMessage: "تم حفظ إعدادات الموقع" });

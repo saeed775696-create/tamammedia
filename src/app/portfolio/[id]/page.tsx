@@ -1,10 +1,8 @@
-import { PrismaPortfolioRepository } from "@/lib/repositories/portfolio.repository";
+import { getPortfolioItem } from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { isSafeExternalUrl } from "@/lib/utils";
-
-const portfolioRepository = new PrismaPortfolioRepository();
 
 function parseGallery(value: unknown): string[] {
   if (!value) return [];
@@ -26,7 +24,7 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await portfolioRepository.findById(id);
+  const project = await getPortfolioItem(id);
 
   if (!project) notFound();
 

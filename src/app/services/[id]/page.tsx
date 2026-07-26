@@ -1,9 +1,7 @@
-import { PrismaServiceRepository } from "@/lib/repositories/service.repository";
+import { getServiceItem } from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"; // يُفضل استخدام Image من Next.js للأداء
-
-const serviceRepository = new PrismaServiceRepository();
 
 export default async function ServiceDetailPage({
   params,
@@ -11,7 +9,7 @@ export default async function ServiceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const service = await serviceRepository.findById(id);
+  const service = await getServiceItem(id);
   if (!service) notFound();
 
   return (
@@ -58,6 +56,7 @@ export default async function ServiceDetailPage({
                   alt={service.titleAr}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 67vw"
                 />
                 {/* تأثير لوني خفيف عند مرور الماوس */}
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
