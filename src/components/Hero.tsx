@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
@@ -24,7 +25,7 @@ function HeroStats({ stats, lang }: { stats: HeroStat[]; lang: Lang }) {
   );
 }
 
-function DesktopProjectReel({
+function DesktopProjectStack({
   cards,
   lang,
   brandName,
@@ -33,40 +34,85 @@ function DesktopProjectReel({
   lang: Lang;
   brandName: string;
 }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (cards.length < 2) return;
+
+    const desktopMotion = window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)");
+    let intervalId: number | undefined;
+
+    const updateRotation = () => {
+      if (intervalId) window.clearInterval(intervalId);
+      intervalId = undefined;
+
+      if (desktopMotion.matches) {
+        intervalId = window.setInterval(() => {
+          setActiveIndex((currentIndex) => (currentIndex + 1) % cards.length);
+        }, 5200);
+      }
+    };
+
+    updateRotation();
+    desktopMotion.addEventListener("change", updateRotation);
+
+    return () => {
+      if (intervalId) window.clearInterval(intervalId);
+      desktopMotion.removeEventListener("change", updateRotation);
+    };
+  }, [cards.length]);
+
   if (!cards.length) return null;
+
+  const stackPositionClass = (cardIndex: number) => {
+    const position = (cardIndex - activeIndex + cards.length) % cards.length;
+
+    if (position === 0) {
+      return "z-30 translate-x-0 translate-y-0 rotate-0 scale-100 opacity-100 blur-0";
+    }
+    if (position === 1) {
+      return "z-20 translate-x-3 translate-y-4 -rotate-[4deg] scale-[0.94] opacity-80 blur-[0.5px]";
+    }
+    if (position === 2) {
+      return "z-10 translate-x-7 translate-y-8 -rotate-[8deg] scale-[0.88] opacity-45 blur-[1.5px]";
+    }
+
+    return "z-0 translate-x-12 translate-y-12 -rotate-[11deg] scale-[0.8] opacity-0 blur-sm";
+  };
 
   return (
     <div className="pointer-events-none absolute inset-y-0 end-8 hidden w-[34%] max-w-[500px] items-center lg:flex xl:end-12">
       <div className="relative h-[420px] w-full overflow-hidden rounded-[2rem] border border-white/20 bg-brand-950/25 p-4 shadow-2xl shadow-brand-950/40 backdrop-blur-md xl:h-[500px]">
-        <div className="pointer-events-none absolute inset-y-0 start-0 z-20 w-12 bg-gradient-to-r from-brand-950/80 to-transparent" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-y-0 end-0 z-20 w-12 bg-gradient-to-l from-brand-950/80 to-transparent" aria-hidden="true" />
-        <span className="absolute top-5 start-5 z-30 rounded-full border border-white/15 bg-brand-950/45 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/90 backdrop-blur-md">
+        <span className="absolute top-5 start-5 z-40 rounded-full border border-white/15 bg-brand-950/45 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/90 backdrop-blur-md">
           {lang === "ar" ? "من أعمالنا" : "Our work"}
         </span>
 
-        <div className="flex h-full w-max items-stretch animate-marquee py-1 will-change-transform" dir="ltr">
-          {[...cards, ...cards].map((card, index) => (
+        {cards.map((card, index) => {
+          const position = (index - activeIndex + cards.length) % cards.length;
+
+          return (
             <article
               key={`${card.imageUrl}-${index}`}
-              className="relative me-4 h-full w-[180px] shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-brand-950/40 shadow-xl xl:me-5 xl:w-[220px]"
+              className={`absolute inset-x-5 top-7 bottom-7 overflow-hidden rounded-2xl border border-white/15 bg-brand-950/50 shadow-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${stackPositionClass(index)}`}
             >
               <Image
                 src={card.imageUrl}
                 fill
                 loading="lazy"
-                quality={65}
-                sizes="220px"
-                className="object-cover opacity-85"
+                quality={68}
+                sizes="(max-width: 1280px) 300px, 420px"
+                className="object-cover"
                 alt={lang === "ar" ? card.ar : card.en}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/35 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-start text-white">
-                <p className="line-clamp-2 text-sm font-bold leading-snug">{lang === "ar" ? card.ar : card.en}</p>
-                <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-300">{brandName}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/25 to-transparent" />
+
+              <div className={`absolute inset-x-0 bottom-0 p-5 text-start text-white transition-opacity duration-500 ${position === 0 ? "opacity-100 delay-200" : "opacity-0"}`}>
+                <p className="line-clamp-2 text-lg font-bold leading-snug">{lang === "ar" ? card.ar : card.en}</p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-300">{brandName}</p>
               </div>
             </article>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -102,7 +148,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(255,255,255,0.14),transparent_35%)]" aria-hidden="true" />
 
       <div className="container-site relative z-10 flex min-h-[100dvh] w-full items-center pt-24 pb-20 md:pt-32 md:pb-28">
-        <DesktopProjectReel cards={hero.cards} lang={lang} brandName={branding.nameEn} />
+        <DesktopProjectStack cards={hero.cards} lang={lang} brandName={branding.nameEn} />
 
         <div className="flex w-full max-w-3xl flex-col items-center text-center lg:max-w-[55%] lg:items-start lg:text-start">
           <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-label-xl font-medium shadow-lg backdrop-blur-md">
