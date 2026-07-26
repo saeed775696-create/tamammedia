@@ -178,14 +178,14 @@ export default function Navbar() {
 
               {/* Mega Menu Panel — uses end-0 (logical) */}
               <div
-                className={`absolute top-full end-0 pt-4 transition-all duration-300 w-[450px] ${
+                className={`absolute top-full end-0 w-[400px] pt-3 transition-all duration-300 ${
                   servicesOpen
                     ? "opacity-100 visible translate-y-0"
                     : "opacity-0 invisible translate-y-4 pointer-events-none"
                 }`}
               >
-                <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_rgba(33,33,79,0.15)] p-5 border border-surface-200/50 grid grid-cols-2 gap-3">
-                  <div className="col-span-2 pb-2 border-b border-slate-100">
+                <div className="flex flex-col gap-1.5 rounded-2xl border border-surface-200/60 bg-white/95 p-3 shadow-[0_20px_60px_rgba(33,33,79,0.16)] backdrop-blur-2xl">
+                  <div className="border-b border-slate-100 px-3 pt-1 pb-2.5">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
                       {lang === "ar"
                         ? "اختر الخدمة المناسبة"
@@ -196,61 +196,79 @@ export default function Navbar() {
                   <Link
                     href="/services/creative"
                     onClick={() => setServicesOpen(false)}
-                    className="group/item flex items-start gap-4 p-4 rounded-2xl hover:bg-surface-50 transition-all"
+                    className="group/item flex items-center gap-4 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200 hover:border-accent-500/15 hover:bg-accent-500/[0.06]"
                   >
-                    <div className="w-10 h-10 rounded-full bg-accent-500/10 text-accent-600 flex items-center justify-center shrink-0 group-hover/item:scale-110 group-hover/item:bg-accent-500 group-hover/item:text-white transition-all">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent-500/10 text-accent-600 transition-all duration-200 group-hover/item:scale-105 group-hover/item:bg-accent-500 group-hover/item:text-white">
                       <Paintbrush size={20} />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-brand-900 mb-1 group-hover/item:text-accent-600 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="mb-0.5 font-bold text-brand-900 transition-colors group-hover/item:text-accent-600">
                         {lang === "ar" ? "الحلول الإبداعية" : "Creative"}
                       </h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">
+                      <p className="line-clamp-1 text-xs leading-relaxed text-slate-500">
                         {lang === "ar"
                           ? "تصميم هويات، جرافيكس، وصناعة محتوى"
                           : "Branding, graphics, and content creation"}
                       </p>
                     </div>
+                    <ArrowLeft
+                      size={17}
+                      className={`shrink-0 text-slate-300 transition-all duration-200 group-hover/item:text-accent-600 ${
+                        lang === "ar" ? "group-hover/item:-translate-x-1" : "rotate-180 group-hover/item:translate-x-1"
+                      }`}
+                    />
                   </Link>
 
                   <Link
                     href="/services/tech"
                     onClick={() => setServicesOpen(false)}
-                    className="group/item flex items-start gap-4 p-4 rounded-2xl hover:bg-surface-50 transition-all"
+                    className="group/item flex items-center gap-4 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200 hover:border-blue-500/15 hover:bg-blue-500/[0.06]"
                   >
-                    <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0 group-hover/item:scale-110 group-hover/item:bg-blue-500 group-hover/item:text-white transition-all">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 transition-all duration-200 group-hover/item:scale-105 group-hover/item:bg-blue-500 group-hover/item:text-white">
                       <MonitorSmartphone size={20} />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-brand-900 mb-1 group-hover/item:text-blue-600 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="mb-0.5 font-bold text-brand-900 transition-colors group-hover/item:text-blue-600">
                         {lang === "ar" ? "الحلول التقنية" : "Tech"}
                       </h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">
+                      <p className="line-clamp-1 text-xs leading-relaxed text-slate-500">
                         {lang === "ar"
                           ? "برمجة تطبيقات، مواقع، وحلول برمجية"
                           : "App/Web dev & software solutions"}
                       </p>
                     </div>
+                    <ArrowLeft
+                      size={17}
+                      className={`shrink-0 text-slate-300 transition-all duration-200 group-hover/item:text-blue-600 ${
+                        lang === "ar" ? "group-hover/item:-translate-x-1" : "rotate-180 group-hover/item:translate-x-1"
+                      }`}
+                    />
                   </Link>
 
                   <Link
                     href="/services/integrated"
                     onClick={() => setServicesOpen(false)}
-                    className="group/item flex items-start gap-4 p-4 rounded-2xl hover:bg-surface-50 transition-all col-span-2 mt-2 bg-brand-800/5 border border-brand-800/10"
+                    className="group/item flex items-center gap-4 rounded-2xl border border-brand-800/10 bg-brand-800/[0.04] px-3 py-3 transition-all duration-200 hover:border-brand-800/20 hover:bg-brand-800/[0.08]"
                   >
-                    <div className="w-10 h-10 rounded-full bg-brand-800 text-white flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-all">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand-800 text-white transition-all duration-200 group-hover/item:scale-105 group-hover/item:bg-brand-700">
                       <Layers size={20} />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-brand-900 mb-1 group-hover/item:text-brand-700 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="mb-0.5 font-bold text-brand-900 transition-colors group-hover/item:text-brand-700">
                         {lang === "ar" ? "الحلول المتكاملة" : "Integrated"}
                       </h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">
+                      <p className="line-clamp-1 text-xs leading-relaxed text-slate-500">
                         {lang === "ar"
                           ? "إدارة حملات شاملة لنمو متسارع ومستدام لعلامتك التجارية"
                           : "Comprehensive campaigns for rapid growth"}
                       </p>
                     </div>
+                    <ArrowLeft
+                      size={17}
+                      className={`shrink-0 text-slate-300 transition-all duration-200 group-hover/item:text-brand-700 ${
+                        lang === "ar" ? "group-hover/item:-translate-x-1" : "rotate-180 group-hover/item:translate-x-1"
+                      }`}
+                    />
                   </Link>
                 </div>
               </div>
