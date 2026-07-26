@@ -6,7 +6,7 @@ import { Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import type { Lang } from "@/i18n/translations";
-import type { HeroStat } from "@/types/site-settings";
+import type { HeroCard, HeroStat } from "@/types/site-settings";
 import DirectionArrow from "./DirectionArrow";
 
 function HeroStats({ stats, lang }: { stats: HeroStat[]; lang: Lang }) {
@@ -20,6 +20,54 @@ function HeroStats({ stats, lang }: { stats: HeroStat[]; lang: Lang }) {
           </span>
         </div>
       ))}
+    </div>
+  );
+}
+
+function DesktopProjectReel({
+  cards,
+  lang,
+  brandName,
+}: {
+  cards: HeroCard[];
+  lang: Lang;
+  brandName: string;
+}) {
+  if (!cards.length) return null;
+
+  return (
+    <div className="pointer-events-none absolute inset-y-0 end-8 hidden w-[34%] max-w-[500px] items-center lg:flex xl:end-12">
+      <div className="relative h-[420px] w-full overflow-hidden rounded-[2rem] border border-white/20 bg-brand-950/25 p-4 shadow-2xl shadow-brand-950/40 backdrop-blur-md xl:h-[500px]">
+        <div className="pointer-events-none absolute inset-y-0 start-0 z-20 w-12 bg-gradient-to-r from-brand-950/80 to-transparent" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-y-0 end-0 z-20 w-12 bg-gradient-to-l from-brand-950/80 to-transparent" aria-hidden="true" />
+        <span className="absolute top-5 start-5 z-30 rounded-full border border-white/15 bg-brand-950/45 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/90 backdrop-blur-md">
+          {lang === "ar" ? "من أعمالنا" : "Our work"}
+        </span>
+
+        <div className="flex h-full w-max items-stretch animate-marquee py-1 will-change-transform" dir="ltr">
+          {[...cards, ...cards].map((card, index) => (
+            <article
+              key={`${card.imageUrl}-${index}`}
+              className="relative me-4 h-full w-[180px] shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-brand-950/40 shadow-xl xl:me-5 xl:w-[220px]"
+            >
+              <Image
+                src={card.imageUrl}
+                fill
+                loading="lazy"
+                quality={65}
+                sizes="220px"
+                className="object-cover opacity-85"
+                alt={lang === "ar" ? card.ar : card.en}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/35 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 text-start text-white">
+                <p className="line-clamp-2 text-sm font-bold leading-snug">{lang === "ar" ? card.ar : card.en}</p>
+                <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-300">{brandName}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -54,7 +102,9 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(255,255,255,0.14),transparent_35%)]" aria-hidden="true" />
 
       <div className="container-site relative z-10 flex min-h-[100dvh] w-full items-center pt-24 pb-20 md:pt-32 md:pb-28">
-        <div className="flex w-full max-w-3xl flex-col items-center text-center lg:items-start lg:text-start">
+        <DesktopProjectReel cards={hero.cards} lang={lang} brandName={branding.nameEn} />
+
+        <div className="flex w-full max-w-3xl flex-col items-center text-center lg:max-w-[55%] lg:items-start lg:text-start">
           <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-label-xl font-medium shadow-lg backdrop-blur-md">
             <Sparkles size={16} className="text-accent-300" />
             {lang === "ar" ? hero.badgeAr : hero.badgeEn}
