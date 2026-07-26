@@ -301,20 +301,31 @@ export default function Navbar() {
           </div>
 
           {/* ── Mobile Hamburger Button ── */}
-          <button
-            type="button"
-            className={`block rounded-full p-2 transition-all active:scale-90 lg:hidden ${
-              darkAtTop
-                ? "bg-white/10 text-white hover:bg-white/15"
-                : "bg-slate-100 text-brand-900"
-            }`}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-navigation"
-          >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              href="/contact"
+              onClick={closeMobile}
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent-500 px-3 py-2 text-xs font-bold text-white shadow-[0_6px_18px_rgba(245,120,45,0.3)] transition-all active:scale-95 hover:bg-accent-600 min-[390px]:px-3.5"
+              aria-label={lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}
+            >
+              <span className="hidden min-[390px]:inline">{lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}</span>
+              <ArrowLeft size={17} className={lang === "ar" ? "" : "rotate-180"} />
+            </Link>
+            <button
+              type="button"
+              className={`rounded-full p-2 transition-all active:scale-90 ${
+                darkAtTop
+                  ? "bg-white/10 text-white hover:bg-white/15"
+                  : "bg-slate-100 text-brand-900"
+              }`}
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
