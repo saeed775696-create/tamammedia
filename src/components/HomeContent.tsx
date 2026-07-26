@@ -157,6 +157,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                   alt="Creative Services"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  quality={65}
                 />
                 <div className="absolute inset-0 gradient-overlay" />
                 <div className="absolute bottom-5 start-5 gradient-glass p-3 rounded-xl border border-white/20 text-white shadow-lg">
@@ -197,6 +198,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                   alt="Tech Services"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  quality={65}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
                 <div className="absolute bottom-4 end-4 bg-accent-500/80 backdrop-blur-md p-3 rounded-xl border border-white/30 text-white shadow-lg shadow-accent-500/20">
@@ -236,6 +238,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                   alt="Integrated Solutions"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  quality={65}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent" />
                 <div className="absolute bottom-4 end-4 bg-white/90 backdrop-blur-md p-3 rounded-xl border border-white text-brand-800 shadow-lg">
@@ -304,7 +307,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
       {/* =================================================================
           ABOUT US — Split Layout (Text + Visual) with breathing room
           ================================================================= */}
-      <section className="section-y bg-white relative overflow-hidden">
+      <section className="defer-render section-y bg-white relative overflow-hidden">
         <div className="container-site">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 xl:gap-24 items-center">
             {/* ── Visual Side (Overlapping Images + Floating Badge) ── */}
@@ -317,6 +320,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-1000"
                   sizes="(max-width: 1024px) 80vw, 40vw"
+                  quality={65}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-900/20 via-brand-900/5 to-transparent" />
               </div>
@@ -328,6 +332,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-1000"
                   sizes="(max-width: 1024px) 66vw, 30vw"
+                  quality={65}
                 />
               </div>
               {/* Floating Stats Badge */}
@@ -401,7 +406,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
       {/* =================================================================
           TEAM — Responsive Grid (1→2→3→4 columns) with softer styling
           ================================================================= */}
-      <section className="section-y section-bg-light relative">
+      <section className="defer-render section-y section-bg-light relative">
         <div className="container-site">
           {/* Section Header */}
           <div className="flex justify-center w-full">
@@ -447,6 +452,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                       fill
                       className="object-cover object-top rounded-full border-[3px] border-white shadow-md relative z-10 group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 640px) 128px, 160px"
+                      quality={65}
                     />
                   </div>
 
@@ -496,7 +502,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
       {/* =================================================================
           PARTNERS — Auto-scrolling Marquee with softer edges
           ================================================================= */}
-      <section className="section-y-md bg-white relative overflow-hidden">
+      <section className="defer-render section-y-md bg-white relative overflow-hidden">
         <div className="container-site relative z-10">
           {/* Section Header */}
           <div className="flex justify-center w-full">

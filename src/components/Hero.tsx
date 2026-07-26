@@ -42,7 +42,7 @@ export default function Hero() {
         <div className="grid min-w-0 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14">
           {/* ── Visual Side: order-2 on mobile (text first), order-2 on desktop ── */}
           <div
-            className="relative order-2 flex h-[300px] w-full min-w-0 items-center justify-center overflow-hidden rounded-3xl sm:h-[460px] md:h-[540px] lg:col-span-5 lg:h-[560px]"
+            className="relative order-2 flex h-[250px] w-full min-w-0 items-center justify-center overflow-hidden rounded-3xl sm:h-[460px] md:h-[540px] lg:col-span-5 lg:h-[560px]"
             dir="ltr"
           >
             {/* Edge fade masks — soften the scrolling strip's cut-off points */}
@@ -55,15 +55,25 @@ export default function Hero() {
               {[...hero.cards, ...hero.cards].map((item, i) => (
                 <div
                   key={i}
-                  className="group relative me-4 h-full w-[156px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 sm:me-6 sm:w-[230px] md:w-[260px]"
+                  className="group relative me-4 h-full w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 sm:me-6 sm:w-[230px] md:w-[260px]"
                 >
                   <Image
                     src={item.imageUrl}
                     fill
                     className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700 group-hover:scale-105"
                     alt={item.en}
-                    sizes="(max-width: 640px) 180px, (max-width: 768px) 220px, 260px"
+                    sizes="(max-width: 640px) 150px, (max-width: 768px) 220px, 260px"
                     quality={65}
+                    loading={
+                      hero.cards.length > 0 && i % hero.cards.length === 0
+                        ? "eager"
+                        : "lazy"
+                    }
+                    fetchPriority={
+                      hero.cards.length > 0 && i % hero.cards.length === 0
+                        ? "high"
+                        : "auto"
+                    }
                   />
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/60 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500" />

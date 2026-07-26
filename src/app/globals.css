@@ -202,6 +202,13 @@
   background-size: 200% 100%;
 }
 
+/* Skip style/layout/paint work for distant sections until they approach the
+   viewport, while reserving space to keep layout shifts at zero. */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 /* ─── Enhanced Gradient Utilities ─── */
 @utility gradient-overlay {
    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 80%);

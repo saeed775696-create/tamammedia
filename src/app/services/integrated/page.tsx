@@ -34,7 +34,7 @@ export default function IntegratedServicePage() {
             {/* Marketing Strategies */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/marketing_real_1784854282989.jpg" alt="Marketing Strategies" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src="/imgs/service imgs/real/marketing_real_1784854282989.jpg" alt="Marketing Strategies" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Target size={24} />
@@ -53,7 +53,7 @@ export default function IntegratedServicePage() {
             {/* Digital & Field Campaigns */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/advertising_real_1784854291002.jpg" alt="Digital & Field Campaigns" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src="/imgs/service imgs/real/advertising_real_1784854291002.jpg" alt="Digital & Field Campaigns" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <TrendingUp size={24} />
@@ -72,7 +72,7 @@ export default function IntegratedServicePage() {
             {/* Data Analysis */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/tech_solutions_1784854112279.jpg" alt="Data Analysis" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src="/imgs/service imgs/real/tech_solutions_1784854112279.jpg" alt="Data Analysis" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <BarChart3 size={24} />
@@ -91,7 +91,7 @@ export default function IntegratedServicePage() {
             {/* Strategic Consulting */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/brand_identity_1784854043969.jpg" alt="Strategic Consulting" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src="/imgs/service imgs/real/brand_identity_1784854043969.jpg" alt="Strategic Consulting" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Briefcase size={24} />

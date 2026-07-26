@@ -119,7 +119,7 @@ export default function PortfolioContent({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 md:gap-8">
                 {sortedItems.map((item) => (
                   <Link href={`/portfolio/${item.id}`} key={item.id} className="group block relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 aspect-card bg-white">
-                    <Image src={item.imageUrl} alt={lang === "ar" ? item.titleAr : item.titleEn} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" />
+                    <Image src={item.imageUrl} alt={lang === "ar" ? item.titleAr : item.titleEn} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" quality={65} />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
 

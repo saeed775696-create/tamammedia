@@ -142,7 +142,7 @@ export default async function RootLayout({
           <LayoutFooter />
           <BackToTop />
           <StructuredData nonce={nonce} />
-          <TawkChat nonce={nonce} />
+          <TawkChat />
         </Providers>
       </body>
     </html>

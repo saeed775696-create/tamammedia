@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, ReactNode, useState, useEffect, useCallback } from "react"
+import { SessionProvider } from "next-auth/react"
 
 function getInitialDarkMode() {
   if (typeof window === "undefined") return false
@@ -45,18 +46,20 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const closeMobileSidebar = useCallback(() => setIsMobileSidebarOpen(false), [])
 
   return (
-    <DashboardContext.Provider
-      value={{ 
-        isDarkMode, 
-        toggleDarkMode, 
-        isSidebarCollapsed, 
-        toggleSidebar,
-        isMobileSidebarOpen,
-        toggleMobileSidebar,
-        closeMobileSidebar
-      }}
-    >
-      {children}
-    </DashboardContext.Provider>
+    <SessionProvider>
+      <DashboardContext.Provider
+        value={{
+          isDarkMode,
+          toggleDarkMode,
+          isSidebarCollapsed,
+          toggleSidebar,
+          isMobileSidebarOpen,
+          toggleMobileSidebar,
+          closeMobileSidebar
+        }}
+      >
+        {children}
+      </DashboardContext.Provider>
+    </SessionProvider>
   )
 }
