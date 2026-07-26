@@ -1,9 +1,12 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import type { Lang } from "@/i18n/translations";
+import type { HeroCard, HeroStat } from "@/types/site-settings";
 import { Sparkles } from "lucide-react";
 import DirectionArrow from "./DirectionArrow";
 
@@ -16,6 +19,168 @@ import DirectionArrow from "./DirectionArrow";
    - Softer shadows (shadow-xl instead of shadow-2xl) and rounded-2xl/3xl
    - Fluid decorative blobs via min() + vw
    ========================================================================= */
+
+function HeroStats({
+  stats,
+  lang,
+  className,
+}: {
+  stats: HeroStat[];
+  lang: Lang;
+  className?: string;
+}) {
+  return (
+    <div className={`flex flex-wrap justify-center gap-8 border-t border-white/10 pt-6 ${className ?? ""}`}>
+      {stats.map((stat, index) => (
+        <div key={`${stat.value}-${index}`} className="group flex flex-col items-center gap-1.5 lg:items-start">
+          <span className="text-2xl font-bold text-white transition-transform group-hover:scale-110 md:text-3xl">
+            {stat.value}
+          </span>
+          <span className="text-xs font-medium uppercase tracking-widest text-accent-300">
+            {lang === "ar" ? stat.ar : stat.en}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MobileProjectShowcase({
+  cards,
+  lang,
+  brandName,
+}: {
+  cards: HeroCard[];
+  lang: Lang;
+  brandName: string;
+}) {
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const scrollToCard = useCallback((index: number) => {
+    if (!cards.length) return;
+
+    const normalizedIndex = ((index % cards.length) + cards.length) % cards.length;
+    const card = carouselRef.current?.querySelector<HTMLElement>(
+      `[data-hero-card-index="${normalizedIndex}"]`
+    );
+
+    card?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+    setActiveIndex(normalizedIndex);
+  }, [cards.length]);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel || cards.length < 2) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const mostVisible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (mostVisible) {
+          setActiveIndex(Number(mostVisible.target.getAttribute("data-hero-card-index")));
+        }
+      },
+      { root: carousel, threshold: [0.55, 0.75] }
+    );
+
+    const cardsInCarousel = carousel.querySelectorAll<HTMLElement>("[data-hero-card-index]");
+    cardsInCarousel.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [cards.length]);
+
+  useEffect(() => {
+    if (cards.length < 2 || isPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setActiveIndex((currentIndex) => {
+        const nextIndex = (currentIndex + 1) % cards.length;
+        const nextCard = carouselRef.current?.querySelector<HTMLElement>(
+          `[data-hero-card-index="${nextIndex}"]`
+        );
+        nextCard?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        return nextIndex;
+      });
+    }, 5500);
+
+    return () => window.clearInterval(intervalId);
+  }, [cards.length, isPaused]);
+
+  return (
+    <section
+      aria-label={lang === "ar" ? "مشاريع مختارة" : "Featured projects"}
+      className="order-2 min-w-0 lg:hidden"
+    >
+      <div className="-mx-4 px-4 sm:-mx-6 sm:px-6">
+        <div
+          ref={carouselRef}
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onFocusCapture={() => setIsPaused(true)}
+          onPointerDown={() => setIsPaused(true)}
+        >
+          {cards.map((card, index) => (
+            <article
+              key={`${card.imageUrl}-${index}`}
+              data-hero-card-index={index}
+              className="relative aspect-[16/10] w-[86%] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/15 bg-brand-950 shadow-xl shadow-brand-950/30"
+            >
+              <Image
+                src={card.imageUrl}
+                fill
+                className="object-cover"
+                alt={lang === "ar" ? card.ar : card.en}
+                sizes="(max-width: 640px) 86vw, 500px"
+                quality={65}
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/35 to-transparent" />
+              <span className="absolute top-3 end-3 rounded-full border border-white/15 bg-brand-950/45 px-2.5 py-1 text-xs font-bold text-white/90 backdrop-blur-md">
+                {String(index + 1).padStart(2, "0")} / {String(cards.length).padStart(2, "0")}
+              </span>
+              <div className="absolute inset-x-0 bottom-0 p-5 text-start text-white">
+                <p className="text-lg font-bold leading-snug">{lang === "ar" ? card.ar : card.en}</p>
+                <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-300">
+                  {brandName}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {cards.length > 1 && (
+          <div className="mt-1 flex items-center justify-center gap-2" aria-label={lang === "ar" ? "التنقل بين المشاريع" : "Project navigation"}>
+            {cards.map((card, index) => (
+              <button
+                key={`${card.imageUrl}-control-${index}`}
+                type="button"
+                aria-pressed={activeIndex === index}
+                aria-label={lang === "ar" ? `عرض المشروع ${index + 1}` : `Show project ${index + 1}`}
+                onClick={() => {
+                  setIsPaused(true);
+                  scrollToCard(index);
+                }}
+                className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 ${
+                  activeIndex === index ? "w-7 bg-accent-400" : "w-2 bg-white/35 hover:bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export default function Hero() {
   const { lang } = useLanguage();
@@ -39,10 +204,10 @@ export default function Hero() {
       />
 
       <div className="container-site relative z-10 w-full min-w-0 pt-24 pb-20 md:pt-32 md:pb-28">
-        <div className="grid min-w-0 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14">
+        <div className="grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-14">
           {/* ── Visual Side: order-2 on mobile (text first), order-2 on desktop ── */}
           <div
-            className="relative order-2 flex h-[250px] w-full min-w-0 items-center justify-center overflow-hidden rounded-3xl sm:h-[460px] md:h-[540px] lg:col-span-5 lg:h-[560px]"
+            className="relative order-2 hidden h-[560px] w-full min-w-0 items-center justify-center overflow-hidden rounded-3xl lg:col-span-5 lg:flex"
             dir="ltr"
           >
             {/* Edge fade masks — soften the scrolling strip's cut-off points */}
@@ -64,16 +229,8 @@ export default function Hero() {
                     alt={item.en}
                     sizes="(max-width: 640px) 150px, (max-width: 768px) 220px, 260px"
                     quality={65}
-                    loading={
-                      hero.cards.length > 0 && i % hero.cards.length === 0
-                        ? "eager"
-                        : "lazy"
-                    }
-                    fetchPriority={
-                      hero.cards.length > 0 && i % hero.cards.length === 0
-                        ? "high"
-                        : "auto"
-                    }
+                    loading="lazy"
+                    fetchPriority="auto"
                   />
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-900/60 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500" />
@@ -94,6 +251,8 @@ export default function Hero() {
           </div>
 
           {/* ── Text Side: order-1 on mobile (headline first), order-1 on desktop ── */}
+          <MobileProjectShowcase cards={hero.cards} lang={lang} brandName={branding.nameEn} />
+
           <div className="order-1 flex min-w-0 flex-col items-center text-center lg:col-span-7 lg:items-start lg:text-start">
             {/* Badge */}
             <div className="inline-flex items-center gap-2.5 gradient-glass px-5 py-2.5 rounded-full text-label-xl font-medium mb-8 backdrop-blur-md shadow-lg transition-all duration-500 hover:scale-105">
@@ -117,7 +276,7 @@ export default function Hero() {
             </p>
 
             {/* ── Dual CTAs — generous gap ── */}
-            <div className="mb-14 flex w-full max-w-sm flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-5 lg:max-w-none lg:justify-start">
+            <div className="mb-0 flex w-full max-w-sm flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-5 lg:mb-14 lg:max-w-none lg:justify-start">
               {/* Primary CTA (Solid) */}
               <Link
                 href="/contact"
@@ -138,19 +297,10 @@ export default function Hero() {
             </div>
 
             {/* ── Stats Row — more breathing room ── */}
-            <div className="flex gap-10 lg:gap-14 justify-center lg:justify-start flex-wrap pt-8 border-t border-white/10 w-full max-w-md lg:max-w-none">
-              {hero.stats.map((stat, index) => (
-                <div key={`${stat.value}-${index}`} className="group flex flex-col items-center gap-1.5 lg:items-start">
-                  <span className="text-2xl font-bold text-white transition-transform group-hover:scale-110 md:text-3xl">
-                    {stat.value}
-                  </span>
-                  <span className="text-xs font-medium uppercase tracking-widest text-accent-300">
-                    {lang === "ar" ? stat.ar : stat.en}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <HeroStats stats={hero.stats} lang={lang} className="hidden w-full max-w-md justify-center gap-10 pt-8 lg:flex lg:max-w-none lg:justify-start lg:gap-14" />
           </div>
+
+          <HeroStats stats={hero.stats} lang={lang} className="order-3 w-full justify-center gap-8 pt-6 lg:hidden" />
         </div>
       </div>
     </section>
