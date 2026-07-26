@@ -366,6 +366,12 @@
   @apply bg-transparent border-2 border-brand-300 text-brand-700 hover:bg-brand-50 hover:border-brand-500 hover:text-brand-900;
 }
 
+/* The hero sits on a dark surface, so it needs an independent outline
+   treatment instead of inheriting the light-surface button hover state. */
+@utility btn-hero-outline {
+  @apply border-2 border-white/35 bg-white/5 text-white backdrop-blur-sm hover:-translate-y-1 hover:border-white/70 hover:bg-white/15 hover:text-white;
+}
+
 @utility btn-ghost {
   @apply bg-transparent text-brand-600 hover:bg-brand-50 hover:text-brand-900;
 }

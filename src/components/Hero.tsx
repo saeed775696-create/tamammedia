@@ -110,7 +110,7 @@ export default function Hero() {
               {/* Primary CTA (Solid) */}
               <Link
                 href="/contact"
-                className="btn-md btn-primary inline-flex w-full items-center justify-center text-sm sm:w-auto md:text-base"
+                className="btn-base btn-md btn-primary inline-flex w-full items-center justify-center text-sm sm:w-auto md:text-base"
               >
                 {lang === "ar" ? hero.primaryCtaAr : hero.primaryCtaEn}
                 <DirectionArrow size={20} />
@@ -119,7 +119,7 @@ export default function Hero() {
               {/* Secondary CTA (Outlined) */}
               <Link
                 href="/services"
-                className="btn-md btn-outline inline-flex w-full items-center justify-center gap-2 border-white/30 text-sm text-white hover:border-white/60 hover:text-white sm:w-auto md:text-base"
+                className="btn-base btn-md btn-hero-outline inline-flex w-full items-center justify-center text-sm sm:w-auto md:text-base"
               >
                 {lang === "ar" ? hero.secondaryCtaAr : hero.secondaryCtaEn}
                 <DirectionArrow size={20} />

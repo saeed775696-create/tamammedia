@@ -228,8 +228,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
             </div>
 
             {/* ── Integrated Solutions Card ── */}
-            <div className="card-base group flex flex-col bg-brand-900 border-brand-800 shadow-lg shadow-brand-900/15 hover:shadow-xl hover:shadow-brand-900/25">
-              <div className="absolute inset-0 bg-white/5 opacity-10 pointer-events-none" />
+            <div className="card-base group flex flex-col">
               <div className="relative w-full aspect-media overflow-hidden rounded-t-2xl">
                 <Image
                   src="/imgs/services/marketing_real.jpg"
@@ -238,8 +237,8 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   alt="Integrated Solutions"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-900 to-transparent" />
-                <div className="absolute bottom-4 end-4 bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20 text-accent-400">
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent" />
+                <div className="absolute bottom-4 end-4 bg-white/90 backdrop-blur-md p-3 rounded-xl border border-white text-brand-800 shadow-lg">
                   <svg
                     width="24"
                     height="24"
@@ -256,18 +255,18 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   </svg>
                 </div>
               </div>
-              <div className="p-7 md:p-8 flex-1 flex flex-col relative z-10">
-                <h3 className="text-h4 text-white mb-4">
+              <div className="p-7 md:p-8 flex-1 flex flex-col">
+                <h3 className="text-h4 text-brand-900 mb-4">
                   {lang === "ar" ? "الحلول المتكاملة" : "Integrated Solutions"}
                 </h3>
-                <p className="text-body text-slate-300 leading-loose flex-1 mb-6">
+                <p className="text-body text-surface-600 leading-loose flex-1 mb-6">
                   {lang === "ar"
                     ? "خطط تسويقية شاملة، إدارة حملات رقمية وميدانية، استشارات استراتيجية لنمو أعمالك وقيادة السوق."
                     : "Comprehensive marketing plans, digital and on-ground campaign management, strategic consulting for business growth."}
                 </p>
                 <Link
                   href="/services/integrated"
-                  className="mt-auto inline-flex items-center gap-2 font-semibold text-accent-400 hover:text-white transition-colors group/link text-sm"
+                  className="mt-auto inline-flex items-center gap-2 font-semibold text-accent-600 hover:text-accent-800 transition-colors group/link text-sm"
                 >
                   {lang === "ar" ? "اكتشف المزيد" : "Discover More"}
                   <DirectionArrow
