@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { ArrowRight, Sparkles, Users } from "lucide-react";
+import { ArrowRight, Lightbulb, Rocket, Sparkles, Users } from "lucide-react";
 import DirectionArrow from "@/components/DirectionArrow";
 import { isSafeExternalUrl } from "@/lib/utils";
 
@@ -52,6 +52,66 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
           HERO
           ================================================================= */}
       {includeHero && <Hero />}
+
+      {/* A concise value rail makes the first scroll feel intentional without
+          relying on unverifiable client-count or revenue claims. */}
+      <section
+        aria-label={lang === "ar" ? "منهجية العمل" : "How we work"}
+        className="relative z-30 -mt-6 pb-3 sm:-mt-10 sm:pb-6"
+      >
+        <div className="container-site">
+          <div className="grid overflow-hidden rounded-2xl border border-white/70 bg-white/95 shadow-[0_18px_45px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:grid-cols-3 sm:rounded-3xl">
+            {[
+              {
+                icon: Lightbulb,
+                number: "01",
+                titleAr: "نفهم الهدف أولاً",
+                titleEn: "Start with clarity",
+                textAr: "نحوّل احتياجك إلى اتجاه واضح قبل أن يبدأ التنفيذ.",
+                textEn: "We turn the need into a clear direction before execution.",
+              },
+              {
+                icon: Sparkles,
+                number: "02",
+                titleAr: "نصنع تجربة تُتذكر",
+                titleEn: "Make it memorable",
+                textAr: "تصميم ومحتوى يبدوان متماسكين في كل نقطة تواصل.",
+                textEn: "Design and content that feel consistent at every touchpoint.",
+              },
+              {
+                icon: Rocket,
+                number: "03",
+                titleAr: "نطوّر ما ينجح",
+                titleEn: "Build on what works",
+                textAr: "نُحسّن باستمرار لتبقى التجربة جاهزة للنمو.",
+                textEn: "We keep improving so the experience stays ready to grow.",
+              },
+            ].map(({ icon: Icon, number, titleAr, titleEn, textAr, textEn }, index) => (
+              <div
+                key={number}
+                className={`group relative flex gap-4 px-5 py-5 sm:px-6 sm:py-7 lg:px-8 ${
+                  index < 2 ? "border-b border-surface-200/80 sm:border-b-0 sm:border-e" : ""
+                }`}
+              >
+                <span className="absolute end-5 top-4 text-xs font-bold tracking-[0.18em] text-brand-900/10 transition-colors duration-300 group-hover:text-accent-500/30 sm:end-6 sm:top-5">
+                  {number}
+                </span>
+                <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-900 text-accent-300 shadow-lg shadow-brand-900/15 transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-3">
+                  <Icon size={20} strokeWidth={2.25} aria-hidden="true" />
+                </div>
+                <div className="relative z-10 min-w-0 pt-0.5">
+                  <h2 className="mb-1 text-sm font-bold text-brand-900 sm:text-base">
+                    {lang === "ar" ? titleAr : titleEn}
+                  </h2>
+                  <p className="text-xs leading-relaxed text-surface-600 sm:text-sm">
+                    {lang === "ar" ? textAr : textEn}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* =================================================================
           SERVICES — Generous Grid (1→2→3 columns)

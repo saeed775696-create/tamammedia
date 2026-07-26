@@ -172,6 +172,35 @@
    from { transform: translateX(100%); }
    to { transform: translateX(0); }
 }
+@keyframes skeleton-shimmer {
+   from { background-position: 200% 0; }
+   to { background-position: -200% 0; }
+}
+
+/* A lightweight shimmer keeps loading states intentional while content is
+   streamed from the database. It does not affect layout or CLS. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-100) 8%,
+    var(--color-surface-50) 18%,
+    var(--color-surface-100) 33%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-dark {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.08) 8%,
+    rgba(255, 255, 255, 0.18) 18%,
+    rgba(255, 255, 255, 0.08) 33%
+  );
+  background-size: 200% 100%;
+}
 
 /* ─── Enhanced Gradient Utilities ─── */
 @utility gradient-overlay {
@@ -326,11 +355,11 @@
 
 /* Button variants */
 @utility btn-primary {
-  @apply gradient-accent text-white shadow-[0_8px_20px_rgba(var(--accent-500),0.3)] hover:shadow-[0_12px_30px_rgba(var(--accent-500),0.4)] hover:-translate-y-1;
+  @apply gradient-accent text-white shadow-[0_8px_20px_rgba(245,120,45,0.3)] hover:shadow-[0_12px_30px_rgba(245,120,45,0.4)] hover:-translate-y-1;
 }
 
 @utility btn-secondary {
-  @apply gradient-brand text-white shadow-[0_8px_20px_rgba(var(--brand-800),0.2)] hover:shadow-[0_12px_30px_rgba(var(--brand-800),0.3)] hover:-translate-y-1;
+  @apply gradient-brand text-white shadow-[0_8px_20px_rgba(45,50,92,0.2)] hover:shadow-[0_12px_30px_rgba(45,50,92,0.3)] hover:-translate-y-1;
 }
 
 @utility btn-outline {
@@ -463,6 +492,8 @@
   img { max-width: 100%; height: auto; display: block; }
   a { text-decoration: none; color: inherit; transition: all var(--transition-base); }
   ul { list-style: none; }
+  ::selection { background: var(--color-accent-200); color: var(--color-brand-950); }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent-500) 70%, white); outline-offset: 3px; }
 }
 
 /* Use dvh for better mobile viewport handling */
@@ -480,4 +511,5 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .skeleton { animation: none; }
 }
