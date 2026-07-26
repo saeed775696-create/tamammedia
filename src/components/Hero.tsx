@@ -10,6 +10,8 @@ import type { Lang } from "@/i18n/translations";
 import type { HeroCard, HeroStat } from "@/types/site-settings";
 import DirectionArrow from "./DirectionArrow";
 
+type NetworkPoint = { x: number; y: number };
+
 function HeroStats({ stats, lang }: { stats: HeroStat[]; lang: Lang }) {
   return (
     <div className="mt-10 flex w-full max-w-xl flex-wrap justify-center gap-8 border-t border-white/15 pt-7 lg:justify-start lg:gap-14">
@@ -25,13 +27,13 @@ function HeroStats({ stats, lang }: { stats: HeroStat[]; lang: Lang }) {
   );
 }
 
-function networkSlots(count: number) {
+function networkSlots(count: number): NetworkPoint[] {
   if (count === 1) return [{ x: 50, y: 50 }];
 
-  const compactLayouts: Record<number, { x: number; y: number }[]> = {
-    2: [{ x: 50, y: 16 }],
-    3: [{ x: 21, y: 30 }, { x: 79, y: 70 }],
-    4: [{ x: 20, y: 24 }, { x: 80, y: 24 }, { x: 50, y: 82 }],
+  const compactLayouts: Record<number, NetworkPoint[]> = {
+    2: [{ x: 50, y: 15 }],
+    3: [{ x: 20, y: 29 }, { x: 80, y: 71 }],
+    4: [{ x: 19, y: 23 }, { x: 81, y: 23 }, { x: 50, y: 83 }],
   };
 
   if (compactLayouts[count]) {
@@ -42,7 +44,7 @@ function networkSlots(count: number) {
     { x: 50, y: 50 },
     ...Array.from({ length: count - 1 }, (_, index) => {
       const angle = (-90 + (360 / (count - 1)) * index) * (Math.PI / 180);
-      const radius = 37;
+      const radius = 38;
       return {
         x: 50 + Math.cos(angle) * radius,
         y: 50 + Math.sin(angle) * radius,
@@ -51,7 +53,19 @@ function networkSlots(count: number) {
   ];
 }
 
-function DesktopServiceNetwork({
+function curvedNetworkPath(slot: NetworkPoint, index: number) {
+  const middleX = (50 + slot.x) / 2;
+  const middleY = (50 + slot.y) / 2;
+  const deltaX = slot.x - 50;
+  const deltaY = slot.y - 50;
+  const curveDirection = index % 2 === 0 ? 1 : -1;
+  const controlX = middleX - deltaY * 0.16 * curveDirection;
+  const controlY = middleY + deltaX * 0.16 * curveDirection;
+
+  return `M 50 50 Q ${controlX} ${controlY} ${slot.x} ${slot.y}`;
+}
+
+function DesktopServiceConstellation({
   cards,
   lang,
 }: {
@@ -91,39 +105,62 @@ function DesktopServiceNetwork({
   if (!nodes.length) return null;
 
   const nodeIcons = [Palette, Code2, Megaphone, ShoppingBag, Layers3, Workflow];
+  const paths = slots.slice(1).map(curvedNetworkPath);
 
   return (
     <aside
-      aria-label={lang === "ar" ? "شبكة خدماتنا" : "Our service network"}
-      className="pointer-events-none absolute inset-y-0 end-8 hidden w-[34%] max-w-[500px] items-center lg:flex xl:end-12"
+      aria-label={lang === "ar" ? "كوكبة خدماتنا" : "Our service constellation"}
+      className="pointer-events-none absolute inset-y-0 end-3 hidden w-[40%] max-w-[550px] items-center lg:flex xl:end-8"
     >
-      <div className="relative h-[420px] w-full overflow-hidden rounded-[2rem] border border-white/20 bg-brand-950/25 shadow-2xl shadow-brand-950/40 backdrop-blur-md xl:h-[500px]">
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <div className="relative h-[460px] w-full overflow-visible xl:h-[540px]">
+        <div className="absolute inset-[22%] rounded-full bg-accent-500/10 blur-[70px]" aria-hidden="true" />
+        <div className="absolute top-1/2 left-1/2 size-48 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-300/10 shadow-[0_0_80px_rgba(251,146,60,0.16)]" aria-hidden="true" />
+
+        <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <linearGradient id="service-network-line" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.08)" />
-              <stop offset="50%" stopColor="rgba(251,146,60,0.8)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
+            <linearGradient id="constellation-line" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.03)" />
+              <stop offset="45%" stopColor="rgba(251,146,60,0.75)" />
+              <stop offset="100%" stopColor="rgba(125,211,252,0.2)" />
             </linearGradient>
+            <radialGradient id="constellation-core">
+              <stop offset="0%" stopColor="rgba(251,146,60,0.65)" />
+              <stop offset="100%" stopColor="rgba(251,146,60,0)" />
+            </radialGradient>
+            <filter id="constellation-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="0.8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
-          {slots.slice(1).map((slot, index) => (
-            <line
-              key={`${slot.x}-${slot.y}`}
-              x1="50"
-              y1="50"
-              x2={slot.x}
-              y2={slot.y}
-              stroke="url(#service-network-line)"
-              strokeWidth="0.45"
-              strokeDasharray={index % 2 === 0 ? "2 2" : undefined}
-            />
+
+          <ellipse cx="50" cy="50" rx="38" ry="38" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.28" strokeDasharray="1.4 2.2" />
+          <ellipse cx="50" cy="50" rx="27" ry="27" fill="none" stroke="rgba(251,146,60,0.12)" strokeWidth="0.24" strokeDasharray="0.8 3" />
+
+          {paths.map((path, index) => (
+            <g key={path}>
+              <path d={path} fill="none" stroke="url(#constellation-line)" strokeWidth="0.46" strokeLinecap="round" />
+              <circle className="service-network-motion" r="0.75" fill="#fdba74" filter="url(#constellation-glow)">
+                <animateMotion
+                  path={path}
+                  dur={`${3.8 + index * 0.35}s`}
+                  begin={`${index * 0.45}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+            </g>
           ))}
-          <circle cx="50" cy="50" r="3.2" fill="rgba(251,146,60,0.2)" />
+
+          <circle cx="50" cy="50" r="6" fill="url(#constellation-core)" />
+          <circle cx="50" cy="50" r="1.15" fill="#fdba74" filter="url(#constellation-glow)" />
         </svg>
 
-        <span className="absolute top-5 end-5 z-40 rounded-full border border-white/15 bg-brand-950/45 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/90 backdrop-blur-md">
-          {lang === "ar" ? "خدمات مترابطة" : "Connected services"}
-        </span>
+        <div className="absolute top-2 end-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/65">
+          <span className="size-1.5 rounded-full bg-accent-300 shadow-[0_0_12px_rgba(253,186,116,0.9)]" />
+          {lang === "ar" ? "منظومة خدمات متكاملة" : "Integrated service system"}
+        </div>
 
         {nodes.map((node, index) => {
           const slotIndex = (index + rotation) % slots.length;
@@ -137,19 +174,36 @@ function DesktopServiceNetwork({
               style={{
                 left: `${slot.x}%`,
                 top: `${slot.y}%`,
-                transform: `translate(-50%, -50%) scale(${isCentral ? 1.08 : 0.94})`,
+                transform: `translate(-50%, -50%) scale(${isCentral ? 1.12 : 0.94})`,
+                transitionDelay: `${index * 65}ms`,
                 zIndex: isCentral ? 30 : 10,
               }}
-              className={`absolute flex aspect-square w-24 flex-col items-center justify-center rounded-2xl border px-2 text-center shadow-xl transition-[left,top,transform,opacity] duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] xl:w-28 ${
-                isCentral
-                  ? "border-accent-300/80 bg-accent-500/25 text-white shadow-[0_18px_40px_rgba(251,146,60,0.3)]"
-                  : "border-white/20 bg-brand-950/60 text-white/90 shadow-brand-950/30"
-              }`}
+              className="absolute aspect-square w-[92px] transition-[left,top,transform] duration-[1250ms] ease-[cubic-bezier(0.22,1,0.36,1)] xl:w-[108px]"
             >
-              <Icon size={isCentral ? 24 : 20} className={isCentral ? "text-accent-200" : "text-white/75"} strokeWidth={1.8} />
-              <p className="mt-2 line-clamp-2 text-[10px] font-bold leading-snug xl:text-[11px]">
-                {lang === "ar" ? node.ar : node.en}
-              </p>
+              <div
+                className={`absolute inset-1 rotate-45 rounded-[26%] border transition-colors duration-700 ${
+                  isCentral
+                    ? "border-accent-200/70 bg-accent-400/15 shadow-[0_0_34px_rgba(251,146,60,0.32)]"
+                    : "border-white/15 bg-white/[0.025]"
+                }`}
+              />
+              <div
+                className={`absolute inset-0 rounded-[30%] border backdrop-blur-xl transition-colors duration-700 ${
+                  isCentral
+                    ? "border-accent-200/75 bg-brand-950/75 shadow-[0_20px_50px_rgba(15,23,42,0.45)]"
+                    : "border-white/20 bg-brand-950/65 shadow-[0_14px_34px_rgba(15,23,42,0.35)]"
+                }`}
+              />
+
+              <div className="relative z-10 flex h-full flex-col items-center justify-center px-2 text-center text-white">
+                <span className={`absolute top-2 end-2 text-[8px] font-bold tabular-nums ${isCentral ? "text-accent-200" : "text-white/35"}`}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <Icon size={isCentral ? 24 : 19} className={isCentral ? "text-accent-200" : "text-white/70"} strokeWidth={1.7} />
+                <p className={`mt-2 line-clamp-2 font-bold leading-snug ${isCentral ? "text-[11px] xl:text-xs" : "text-[9px] xl:text-[10px]"}`}>
+                  {lang === "ar" ? node.ar : node.en}
+                </p>
+              </div>
             </article>
           );
         })}
@@ -188,9 +242,9 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(255,255,255,0.14),transparent_35%)]" aria-hidden="true" />
 
       <div className="container-site relative z-10 flex min-h-[100dvh] w-full items-center pt-24 pb-20 md:pt-32 md:pb-28">
-        <DesktopServiceNetwork cards={hero.cards} lang={lang} />
+        <DesktopServiceConstellation cards={hero.cards} lang={lang} />
 
-        <div className="flex w-full max-w-3xl flex-col items-center text-center lg:max-w-[55%] lg:items-start lg:text-start">
+        <div className="flex w-full max-w-3xl flex-col items-center text-center lg:max-w-[53%] lg:items-start lg:text-start">
           <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-label-xl font-medium shadow-lg backdrop-blur-md">
             <Sparkles size={16} className="text-accent-300" />
             {lang === "ar" ? hero.badgeAr : hero.badgeEn}

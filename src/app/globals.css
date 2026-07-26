@@ -525,4 +525,5 @@
     scroll-behavior: auto !important;
   }
   .skeleton { animation: none; }
+  .service-network-motion { display: none; }
 }
