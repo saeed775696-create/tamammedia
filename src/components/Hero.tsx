@@ -38,7 +38,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div className="container-site relative z-10 w-full min-w-0 pt-28 pb-20 md:pt-36 md:pb-28">
+      <div className="container-site relative z-10 w-full min-w-0 pt-24 pb-20 md:pt-32 md:pb-28">
         <div className="grid min-w-0 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14">
           {/* ── Visual Side: order-2 on mobile (text first), order-2 on desktop ── */}
           <div
