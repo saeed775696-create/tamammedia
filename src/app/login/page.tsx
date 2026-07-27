@@ -7,6 +7,25 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Loader2, Lock, Mail, ArrowRight, ShieldAlert, Eye, EyeOff } from "lucide-react";
 
+function getSignInErrorMessage(errorCode: string | null | undefined) {
+  switch (errorCode) {
+    case "forbidden":
+      return "ليس لديك صلاحية الوصول للوحة التحكم.";
+    case "access-revoked":
+      return "تم إيقاف وصول هذا الحساب. راجع مدير النظام.";
+    case "CredentialsSignin":
+      return "بيانات الدخول غير صحيحة. تأكد من البريد وكلمة المرور.";
+    case "RATE_LIMITED":
+      return "تم إيقاف المحاولات مؤقتًا لحماية الحساب. انتظر 15 دقيقة ثم حاول مجددًا.";
+    case "AUTH_SERVICE_UNAVAILABLE":
+    case "Callback":
+    case "Configuration":
+      return "تعذّر إكمال تسجيل الدخول بسبب عطل مؤقت في خدمة المصادقة. حاول بعد قليل.";
+    default:
+      return errorCode ? "تعذّر إكمال تسجيل الدخول. حاول مرة أخرى بعد قليل." : "";
+  }
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -16,13 +35,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(
-    errorParam === "forbidden"
-      ? "ليس لديك صلاحية الوصول للوحة التحكم"
-      : errorParam === "access-revoked"
-        ? "تم إيقاف وصول هذا الحساب. راجع مدير النظام."
-        : ""
-  );
+  const [error, setError] = useState(() => getSignInErrorMessage(errorParam));
   const passwordChanged = searchParams.get("passwordChanged") === "1";
   const passwordReset = searchParams.get("passwordReset") === "1";
 
@@ -41,7 +54,7 @@ function LoginForm() {
       });
 
       if (res?.error) {
-        setError("بيانات الدخول غير صحيحة. تأكد من البريد وكلمة المرور.");
+        setError(getSignInErrorMessage(res.error));
       } else if (res?.ok) {
         router.push("/dashboard");
         router.refresh();
@@ -158,7 +171,7 @@ function LoginForm() {
                     id="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="admin@tamammedia.com"
+                    placeholder="name@example.com"
                     dir="ltr"
                     className="w-full px-14 py-4 bg-surface-50 border-2 border-surface-200 rounded-2xl text-[16px] font-medium text-brand-900 focus:ring-4 focus:ring-accent-500/10 focus:bg-white focus:border-accent-500 outline-none transition-all placeholder:text-surface-400 text-right"
                     value={email}

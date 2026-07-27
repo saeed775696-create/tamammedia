@@ -34,9 +34,16 @@ function isValidIp(value: string) {
  * TRUSTED_CLIENT_IP_HEADER to a header overwritten by your reverse proxy, e.g.
  * `cf-connecting-ip` or `x-vercel-forwarded-for`. Never set it to
  * `x-forwarded-for` unless the proxy strips client-supplied values first.
+ *
+ * Vercel overwrites `x-vercel-forwarded-for`, so it is safe to use that header
+ * automatically when the application is running on Vercel. This prevents all
+ * visitors from sharing a single rate-limit bucket when the optional setting
+ * has not been added to the deployment yet.
  */
 export function getClientIpFromHeaders(headers: Headers | Record<string, string | string[] | undefined>): string {
-  const trustedHeader = process.env.TRUSTED_CLIENT_IP_HEADER?.trim().toLowerCase();
+  const configuredHeader = process.env.TRUSTED_CLIENT_IP_HEADER?.trim().toLowerCase();
+  const trustedHeader =
+    configuredHeader || (process.env.VERCEL === "1" ? "x-vercel-forwarded-for" : undefined);
   if (!trustedHeader) return "untrusted-network";
 
   const raw = readHeader(headers, trustedHeader);

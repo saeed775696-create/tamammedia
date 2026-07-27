@@ -8,6 +8,18 @@ import { getClientIpFromHeaders, rateLimit } from "@/lib/api/rate-limit";
 // Used for unknown and disabled accounts so authentication timing does not
 // reveal whether an email address exists in the database.
 const DUMMY_PASSWORD_HASH = "$2b$12$l0AGQlSrJtwI/2ksMmqsZudYVsN4E7SU52DDJ8wYgW61fTbv/3OTa";
+const AUTH_ERROR = {
+  RATE_LIMITED: "RATE_LIMITED",
+  SERVICE_UNAVAILABLE: "AUTH_SERVICE_UNAVAILABLE",
+} as const;
+
+function isSafeAuthError(error: unknown): error is Error {
+  return (
+    error instanceof Error &&
+    (error.message === AUTH_ERROR.RATE_LIMITED ||
+      error.message === AUTH_ERROR.SERVICE_UNAVAILABLE)
+  );
+}
 
 export const authOptions: NextAuthOptions = {
   secret: authConfig.secret,
@@ -22,33 +34,46 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
 
         const email = credentials.email.trim().toLowerCase();
-        const ip = getClientIpFromHeaders(request.headers ?? {});
-        const [ipAllowed, credentialAllowed] = await Promise.all([
-          rateLimit(`login:ip:${ip}`, { limit: 20, windowSeconds: 15 * 60 }),
-          rateLimit(`login:credential:${ip}:${email}`, { limit: 8, windowSeconds: 15 * 60 }),
-        ]);
-        if (!ipAllowed || !credentialAllowed) return null;
+        try {
+          const ip = getClientIpFromHeaders(request.headers ?? {});
+          const [ipAllowed, credentialAllowed] = await Promise.all([
+            rateLimit(`login:ip:${ip}`, { limit: 20, windowSeconds: 15 * 60 }),
+            rateLimit(`login:credential:${ip}:${email}`, { limit: 8, windowSeconds: 15 * 60 }),
+          ]);
+          if (!ipAllowed || !credentialAllowed) {
+            throw new Error(AUTH_ERROR.RATE_LIMITED);
+          }
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user?.isActive ? user.password : DUMMY_PASSWORD_HASH,
-        );
-        if (!user || !user.isActive || !isValid) return null;
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() },
-        });
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          mustChangePassword: user.mustChangePassword,
-          sessionVersion: user.sessionVersion,
-        };
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user?.isActive ? user.password : DUMMY_PASSWORD_HASH,
+          );
+          if (!user || !user.isActive || !isValid) return null;
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+          });
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            mustChangePassword: user.mustChangePassword,
+            sessionVersion: user.sessionVersion,
+          };
+        } catch (error) {
+          if (isSafeAuthError(error)) throw error;
+
+          // Never leak database details or submitted credentials to the client.
+          console.error("[auth] Credentials service unavailable", {
+            error: error instanceof Error ? error.name : "UnknownError",
+          });
+          throw new Error(AUTH_ERROR.SERVICE_UNAVAILABLE);
+        }
       },
     }),
   ],
