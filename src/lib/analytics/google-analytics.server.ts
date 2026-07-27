@@ -22,6 +22,13 @@ type BatchReportResponse = {
   reports?: Report[];
 };
 
+type GoogleErrorContext = {
+  httpStatus: number;
+  canonicalStatus: string;
+  reasons: Set<string>;
+  normalizedMessage: string;
+};
+
 const periodDays: Record<AnalyticsPeriod, number> = {
   "7d": 7,
   "30d": 30,
@@ -105,52 +112,137 @@ function dateRanges(period: AnalyticsPeriod) {
   };
 }
 
-function translateGoogleError(error: unknown): never {
-  const code =
-    typeof error === "object" && error && "code" in error
-      ? Number((error as { code?: unknown }).code)
-      : 0;
-  const httpStatus =
-    typeof error === "object" &&
-    error &&
-    "response" in error &&
-    typeof (error as { response?: unknown }).response === "object"
-      ? Number(
-          (
-            error as {
-              response?: { status?: unknown };
-            }
-          ).response?.status
-        )
-      : 0;
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null
+    ? (value as Record<string, unknown>)
+    : null;
+}
 
-  if (code === 7 || httpStatus === 403) {
-    throw new AppError({
+function googleErrorContext(error: unknown): GoogleErrorContext {
+  const root = asRecord(error);
+  const response = asRecord(root?.response);
+  const data = asRecord(response?.data);
+  const nestedError = asRecord(data?.error);
+  const apiError = nestedError || data;
+  const details = Array.isArray(apiError?.details) ? apiError.details : [];
+  const reasons = new Set(
+    details
+      .map((detail) => asRecord(detail)?.reason)
+      .filter((reason): reason is string => typeof reason === "string")
+      .map((reason) => reason.toUpperCase())
+  );
+
+  const messageParts = [
+    apiError?.message,
+    data?.error_description,
+    typeof data?.error === "string" ? data.error : undefined,
+    root?.message,
+  ].filter((value): value is string => typeof value === "string");
+
+  return {
+    httpStatus:
+      Number(response?.status) ||
+      Number(apiError?.code) ||
+      Number(root?.code) ||
+      0,
+    canonicalStatus:
+      typeof apiError?.status === "string"
+        ? apiError.status.toUpperCase()
+        : "",
+    reasons,
+    normalizedMessage: messageParts.join(" ").toLowerCase(),
+  };
+}
+
+export function mapGoogleAnalyticsError(error: unknown): AppError {
+  const context = googleErrorContext(error);
+  const apiDisabled =
+    context.reasons.has("SERVICE_DISABLED") ||
+    context.reasons.has("SERVICE_NOT_ACTIVATED") ||
+    context.reasons.has("API_DISABLED") ||
+    context.normalizedMessage.includes("has not been used in project") ||
+    context.normalizedMessage.includes("service disabled") ||
+    context.normalizedMessage.includes("api is disabled") ||
+    context.normalizedMessage.includes("it is disabled");
+
+  if (apiDisabled) {
+    return new AppError({
       message:
-        "لا يملك حساب الخدمة صلاحية قراءة هذه الخاصية. أضف بريده كمشاهد في Google Analytics.",
-      statusCode: 502,
-      code: "GOOGLE_ANALYTICS_PERMISSION_DENIED",
+        "تم توثيق حساب الخدمة، لكن Google Analytics Data API غير مفعّلة في مشروع Google Cloud الخاص به. فعّل الواجهة في مشروع project_id، انتظر دقيقة، ثم أعد الاختبار.",
+      statusCode: 400,
+      code: "GOOGLE_ANALYTICS_API_DISABLED",
+    });
+  }
+
+  const invalidCredentials =
+    context.httpStatus === 401 ||
+    context.httpStatus === 16 ||
+    context.canonicalStatus === "UNAUTHENTICATED" ||
+    context.normalizedMessage.includes("invalid_grant") ||
+    context.normalizedMessage.includes("invalid jwt") ||
+    context.normalizedMessage.includes("invalid credentials") ||
+    context.normalizedMessage.includes("service account has been disabled");
+
+  if (invalidCredentials) {
+    return new AppError({
+      message:
+        "تعذر توثيق حساب الخدمة. احذف المفتاح القديم أو المكشوف، وأنشئ مفتاح JSON جديدًا لحساب خدمة فعّال، ثم أعد الربط.",
+      statusCode: 400,
+      code: "GOOGLE_ANALYTICS_INVALID_CREDENTIALS",
     });
   }
 
   if (
-    code === 3 ||
-    code === 5 ||
-    httpStatus === 400 ||
-    httpStatus === 404
+    context.httpStatus === 429 ||
+    context.httpStatus === 8 ||
+    context.canonicalStatus === "RESOURCE_EXHAUSTED"
   ) {
-    throw new AppError({
-      message: "معرّف خاصية Google Analytics غير صحيح أو غير متاح.",
+    return new AppError({
+      message:
+        "تم تجاوز حصة طلبات Google Analytics مؤقتًا. انتظر بضع دقائق ثم أعد الاختبار.",
+      statusCode: 429,
+      code: "GOOGLE_ANALYTICS_QUOTA_EXCEEDED",
+    });
+  }
+
+  if (
+    context.httpStatus === 400 ||
+    context.httpStatus === 404 ||
+    context.httpStatus === 3 ||
+    context.httpStatus === 5 ||
+    context.canonicalStatus === "INVALID_ARGUMENT" ||
+    context.canonicalStatus === "NOT_FOUND"
+  ) {
+    return new AppError({
+      message:
+        "معرّف الخاصية غير صحيح أو لا يخص خاصية GA4. استخدم Property ID الرقمي من إعدادات الخاصية، وليس Measurement ID الذي يبدأ بـ G-.",
       statusCode: 400,
       code: "GOOGLE_ANALYTICS_INVALID_PROPERTY",
     });
   }
 
-  throw new AppError({
+  if (
+    context.httpStatus === 403 ||
+    context.httpStatus === 7 ||
+    context.canonicalStatus === "PERMISSION_DENIED"
+  ) {
+    return new AppError({
+      message:
+        "تم الاتصال بـ Google، لكن حساب الخدمة لا يملك وصولًا إلى هذه الخاصية. أضف client_email في Google Analytics ← المشرف ← إدارة وصول الخاصية للخاصية المطابقة لـ Property ID، وليس في IAM داخل Google Cloud.",
+      statusCode: 502,
+      code: "GOOGLE_ANALYTICS_PERMISSION_DENIED",
+    });
+  }
+
+  return new AppError({
     message: "تعذر الاتصال بخدمة Google Analytics حاليًا.",
     statusCode: 502,
     code: "GOOGLE_ANALYTICS_UNAVAILABLE",
   });
+}
+
+function translateGoogleError(error: unknown): never {
+  throw mapGoogleAnalyticsError(error);
 }
 
 export async function testGoogleAnalyticsConnection(

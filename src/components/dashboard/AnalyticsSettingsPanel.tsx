@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import {
+  AlertTriangle,
   BarChart3,
   CheckCircle2,
   ExternalLink,
@@ -18,6 +19,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import type { GoogleAnalyticsConnectionStatus } from "@/types/analytics";
+
+type ConnectionError = {
+  code: string;
+  message: string;
+};
+
+function connectionErrorHints(code: string) {
+  switch (code) {
+    case "GOOGLE_ANALYTICS_API_DISABLED":
+      return [
+        "افتح Google Cloud بالمشروع الموجود في project_id داخل ملف JSON.",
+        "فعّل Google Analytics Data API، ثم انتظر دقيقة قبل إعادة الاختبار.",
+      ];
+    case "GOOGLE_ANALYTICS_PERMISSION_DENIED":
+      return [
+        "أضف قيمة client_email في إدارة وصول الخاصية داخل Google Analytics، وليس كدور IAM في Google Cloud.",
+        "تأكد أن الخاصية التي منحتها Viewer تحمل Property ID نفسه المكتوب أعلاه.",
+      ];
+    case "GOOGLE_ANALYTICS_INVALID_CREDENTIALS":
+      return [
+        "احذف المفتاح القديم من تبويب Keys لحساب الخدمة وأنشئ مفتاح JSON جديدًا.",
+        "لا ترسل المفتاح في المحادثات ولا تحفظه داخل ملفات المشروع.",
+      ];
+    case "GOOGLE_ANALYTICS_INVALID_PROPERTY":
+      return [
+        "انسخ Property ID الرقمي من المشرف ← إعدادات الخاصية.",
+        "لا تستخدم Measurement ID الذي يبدأ بـ G- في حقل Property ID.",
+      ];
+    case "GOOGLE_ANALYTICS_QUOTA_EXCEEDED":
+      return ["انتظر بضع دقائق، ثم استخدم زر الحفظ والاختبار مرة أخرى."];
+    default:
+      return ["تحقق من اتصال Google ثم أعد المحاولة بعد قليل."];
+  }
+}
 
 function SettingField({
   label,
@@ -55,6 +90,8 @@ export default function AnalyticsSettingsPanel({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [connectionError, setConnectionError] =
+    useState<ConnectionError | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -106,6 +143,8 @@ export default function AnalyticsSettingsPanel({
       return;
     }
 
+    const suppliedCredentials = Boolean(serviceAccountJson.trim());
+    setConnectionError(null);
     setSaving(true);
     try {
       const response = await fetch("/api/analytics/settings", {
@@ -119,12 +158,18 @@ export default function AnalyticsSettingsPanel({
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok || !payload?.data) {
-        throw new Error(
-          payload?.error?.message || "تعذر التحقق من اتصال Google Analytics"
-        );
+        const nextError = {
+          code: payload?.error?.code || "GOOGLE_ANALYTICS_UNAVAILABLE",
+          message:
+            payload?.error?.message ||
+            "تعذر التحقق من اتصال Google Analytics",
+        };
+        setConnectionError(nextError);
+        throw new Error(nextError.message);
       }
 
       const nextStatus = payload.data as GoogleAnalyticsConnectionStatus;
+      setConnectionError(null);
       setStatus(nextStatus);
       setPropertyId(nextStatus.propertyId);
       setServiceAccountJson("");
@@ -137,6 +182,7 @@ export default function AnalyticsSettingsPanel({
           : "تعذر التحقق من اتصال Google Analytics"
       );
     } finally {
+      if (suppliedCredentials) setServiceAccountJson("");
       setSaving(false);
     }
   };
@@ -162,6 +208,7 @@ export default function AnalyticsSettingsPanel({
         );
       }
       setStatus(payload.data as GoogleAnalyticsConnectionStatus);
+      setConnectionError(null);
       setPropertyId("");
       setServiceAccountJson("");
       onMeasurementIdChange("");
@@ -229,6 +276,33 @@ export default function AnalyticsSettingsPanel({
         </div>
 
         <CardContent className="grid gap-5 pt-6 lg:grid-cols-2">
+          {connectionError && (
+            <div
+              role="alert"
+              className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950 lg:col-span-2"
+            >
+              <div className="flex items-start gap-3">
+                <AlertTriangle
+                  size={20}
+                  className="mt-0.5 shrink-0 text-amber-600"
+                />
+                <div>
+                  <p className="text-sm font-extrabold">
+                    تعذر التحقق من اتصال Google Analytics
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed">
+                    {connectionError.message}
+                  </p>
+                  <ul className="mt-3 list-disc space-y-1 ps-5 text-xs leading-relaxed">
+                    {connectionErrorHints(connectionError.code).map((hint) => (
+                      <li key={hint}>{hint}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           <SettingField
             label="معرّف القياس (Measurement ID)"
             hint="يوجد داخل تفاصيل Web Data Stream ويبدأ عادةً بـ G-. هذا المعرّف عام ويُضاف إلى صفحات الموقع."
