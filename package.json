@@ -9,6 +9,7 @@
     "postinstall": "npx prisma generate",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test:dashboard-integration": "tsx scripts/dashboardIntegrationTest.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",

@@ -1,4 +1,4 @@
-import { createHash, randomInt } from "node:crypto";
+import { createHash, randomInt, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { ApiResponseHandler, getActiveUser } from "@/lib/api";
@@ -59,18 +59,20 @@ export async function POST(request: NextRequest) {
     }
 
     const code = randomInt(100_000, 1_000_000).toString();
-    const emailChange = await prisma.$transaction(async (tx) => {
-      await tx.emailChangeCode.deleteMany({ where: { userId: user.id } });
-      return tx.emailChangeCode.create({
+    const emailChangeId = randomUUID();
+    const [, emailChange] = await prisma.$transaction([
+      prisma.emailChangeCode.deleteMany({ where: { userId: user.id } }),
+      prisma.emailChangeCode.create({
         data: {
+          id: emailChangeId,
           userId: user.id,
           currentEmail: user.email,
           newEmail: input.email,
           codeHash: hashCode(code),
           expiresAt: new Date(Date.now() + EMAIL_CHANGE_TTL_MS),
         },
-      });
-    });
+      }),
+    ]);
 
     try {
       await sendAccountEmailChangeCode({ to: input.email, code });

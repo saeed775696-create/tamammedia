@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { googleMeasurementIdSchema } from "./analytics.schema";
+import { imageUrlSchema } from "./url.schema";
 
 const text = (max = 500) => z.string().trim().min(1).max(max);
 const url = z.string().trim().url().max(2048);
@@ -10,7 +11,7 @@ export const siteSettingsSchema = z.object({
   branding: z.object({
     nameAr: text(120),
     nameEn: text(120),
-    logoUrl: url,
+    logoUrl: imageUrlSchema,
     taglineAr: text(180),
     taglineEn: text(180),
   }),
@@ -46,7 +47,7 @@ export const siteSettingsSchema = z.object({
     primaryCtaEn: text(80),
     secondaryCtaAr: text(80),
     secondaryCtaEn: text(80),
-    cards: z.array(localizedTextSchema.extend({ imageUrl: url })).min(1).max(8),
+    cards: z.array(localizedTextSchema.extend({ imageUrl: imageUrlSchema })).min(1).max(8),
     stats: z.array(localizedTextSchema.extend({ value: text(24) })).min(1).max(6),
   }),
   homeAbout: z.object({

@@ -64,6 +64,7 @@ export default function PortfolioDashboard() {
   return (
     <CrudPage<PortfolioItem>
       endpoint="/api/portfolio"
+      formData={form}
       itemName="العمل"
       pageTitle="الأعمال والمشاريع"
       pageSubtitle="إدارة معرض الأعمال والمشاريع السابقة"

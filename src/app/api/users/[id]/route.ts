@@ -43,16 +43,16 @@ export async function PATCH(
     const password = input.temporaryPassword
       ? await bcrypt.hash(input.temporaryPassword, 12)
       : undefined;
-    const editor = await prisma.$transaction(async (tx) => {
-      const updated = await tx.user.update({
+    const [editor] = await prisma.$transaction([
+      prisma.user.update({
         where: { id },
         data: {
           ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
           ...(password ? { password, mustChangePassword: true, sessionVersion: { increment: 1 } } : {}),
         },
         select: publicUserSelect,
-      });
-      await tx.auditLog.create({
+      }),
+      prisma.auditLog.create({
         data: {
           actorId: actor.id,
           targetUserId: id,
@@ -63,9 +63,8 @@ export async function PATCH(
               : "EDITOR_ACCESS_DISABLED",
           metadata: { email: target.email },
         },
-      });
-      return updated;
-    });
+      }),
+    ]);
 
     return editor;
   }, { successMessage: "Editor account updated" });

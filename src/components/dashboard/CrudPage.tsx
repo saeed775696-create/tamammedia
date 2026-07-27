@@ -34,6 +34,8 @@ export interface CrudPageProps<T extends { id: string | number }> {
   renderConfirmDialog: (crud: ReturnType<typeof useCrud<T>>) => React.ReactNode
   onOpenAdd?: (crud: ReturnType<typeof useCrud<T>>) => void
   onOpenEdit?: (item: T, crud: ReturnType<typeof useCrud<T>>) => void
+  /** Controlled form data owned by the resource page. */
+  formData?: Record<string, unknown>
 }
 
 export function CrudPage<T extends { id: string | number }>({
@@ -53,6 +55,7 @@ export function CrudPage<T extends { id: string | number }>({
   renderConfirmDialog,
   onOpenAdd,
   onOpenEdit,
+  formData,
 }: CrudPageProps<T>) {
   const crud = useCrud<T>({ endpoint, itemName })
   const [search, setSearch] = React.useState("")
@@ -73,10 +76,11 @@ export function CrudPage<T extends { id: string | number }>({
   }, [crud.data, search, searchFields])
 
   const handleSave = async () => {
+    const submittedForm = formData ?? form
     if (crud.editItem) {
-      await crud.updateItem(crud.editItem.id, form as Record<string, unknown>, true)
+      await crud.updateItem(crud.editItem.id, submittedForm, true)
     } else {
-      await crud.createItem(form as Record<string, unknown>, true)
+      await crud.createItem(submittedForm, true)
     }
   }
 

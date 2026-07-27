@@ -76,7 +76,17 @@ export async function POST(req: NextRequest) {
       throw new ValidationError('Uploaded content is not a valid image');
     }
 
-    const path = `${crypto.randomUUID()}.${extension}`;
+    const requestedTestRun =
+      process.env.NODE_ENV !== 'production'
+        ? req.headers.get('x-dashboard-test-run')?.trim()
+        : undefined;
+    const testRun =
+      requestedTestRun && /^[a-z0-9]{8,32}$/i.test(requestedTestRun)
+        ? requestedTestRun
+        : undefined;
+    const path = testRun
+      ? `integration-tests/${testRun}-${crypto.randomUUID()}.${extension}`
+      : `${crypto.randomUUID()}.${extension}`;
 
     const { data, error } = await supabase.storage
       .from('images')

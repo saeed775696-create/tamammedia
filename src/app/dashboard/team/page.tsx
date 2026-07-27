@@ -27,6 +27,7 @@ export default function TeamDashboard() {
   return (
     <CrudPage<TeamMember>
       endpoint="/api/team"
+      formData={form}
       itemName="عضو الفريق"
       pageTitle="فريق العمل"
       pageSubtitle="إدارة أعضاء الفريق وإبراز كفاءات الشركة"

@@ -18,6 +18,15 @@ export interface PublicPortfolioItem {
   featured: boolean;
 }
 
+export interface PublicServiceItem {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  imageUrl?: string;
+}
+
 async function readPortfolioList(): Promise<PublicPortfolioItem[]> {
   const items = await prisma.portfolioItem.findMany({
     take: 60,
@@ -58,6 +67,30 @@ const getCachedPortfolioItem = unstable_cache(
   { revalidate: 3600, tags: [PORTFOLIO_CONTENT_CACHE_TAG] }
 );
 
+const getCachedServiceList = unstable_cache(
+  async (): Promise<PublicServiceItem[]> => {
+    const services = await prisma.service.findMany({
+      take: 60,
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      select: {
+        id: true,
+        titleEn: true,
+        titleAr: true,
+        descriptionEn: true,
+        descriptionAr: true,
+        imageUrl: true,
+      },
+    });
+
+    return services.map((service) => ({
+      ...service,
+      imageUrl: service.imageUrl || undefined,
+    }));
+  },
+  ["service-list-v1"],
+  { revalidate: 3600, tags: [SERVICE_CONTENT_CACHE_TAG] }
+);
+
 const getCachedService = unstable_cache(
   async (id: string): Promise<Service | null> =>
     prisma.service.findUnique({ where: { id } }),
@@ -75,4 +108,8 @@ export function getPortfolioItem(id: string) {
 
 export function getServiceItem(id: string) {
   return getCachedService(id);
+}
+
+export function getServiceList() {
+  return getCachedServiceList();
 }

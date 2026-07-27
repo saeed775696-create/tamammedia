@@ -26,6 +26,7 @@ export default function PartnersDashboard() {
   return (
     <CrudPage<Partner>
       endpoint="/api/partners"
+      formData={form}
       itemName="الشريك"
       pageTitle="شركاء النجاح"
       pageSubtitle="إدارة قائمة الشركاء والعملاء المميزين"

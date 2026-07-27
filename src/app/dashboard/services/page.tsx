@@ -28,6 +28,7 @@ export default function ServicesDashboard() {
   return (
     <CrudPage<Service>
       endpoint="/api/services"
+      formData={form}
       itemName="الخدمة"
       pageTitle="خدمات الشركة"
       pageSubtitle="إدارة الخدمات التي تقدمها لعملائك"

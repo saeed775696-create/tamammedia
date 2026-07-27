@@ -1,4 +1,4 @@
-import { createHash, randomInt } from "node:crypto";
+import { createHash, randomInt, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { ApiResponseHandler } from "@/lib/api";
 import { getClientIp, rateLimit } from "@/lib/api/rate-limit";
@@ -37,17 +37,19 @@ export async function POST(request: NextRequest) {
     if (!user || user.role !== "admin" || !user.isActive) return { accepted: true };
 
     const code = randomInt(100_000, 1_000_000).toString();
-    const reset = await prisma.$transaction(async (tx) => {
-      await tx.passwordResetCode.deleteMany({ where: { userId: user.id } });
-      return tx.passwordResetCode.create({
+    const resetId = randomUUID();
+    const [, reset] = await prisma.$transaction([
+      prisma.passwordResetCode.deleteMany({ where: { userId: user.id } }),
+      prisma.passwordResetCode.create({
         data: {
+          id: resetId,
           userId: user.id,
           email: user.email,
           codeHash: hashCode(code),
           expiresAt: new Date(Date.now() + RESET_TTL_MS),
         },
-      });
-    });
+      }),
+    ]);
 
     let deliveryFailed = false;
     try {

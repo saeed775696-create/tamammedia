@@ -1,6 +1,7 @@
 import { IBaseRepository } from '../repositories/base.repository';
 import { PaginationParams } from '../api/pagination';
 import { logger } from '../logger';
+import { NotFoundError } from '../api/errors';
 
 /**
  * كلاس أساسي لتقليل تكرار الـ CRUD services
@@ -19,7 +20,11 @@ export class BaseService<T, TCreate, TUpdate> {
 
   async getById(id: string) {
     logger.info(`Fetching ${this.entityName}`, { id });
-    return this.repository.findById(id);
+    const item = await this.repository.findById(id);
+    if (!item) {
+      throw new NotFoundError(`${this.entityName} with id ${id} not found`);
+    }
+    return item;
   }
 
   async create(data: TCreate) {

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { ApiResponseHandler, requireAdmin, getActiveUser } from "@/lib/api";
 import { ConflictError } from "@/lib/api/errors";
@@ -44,9 +45,11 @@ export async function POST(request: NextRequest) {
     if (existing) throw new ConflictError("An account already exists for this email");
 
     const password = await bcrypt.hash(input.temporaryPassword, 12);
-    const editor = await prisma.$transaction(async (tx) => {
-      const created = await tx.user.create({
+    const editorId = randomUUID();
+    const [editor] = await prisma.$transaction([
+      prisma.user.create({
         data: {
+          id: editorId,
           email: input.email,
           name: input.name || null,
           password,
@@ -55,17 +58,16 @@ export async function POST(request: NextRequest) {
           mustChangePassword: true,
         },
         select: publicUserSelect,
-      });
-      await tx.auditLog.create({
+      }),
+      prisma.auditLog.create({
         data: {
           actorId: actor.id,
-          targetUserId: created.id,
+          targetUserId: editorId,
           action: "EDITOR_CREATED",
-          metadata: { email: created.email },
+          metadata: { email: input.email },
         },
-      });
-      return created;
-    });
+      }),
+    ]);
 
     return editor;
   }, { status: 201, successMessage: "Editor account created" });
