@@ -25,6 +25,9 @@ export const defaultSiteSettings: SiteSettings = {
     linkedin: "https://www.linkedin.com/in/tamam-media-0914b1418",
     whatsapp: "https://wa.me/967733579558",
   },
+  analytics: {
+    googleMeasurementId: "",
+  },
   hero: {
     badgeAr: "وكالة تسويق رقمي متكاملة",
     badgeEn: "Integrated Digital Marketing Agency",
@@ -90,6 +93,7 @@ export function normalizeSiteSettings(value: unknown): SiteSettings {
     branding: mergeSection(defaultSiteSettings.branding, source.branding),
     contact: mergeSection(defaultSiteSettings.contact, source.contact),
     social: mergeSection(defaultSiteSettings.social, source.social),
+    analytics: mergeSection(defaultSiteSettings.analytics, source.analytics),
     hero: {
       ...hero,
       cards: Array.isArray(source.hero?.cards) && source.hero.cards.length > 0

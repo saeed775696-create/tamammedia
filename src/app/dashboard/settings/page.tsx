@@ -1,9 +1,10 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Image as ImageIcon, LayoutTemplate, Loader2, Save, Settings2, Users } from "lucide-react";
+import { BarChart3, Image as ImageIcon, LayoutTemplate, Loader2, Save, Settings2, Users } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
+import AnalyticsSettingsPanel from "@/components/dashboard/AnalyticsSettingsPanel";
 import ImageUpload from "@/components/dashboard/ImageUpload";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -12,7 +13,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { defaultSiteSettings } from "@/config/site-settings";
 import type { SiteSettings } from "@/types/site-settings";
 
-type Tab = "identity" | "hero" | "home";
+type Tab = "identity" | "hero" | "home" | "analytics";
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
@@ -86,6 +87,13 @@ export default function SiteSettingsPage() {
     }));
   };
 
+  const updateAnalyticsMeasurementId = useCallback((googleMeasurementId: string) => {
+    setSettings((current) => ({
+      ...current,
+      analytics: { googleMeasurementId },
+    }));
+  }, []);
+
   const save = async (event: FormEvent) => {
     event.preventDefault();
     setSaving(true);
@@ -112,6 +120,7 @@ export default function SiteSettingsPage() {
     { id: "identity", label: "الهوية والتواصل", icon: Settings2 },
     { id: "hero", label: "واجهة الصفحة الرئيسية", icon: LayoutTemplate },
     { id: "home", label: "محتوى الصفحة والفوتر", icon: Users },
+    { id: "analytics", label: "التحليلات وGoogle", icon: BarChart3 },
   ];
 
   return (
@@ -120,11 +129,11 @@ export default function SiteSettingsPage() {
         title="إعدادات الموقع"
         subtitle="تحكم في الهوية والمعلومات وواجهات الموقع العامة من مكان واحد."
         breadcrumbs={[{ label: "لوحة التحكم", href: "/dashboard" }, { label: "إعدادات الموقع" }]}
-        actions={
+        actions={activeTab !== "analytics" ? (
           <Button type="submit" isLoading={saving || loading} leftIcon={saving ? <Loader2 size={16} /> : <Save size={16} />}>
             حفظ ونشر
           </Button>
-        }
+        ) : undefined}
       />
 
       <div className="mb-6 flex flex-wrap gap-2 rounded-2xl border border-surface-200 bg-white p-2 shadow-sm">
@@ -294,14 +303,23 @@ export default function SiteSettingsPage() {
               </Card>
             </>
           )}
+
+          {activeTab === "analytics" && (
+            <AnalyticsSettingsPanel
+              measurementId={settings.analytics.googleMeasurementId}
+              onMeasurementIdChange={updateAnalyticsMeasurementId}
+            />
+          )}
         </div>
       )}
 
-      <div className="sticky bottom-4 mt-8 flex justify-end">
-        <Button type="submit" size="lg" isLoading={saving || loading} leftIcon={<Save size={17} />} className="shadow-xl">
-          حفظ ونشر التعديلات
-        </Button>
-      </div>
+      {activeTab !== "analytics" && (
+        <div className="sticky bottom-4 mt-8 flex justify-end">
+          <Button type="submit" size="lg" isLoading={saving || loading} leftIcon={<Save size={17} />} className="shadow-xl">
+            حفظ ونشر التعديلات
+          </Button>
+        </div>
+      )}
     </form>
   );
 }

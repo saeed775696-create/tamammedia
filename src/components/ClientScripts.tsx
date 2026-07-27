@@ -1,15 +1,25 @@
 "use client";
 import Script from "next/script";
+import { usePathname } from "next/navigation";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 /**
- * يحمل سكربتات الطرف الثالث (Google Analytics) فقط إن كان المعرّف مضبوطًا.
- * ضع المعرّف في NEXT_PUBLIC_GOOGLE_ANALYTICS_ID.
+ * يحمل Google tag فقط في صفحات الموقع العامة عند ضبط معرّف قياس صالح.
+ * يمكن ضبط المعرّف من لوحة التحكم، مع إبقاء متغير البيئة كخيار توافق.
  */
-export default function ClientScripts() {
-  const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+export default function ClientScripts({ nonce }: { nonce?: string }) {
+  const pathname = usePathname();
+  const { analytics } = useSiteSettings();
+  const gaId =
+    analytics.googleMeasurementId ||
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ||
+    "";
+  const isPrivatePage =
+    /^\/(?:dashboard|login|forgot-password|change-password)(?:\/|$)/.test(
+      pathname
+    );
 
-  if (!gaId || gaId === "G-XXXXXXXXXX") {
-    // لا شيء لتحميله — تجنب الـ placeholder الوهمي
+  if (!/^G-[A-Z0-9]{4,20}$/.test(gaId) || isPrivatePage) {
     return null;
   }
 
@@ -18,13 +28,14 @@ export default function ClientScripts() {
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
         strategy="afterInteractive"
+        nonce={nonce}
       />
-      <Script id="google-analytics" strategy="afterInteractive">
+      <Script id="google-analytics" strategy="afterInteractive" nonce={nonce}>
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${gaId}');
+          gtag('config', '${gaId}', { anonymize_ip: true });
         `}
       </Script>
     </>

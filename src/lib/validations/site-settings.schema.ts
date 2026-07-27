@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { googleMeasurementIdSchema } from "./analytics.schema";
 
 const text = (max = 500) => z.string().trim().min(1).max(max);
 const url = z.string().trim().url().max(2048);
@@ -28,6 +29,9 @@ export const siteSettingsSchema = z.object({
     instagram: url,
     linkedin: url,
     whatsapp: url,
+  }),
+  analytics: z.object({
+    googleMeasurementId: googleMeasurementIdSchema,
   }),
   hero: z.object({
     badgeAr: text(180),

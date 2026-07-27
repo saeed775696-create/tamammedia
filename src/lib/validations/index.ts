@@ -6,3 +6,4 @@ export * from './contact.schema';
 export * from './url.schema';
 export * from './site-settings.schema';
 export * from './user.schema';
+export * from './analytics.schema';

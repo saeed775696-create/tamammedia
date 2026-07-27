@@ -35,6 +35,9 @@ export type SiteSettings = {
     linkedin: string;
     whatsapp: string;
   };
+  analytics: {
+    googleMeasurementId: string;
+  };
   hero: {
     badgeAr: string;
     badgeEn: string;

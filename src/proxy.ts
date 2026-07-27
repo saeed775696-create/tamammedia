@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://embed.tawk.to https://www.google-analytics.com https://*.supabase.co",
+    "connect-src 'self' https://embed.tawk.to https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://*.supabase.co",
     "frame-src 'self' https://www.google.com https://embed.tawk.to",
     "media-src 'self'",
     "object-src 'none'",

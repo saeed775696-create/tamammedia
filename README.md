@@ -45,6 +45,9 @@ DIRECT_URL="postgresql://postgres.PROJECT_REF:PASSWORD@aws-REGION.pooler.supabas
 NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 NEXTAUTH_URL="http://localhost:3000"
 
+# تشفير بيانات تكامل Google Analytics المخزنة
+ANALYTICS_ENCRYPTION_KEY="generate-with-openssl-rand-base64-32"
+
 # Supabase Storage
 NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
@@ -71,6 +74,17 @@ npm run create-admin
 
 > **ملاحظة**: إذا كان لديك admin موجود مسبقًا بكلمة مرور قديمة (مثل `admin123`)،
 > استخدم `npx tsx scripts/createAdmin.ts` لتحديثه بـ `upsert` آمن.
+
+### ربط Google Analytics
+
+بعد تشغيل الموقع، افتح **لوحة التحكم ← إعدادات الموقع ← التحليلات وGoogle** ثم:
+
+1. أدخل Measurement ID الذي يبدأ بـ `G-` وProperty ID الرقمي.
+2. فعّل Google Analytics Data API في مشروع Google Cloud.
+3. أنشئ Service Account وأضف بريده إلى خاصية Analytics بصلاحية Viewer.
+4. ألصق ملف JSON واضغط **ربط Google والتحقق**.
+
+يُشفّر المفتاح الخاص قبل تخزينه، ولا تعيده واجهة API إلى المتصفح بعد الحفظ.
 
 ### 6. تشغيل المشروع
 
@@ -148,6 +162,7 @@ src/
    | `DATABASE_URL` | `postgresql://postgres.PROJECT_REF:PASSWORD@aws-REGION.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true` |
    | `DIRECT_URL` | `postgresql://postgres.PROJECT_REF:PASSWORD@aws-REGION.pooler.supabase.com:5432/postgres?sslmode=require` |
    | `NEXTAUTH_SECRET` | اضغط "Generate" أو `openssl rand -base64 32` |
+   | `ANALYTICS_ENCRYPTION_KEY` | مفتاح مستقل يولّد عبر `openssl rand -base64 32` |
    | `NEXTAUTH_URL` | `https://your-app.vercel.app` (رابط Vercel النهائي) |
    | `NEXT_PUBLIC_SUPABASE_URL` | `https://PROJECT_REF.supabase.co` |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | مفتاح anon من Supabase Dashboard |

@@ -135,7 +135,7 @@ export default async function RootLayout({
           الانتقال إلى المحتوى
         </a>
         <Providers settings={settings}>
-          <ClientScripts />
+          <ClientScripts nonce={nonce} />
           <ScrollProgress />
           <LayoutHeader />
           <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>

@@ -8,6 +8,7 @@ import { DashboardContext } from "@/app/dashboard/DashboardProvider"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
+  ChartNoAxesCombined,
   FolderOpen,
   Wrench,
   MessageSquare,
@@ -24,6 +25,7 @@ type DashboardRole = "admin" | "editor"
 
 const links: { href: string; label: string; icon: typeof LayoutDashboard; roles: DashboardRole[]; badgeKey?: "contacts" }[] = [
   { href: "/dashboard", label: "نظرة عامة", icon: LayoutDashboard, roles: ["admin", "editor"] },
+  { href: "/dashboard/analytics", label: "إحصاءات الزوار", icon: ChartNoAxesCombined, roles: ["admin"] },
   { href: "/dashboard/portfolio", label: "الأعمال", icon: FolderOpen, roles: ["admin", "editor"] },
   { href: "/dashboard/services", label: "الخدمات", icon: Wrench, roles: ["admin", "editor"] },
   { href: "/dashboard/team", label: "الفريق", icon: Users, roles: ["admin", "editor"] },
