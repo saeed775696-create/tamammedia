@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -189,14 +189,25 @@ function TrendChart({
   );
 }
 
-export default function AnalyticsDashboard() {
-  const [period, setPeriod] = useState<AnalyticsPeriod>("30d");
-  const [data, setData] = useState<AnalyticsDashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+type AnalyticsDashboardProps = {
+  initialData?: AnalyticsDashboardData | null;
+  initialError?: { code?: string; message: string } | null;
+};
+
+export default function AnalyticsDashboard({
+  initialData = null,
+  initialError = null,
+}: AnalyticsDashboardProps) {
+  const [period, setPeriod] = useState<AnalyticsPeriod>(
+    initialData?.period || "30d"
+  );
+  const [data, setData] = useState<AnalyticsDashboardData | null>(initialData);
+  const [loading, setLoading] = useState(!initialData && !initialError);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<{ code?: string; message: string } | null>(
-    null
+    initialError
   );
+  const skipInitialFetch = useRef(Boolean(initialData || initialError));
 
   const load = useCallback(async (signal?: AbortSignal) => {
     try {
@@ -233,6 +244,11 @@ export default function AnalyticsDashboard() {
   };
 
   useEffect(() => {
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
+      return;
+    }
+
     const controller = new AbortController();
     const timer = window.setTimeout(() => void load(controller.signal), 0);
     return () => {
@@ -294,12 +310,17 @@ export default function AnalyticsDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div
+        className="space-y-6"
+        aria-busy="true"
+        aria-label="جاري تحميل الإحصاءات"
+      >
+        <div className="h-[58px] animate-pulse rounded-2xl border border-surface-200 bg-white" />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
-              className="h-36 animate-pulse rounded-3xl border border-surface-200 bg-white"
+              className="h-[162px] animate-pulse rounded-3xl border border-surface-200 bg-white"
             />
           ))}
         </div>

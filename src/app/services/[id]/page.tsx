@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { getServiceItem } from "@/lib/public-content.server";
+import {
+  getServiceItem,
+  getServiceList,
+} from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"; // يُفضل استخدام Image من Next.js للأداء
@@ -15,6 +17,13 @@ import {
 type ServicePageProps = {
   params: Promise<{ id: string }>;
 };
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const services = await getServiceList().catch(() => []);
+  return services.map((service) => ({ id: service.id }));
+}
 
 export async function generateMetadata({
   params,
@@ -43,7 +52,6 @@ export default async function ServiceDetailPage({
   const { id } = await params;
   const service = await getServiceItem(id);
   if (!service) notFound();
-  const nonce = (await headers()).get("x-nonce") || undefined;
   const canonical = absoluteUrl(`/services/${service.id}`);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -84,7 +92,6 @@ export default async function ServiceDetailPage({
     <article className="pb-24 bg-surface-100 min-h-screen">
       <script
         type="application/ld+json"
-        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {/* --- 1. الترويسة العلوية (Hero Banner) --- */}

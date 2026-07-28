@@ -1,8 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
-import { connection } from "next/server";
-import { headers } from "next/headers";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -22,9 +20,9 @@ import { siteConfig } from "@/config/site";
 import { getSiteSettings } from "@/lib/site-settings.server";
 import { absoluteUrl, summarizeForSearch } from "@/lib/seo";
 
-// Global content is administered at runtime, so the layout must not be frozen
-// into the production build before the current settings can be read.
-export const dynamic = "force-dynamic";
+// Public pages use ISR. Dashboard mutations invalidate the tagged settings
+// cache, so administered content remains fresh without rendering every request.
+export const revalidate = 3600;
 
 /* =========================================================
    التحسينات المطبّقة:
@@ -119,10 +117,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Content comes from the dashboard and must be rendered per request rather
-  // than captured as a static fallback during the production build.
-  await connection();
-  const nonce = (await headers()).get("x-nonce") || undefined;
   const settings = await getSiteSettings();
 
   return (
@@ -137,13 +131,13 @@ export default async function RootLayout({
           الانتقال إلى المحتوى
         </a>
         <Providers settings={settings}>
-          <ClientScripts nonce={nonce} />
+          <ClientScripts />
           <ScrollProgress />
           <LayoutHeader />
           <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
           <LayoutFooter />
           <BackToTop />
-          <StructuredData nonce={nonce} settings={settings} />
+          <StructuredData settings={settings} />
           <TawkChat />
         </Providers>
       </body>

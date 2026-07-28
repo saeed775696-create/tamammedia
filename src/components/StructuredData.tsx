@@ -1,14 +1,20 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import { absoluteUrl, serializeJsonLd, servedMarkets } from "@/lib/seo";
 import type { SiteSettings } from "@/types/site-settings";
 
 export default function StructuredData({
-  nonce,
   settings,
 }: {
-  nonce?: string;
   settings: SiteSettings;
 }) {
+  const pathname = usePathname();
+  const isPrivatePage =
+    /^\/(?:dashboard|login|forgot-password|change-password)(?:\/|$)/.test(
+      pathname
+    );
   const businessId = `${siteConfig.url}/#business`;
   const websiteId = `${siteConfig.url}/#website`;
   const socialProfiles = Object.values(settings.social).filter(Boolean);
@@ -117,10 +123,11 @@ export default function StructuredData({
     ],
   };
 
+  if (isPrivatePage) return null;
+
   return (
     <script
       type="application/ld+json"
-      nonce={nonce}
       dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
     />
   );

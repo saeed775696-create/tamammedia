@@ -11,6 +11,7 @@ import { IconButton } from "@/components/ui/IconButton"
 import { Input } from "@/components/ui/Input"
 import ImageUpload from "@/components/dashboard/ImageUpload"
 import { isSafeExternalUrl } from "@/lib/utils"
+import DashboardImage from "@/components/dashboard/DashboardImage"
 
 type Partner = {
   id: string
@@ -41,12 +42,11 @@ export default function PartnersDashboard() {
       renderCard={(partner, { onEdit, onDelete }) => (
         <Card className="group overflow-hidden hover:-translate-y-1 transition-all p-0 flex flex-col">
           <div className="h-32 bg-surface-50 flex items-center justify-center p-6 relative group-hover:bg-surface-100 transition-colors rounded-t-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <DashboardImage
               src={partner.imageUrl}
               alt={partner.name}
-              className="max-h-full max-w-full object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"
-              onError={(e) => { e.currentTarget.src = "/imgs/2-3.png" }}
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
+              className="object-contain p-6 grayscale opacity-60 transition-all duration-500 group-hover:scale-110 group-hover:grayscale-0 group-hover:opacity-100"
             />
             <div className="absolute inset-0 bg-brand-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 backdrop-blur-sm">
               <div className="flex items-center gap-2">

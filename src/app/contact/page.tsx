@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import PageHero from "@/components/PageHero";
+import DeferredMap from "@/components/DeferredMap";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function ContactPage() {
@@ -139,16 +140,12 @@ return (
 
               {/* خريطة */}
               <div className="mt-8 aspect-[16/10] w-full rounded-2xl overflow-hidden border border-surface-100 shadow-sm">
-                <iframe
-                  src={contact.mapEmbedUrl}
-                  width="100%"
-                  height="100%"
-                  className="border-0 w-full h-full min-h-[220px]"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
+                <DeferredMap
+                  embedUrl={contact.mapEmbedUrl}
                   title={branding.nameAr}
-                ></iframe>
+                  location={lang === "ar" ? contact.locationAr : contact.locationEn}
+                  language={lang}
+                />
               </div>
             </div>
 

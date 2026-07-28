@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function TawkChat() {
+  const pathname = usePathname();
+  const isPrivatePage =
+    /^\/(?:dashboard|login|forgot-password|change-password)(?:\/|$)/.test(
+      pathname
+    );
+
   useEffect(() => {
+    if (isPrivatePage) return;
+
     const interactionEvents: Array<keyof WindowEventMap> = [
       "pointerdown",
       "keydown",
@@ -41,7 +50,7 @@ export default function TawkChat() {
     );
 
     return removeInteractionListeners;
-  }, []);
+  }, [isPrivatePage]);
 
   return null;
 }

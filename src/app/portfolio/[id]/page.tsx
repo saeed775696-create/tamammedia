@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { getPortfolioItem } from "@/lib/public-content.server";
+import {
+  getPortfolioItem,
+  getPortfolioList,
+} from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,6 +17,13 @@ import {
 type ProjectPageProps = {
   params: Promise<{ id: string }>;
 };
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const items = await getPortfolioList().catch(() => []);
+  return items.map((item) => ({ id: item.id }));
+}
 
 function parseGallery(value: unknown): string[] {
   if (!value) return [];
@@ -65,7 +74,6 @@ export default async function ProjectDetailPage({
   const technologies = parseGallery(project.technologies);
   const safeVideoUrl = isSafeExternalUrl(project.videoUrl) ? project.videoUrl : null;
   const safeProjectLink = isSafeExternalUrl(project.link) ? project.link : null;
-  const nonce = (await headers()).get("x-nonce") || undefined;
   const canonical = absoluteUrl(`/portfolio/${project.id}`);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -99,7 +107,6 @@ export default async function ProjectDetailPage({
     <div className="bg-surface-50 min-h-screen">
       <script
         type="application/ld+json"
-        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <div className="container-site pt-32 pb-20 md:pb-28">

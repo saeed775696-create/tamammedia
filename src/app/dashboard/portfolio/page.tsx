@@ -12,6 +12,7 @@ import { IconButton } from "@/components/ui/IconButton"
 import { Input } from "@/components/ui/Input"
 import { Select } from "@/components/ui/Select"
 import { Text } from "@/components/ui/Text"
+import DashboardImage from "@/components/dashboard/DashboardImage"
 
 type PortfolioItem = {
   id: string
@@ -88,8 +89,12 @@ export default function PortfolioDashboard() {
       renderCard={(item, { onEdit, onDelete }) => (
         <Card key={item.id} className="group overflow-hidden hover:-translate-y-0.5 transition-all p-0">
           <div className="relative h-40 sm:h-48 bg-surface-100 overflow-hidden rounded-t-xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.imageUrl} alt={item.titleAr} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" onError={(e) => { e.currentTarget.src = "/imgs/2-3.png" }} />
+            <DashboardImage
+              src={item.imageUrl}
+              alt={item.titleAr}
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
             {item.featured && (
               <span className="absolute top-2 end-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white p-1 rounded shadow-lg backdrop-blur-md">
