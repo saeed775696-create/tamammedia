@@ -1,5 +1,6 @@
 import HomeContent from "@/components/HomeContent";
 import Hero from "@/components/Hero";
+import RegionalCoverage from "@/components/RegionalCoverage";
 import { getHomepageContent } from "@/lib/homepage-content.server";
 import { Suspense } from "react";
 
@@ -37,6 +38,7 @@ export default function HomePage() {
       <Suspense fallback={<HomeContentFallback />}>
         <HomeDataContent />
       </Suspense>
+      <RegionalCoverage />
     </>
   );
 }

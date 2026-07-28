@@ -1,8 +1,20 @@
+import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getPortfolioItem } from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { isSafeExternalUrl } from "@/lib/utils";
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  createPageMetadata,
+  serializeJsonLd,
+} from "@/lib/seo";
+
+type ProjectPageProps = {
+  params: Promise<{ id: string }>;
+};
 
 function parseGallery(value: unknown): string[] {
   if (!value) return [];
@@ -18,11 +30,32 @@ function parseGallery(value: unknown): string[] {
   return [];
 }
 
+export async function generateMetadata({
+  params,
+}: ProjectPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const project = await getPortfolioItem(id);
+
+  if (!project) {
+    return {
+      title: "المشروع غير موجود",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return createPageMetadata({
+    title: `${project.titleAr} | مشروع من أعمالنا`,
+    description:
+      project.descriptionAr ||
+      `تعرف على مشروع ${project.titleAr} ضمن أعمال تمام ميديا في التصميم والتسويق والتقنية.`,
+    path: `/portfolio/${project.id}`,
+    imageUrl: project.imageUrl,
+  });
+}
+
 export default async function ProjectDetailPage({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+}: ProjectPageProps) {
   const { id } = await params;
   const project = await getPortfolioItem(id);
 
@@ -32,9 +65,43 @@ export default async function ProjectDetailPage({
   const technologies = parseGallery(project.technologies);
   const safeVideoUrl = isSafeExternalUrl(project.videoUrl) ? project.videoUrl : null;
   const safeProjectLink = isSafeExternalUrl(project.link) ? project.link : null;
+  const nonce = (await headers()).get("x-nonce") || undefined;
+  const canonical = absoluteUrl(`/portfolio/${project.id}`);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": `${canonical}#project`,
+        name: project.titleAr,
+        alternateName: project.titleEn,
+        description:
+          project.descriptionAr ||
+          `مشروع ${project.titleAr} من تنفيذ تمام ميديا.`,
+        url: canonical,
+        image: [project.imageUrl, ...gallery].map(absoluteUrl),
+        genre: project.category,
+        creator: {
+          "@id": `${absoluteUrl("/")}#business`,
+          "@type": "ProfessionalService",
+          name: "تمام ميديا",
+        },
+      },
+      breadcrumbJsonLd([
+        { name: "الرئيسية", path: "/" },
+        { name: "أعمالنا", path: "/portfolio" },
+        { name: project.titleAr, path: `/portfolio/${project.id}` },
+      ]),
+    ],
+  };
 
   return (
     <div className="bg-surface-50 min-h-screen">
+      <script
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <div className="container-site pt-32 pb-20 md:pb-28">
         <div className="max-w-4xl mx-auto">
           <div className="relative w-full aspect-media mb-10 rounded-2xl overflow-hidden shadow-lg border border-surface-200/60">

@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
       // an additional discovery-control layer, not an access-control mechanism.
       disallow: [
         "/api/",
+        "/dashboard",
         "/dashboard/",
         "/login",
         "/forgot-password",
@@ -18,5 +19,6 @@ export default function robots(): MetadataRoute.Robots {
       ],
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
+    host: siteConfig.url,
   };
 }

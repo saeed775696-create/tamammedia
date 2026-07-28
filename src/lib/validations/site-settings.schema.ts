@@ -34,6 +34,19 @@ export const siteSettingsSchema = z.object({
   analytics: z.object({
     googleMeasurementId: googleMeasurementIdSchema,
   }),
+  seo: z.object({
+    titleAr: text(180),
+    titleEn: text(180),
+    descriptionAr: text(500),
+    descriptionEn: text(500),
+    ogImageUrl: imageUrlSchema,
+    regionalTitleAr: text(220),
+    regionalTitleEn: text(220),
+    regionalDescriptionAr: text(1200),
+    regionalDescriptionEn: text(1200),
+    googleSiteVerification: z.string().trim().max(256),
+    bingSiteVerification: z.string().trim().max(256),
+  }),
   hero: z.object({
     badgeAr: text(180),
     badgeEn: text(180),

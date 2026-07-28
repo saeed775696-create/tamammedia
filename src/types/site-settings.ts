@@ -38,6 +38,19 @@ export type SiteSettings = {
   analytics: {
     googleMeasurementId: string;
   };
+  seo: {
+    titleAr: string;
+    titleEn: string;
+    descriptionAr: string;
+    descriptionEn: string;
+    ogImageUrl: string;
+    regionalTitleAr: string;
+    regionalTitleEn: string;
+    regionalDescriptionAr: string;
+    regionalDescriptionEn: string;
+    googleSiteVerification: string;
+    bingSiteVerification: string;
+  };
   hero: {
     badgeAr: string;
     badgeEn: string;

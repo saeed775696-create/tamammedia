@@ -1,4 +1,5 @@
 import "./globals.css";
+import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import { connection } from "next/server";
 import { headers } from "next/headers";
@@ -19,6 +20,7 @@ import ScrollProgress from "@/components/ui/ScrollProgress";
 import BackToTop from "@/components/ui/BackToTop";
 import { siteConfig } from "@/config/site";
 import { getSiteSettings } from "@/lib/site-settings.server";
+import { absoluteUrl, summarizeForSearch } from "@/lib/seo";
 
 // Global content is administered at runtime, so the layout must not be frozen
 // into the production build before the current settings can be read.
@@ -32,85 +34,85 @@ export const dynamic = "force-dynamic";
    4. antialiased لجودة عرض الخطوط.
    ========================================================= */
 
-export const viewport = {
+export const viewport: Viewport = {
   themeColor: "#21214f",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
 };
 
-export const metadata = {
-  metadataBase: new URL(siteConfig.url),
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const description = summarizeForSearch(settings.seo.descriptionAr);
+  const socialImage = absoluteUrl(settings.seo.ogImageUrl);
 
-  title: {
-    default: "تمام ميديا | وكالة تسويق رقمي في اليمن",
-    template: "%s | تمام ميديا",
-  },
-
-  description:
-    "تمام ميديا وكالة تسويق رقمي يمنية متخصصة في بناء العلامات التجارية، تطوير المواقع، إدارة وسائل التواصل الاجتماعي وحلول تسويقية متكاملة.",
-
-  keywords: [
-    "تمام ميديا",
-    "تسويق رقمي اليمن",
-    "وكالة تسويق تعز",
-    "بناء علامة تجارية اليمن",
-    "تطوير مواقع اليمن",
-    "SEO اليمن",
-    "تسويق سوشيال ميديا اليمن",
-    "حلول تسويقية اليمن",
-  ],
-
-  authors: [{ name: "تمام ميديا", url: siteConfig.url }],
-  creator: "تمام ميديا",
-  publisher: "تمام ميديا",
-
-  alternates: {
-    canonical: siteConfig.url,
-  },
-
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+  return {
+    metadataBase: new URL(siteConfig.url),
+    applicationName: settings.branding.nameAr,
+    title: {
+      default: settings.seo.titleAr,
+      template: `%s | ${settings.branding.nameAr}`,
+    },
+    description,
+    authors: [{ name: settings.branding.nameAr, url: siteConfig.url }],
+    creator: settings.branding.nameAr,
+    publisher: settings.branding.nameAr,
+    category: "التسويق الرقمي وتطوير المواقع",
+    alternates: {
+      canonical: siteConfig.url,
+    },
+    manifest: "/manifest.webmanifest",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    verification: {
+      google: settings.seo.googleSiteVerification || undefined,
+      other: settings.seo.bingSiteVerification
+        ? { "msvalidate.01": settings.seo.bingSiteVerification }
+        : undefined,
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-
-  openGraph: {
-    title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
-    description:
-      "وكالة تسويق رقمي متكاملة في اليمن - بناء العلامات التجارية وتطوير المواقع.",
-    url: siteConfig.url,
-    siteName: "تمام ميديا",
-    locale: "ar_YE",
-    type: "website",
-    images: [
-      {
-        url: "/imgs/2-3.png",
-        width: 1200,
-        height: 630,
-        alt: "شعار تمام ميديا",
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "تمام ميديا | وكالة تسويق رقمي في اليمن",
-    description: "وكالة تسويق رقمي يمنية متخصصة في بناء العلامات التجارية",
-    images: ["/imgs/2-3.png"],
-  },
-
-  icons: {
-    icon: "/imgs/favicon-32x32.png",
-    apple: "/imgs/favicon-32x32.png",
-  },
-};
+    },
+    openGraph: {
+      title: settings.seo.titleAr,
+      description,
+      url: siteConfig.url,
+      siteName: `${settings.branding.nameAr} | ${settings.branding.nameEn}`,
+      locale: "ar_YE",
+      type: "website",
+      images: [
+        {
+          url: socialImage,
+          width: 1200,
+          height: 630,
+          alt: settings.seo.titleAr,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: settings.seo.titleAr,
+      description,
+      images: [socialImage],
+    },
+    icons: {
+      icon: "/icon",
+      shortcut: "/imgs/favicon-32x32.png",
+      apple: "/icon",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -141,7 +143,7 @@ export default async function RootLayout({
           <main id="main-content" className="flex-grow" tabIndex={-1}>{children}</main>
           <LayoutFooter />
           <BackToTop />
-          <StructuredData nonce={nonce} />
+          <StructuredData nonce={nonce} settings={settings} />
           <TawkChat />
         </Providers>
       </body>

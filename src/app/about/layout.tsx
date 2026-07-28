@@ -1,12 +1,11 @@
-export const metadata = {
-  title: "من نحن - تمام ميديا",
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "عن تمام ميديا: وكالة تسويق رقمي يمنية",
   description:
-    "تعرف على وكالة تمام ميديا، قصتنا، رؤيتنا، فريقنا، وخدماتنا الرقمية في اليمن.",
-  alternates: {
-    canonical: "/about",
-    languages: { ar: "/about", en: "/about" },
-  },
-};
+    "تعرف على تمام ميديا، وكالة يمنية تجمع التسويق الرقمي والهوية البصرية وتطوير المواقع لخدمة العلامات التجارية في اليمن ودول الخليج.",
+  path: "/about",
+});
 
 export default function AboutLayout({
   children,

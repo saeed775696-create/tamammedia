@@ -2,7 +2,7 @@
 
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BarChart3, Image as ImageIcon, LayoutTemplate, Loader2, Save, Settings2, Users } from "lucide-react";
+import { BarChart3, Image as ImageIcon, LayoutTemplate, Loader2, Save, Search, Settings2, Users } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import AnalyticsSettingsPanel from "@/components/dashboard/AnalyticsSettingsPanel";
 import ImageUpload from "@/components/dashboard/ImageUpload";
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { defaultSiteSettings } from "@/config/site-settings";
 import type { SiteSettings } from "@/types/site-settings";
 
-type Tab = "identity" | "hero" | "home" | "analytics";
+type Tab = "identity" | "hero" | "home" | "seo" | "analytics";
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
@@ -120,6 +120,7 @@ export default function SiteSettingsPage() {
     { id: "identity", label: "الهوية والتواصل", icon: Settings2 },
     { id: "hero", label: "واجهة الصفحة الرئيسية", icon: LayoutTemplate },
     { id: "home", label: "محتوى الصفحة والفوتر", icon: Users },
+    { id: "seo", label: "محركات البحث SEO", icon: Search },
     { id: "analytics", label: "التحليلات وGoogle", icon: BarChart3 },
   ];
 
@@ -299,6 +300,123 @@ export default function SiteSettingsPage() {
                     <Field label="رقم المصمم الدولي"><Input value={settings.footer.designerPhone} onChange={(e) => update("footer", { designerPhone: e.target.value })} dir="ltr" /></Field>
                     <Field label="رقم المصمم الظاهر"><Input value={settings.footer.designerPhoneDisplay} onChange={(e) => update("footer", { designerPhoneDisplay: e.target.value })} dir="ltr" /></Field>
                   </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {activeTab === "seo" && (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>الظهور في نتائج البحث والمشاركة</CardTitle>
+                  <p className="mt-1 text-xs leading-relaxed text-surface-500">
+                    استخدم وصفًا طبيعيًا ودقيقًا. لا تكرر الكلمات المفتاحية؛
+                    العنوان والوصف ومحتوى الصفحة أهم لمحركات البحث.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <LanguageFields
+                    label="عنوان الموقع في نتائج البحث"
+                    ar={settings.seo.titleAr}
+                    en={settings.seo.titleEn}
+                    onArChange={(titleAr) => update("seo", { titleAr })}
+                    onEnChange={(titleEn) => update("seo", { titleEn })}
+                  />
+                  <LanguageFields
+                    label="وصف الموقع في نتائج البحث"
+                    ar={settings.seo.descriptionAr}
+                    en={settings.seo.descriptionEn}
+                    onArChange={(descriptionAr) =>
+                      update("seo", { descriptionAr })
+                    }
+                    onEnChange={(descriptionEn) =>
+                      update("seo", { descriptionEn })
+                    }
+                    multiline
+                  />
+                  <ImageUpload
+                    label="صورة المشاركة في Google والشبكات الاجتماعية"
+                    value={settings.seo.ogImageUrl}
+                    onChange={(ogImageUrl) => update("seo", { ogImageUrl })}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>محتوى التغطية الإقليمية</CardTitle>
+                  <p className="mt-1 text-xs leading-relaxed text-surface-500">
+                    يظهر هذا المحتوى في الصفحة الرئيسية لتوضيح خدمة اليمن
+                    ودول الخليج دون الإيحاء بوجود فروع غير حقيقية.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <LanguageFields
+                    label="عنوان نطاق الخدمة"
+                    ar={settings.seo.regionalTitleAr}
+                    en={settings.seo.regionalTitleEn}
+                    onArChange={(regionalTitleAr) =>
+                      update("seo", { regionalTitleAr })
+                    }
+                    onEnChange={(regionalTitleEn) =>
+                      update("seo", { regionalTitleEn })
+                    }
+                  />
+                  <LanguageFields
+                    label="وصف نطاق الخدمة"
+                    ar={settings.seo.regionalDescriptionAr}
+                    en={settings.seo.regionalDescriptionEn}
+                    onArChange={(regionalDescriptionAr) =>
+                      update("seo", { regionalDescriptionAr })
+                    }
+                    onEnChange={(regionalDescriptionEn) =>
+                      update("seo", { regionalDescriptionEn })
+                    }
+                    multiline
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>إثبات ملكية محركات البحث</CardTitle>
+                  <p className="mt-1 text-xs leading-relaxed text-surface-500">
+                    الصق قيمة التحقق فقط، وليس وسم meta كاملًا. اترك الحقل
+                    فارغًا إن لم تربط الخدمة بعد.
+                  </p>
+                </CardHeader>
+                <CardContent className="grid gap-5 md:grid-cols-2">
+                  <Field
+                    label="Google Search Console"
+                    hint="القيمة الموجودة داخل content في وسم google-site-verification."
+                  >
+                    <Input
+                      value={settings.seo.googleSiteVerification}
+                      onChange={(event) =>
+                        update("seo", {
+                          googleSiteVerification: event.target.value,
+                        })
+                      }
+                      dir="ltr"
+                      className="text-left"
+                    />
+                  </Field>
+                  <Field
+                    label="Bing Webmaster Tools"
+                    hint="القيمة الموجودة داخل content في وسم msvalidate.01."
+                  >
+                    <Input
+                      value={settings.seo.bingSiteVerification}
+                      onChange={(event) =>
+                        update("seo", {
+                          bingSiteVerification: event.target.value,
+                        })
+                      }
+                      dir="ltr"
+                      className="text-left"
+                    />
+                  </Field>
                 </CardContent>
               </Card>
             </>

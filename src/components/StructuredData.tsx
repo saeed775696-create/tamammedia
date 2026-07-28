@@ -1,49 +1,127 @@
 import { siteConfig } from "@/config/site";
+import { absoluteUrl, serializeJsonLd, servedMarkets } from "@/lib/seo";
+import type { SiteSettings } from "@/types/site-settings";
 
-/**
- * بيانات منظمة (Schema.org) لمحركات البحث.
- * تُساعد Google على فهم نشاط الشركة وعرض Knowledge Panel.
- *
- * ملاحظة: تم إزالة aggregateRating الوهمي لأن Google تعاقب على التقييمات
- * غير الموثقة بخفض الترتيب.
- */
-export default function StructuredData({ nonce }: { nonce?: string }) {
+export default function StructuredData({
+  nonce,
+  settings,
+}: {
+  nonce?: string;
+  settings: SiteSettings;
+}) {
+  const businessId = `${siteConfig.url}/#business`;
+  const websiteId = `${siteConfig.url}/#website`;
+  const socialProfiles = Object.values(settings.social).filter(Boolean);
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: siteConfig.name.ar,
-    alternateName: siteConfig.name.en,
-    description:
-      "وكالة تسويق رقمي وحلول تقنية متكاملة في اليمن. نقدم خدمات تصميم الهوية البصرية، تطوير المواقع والمتاجر الإلكترونية، إدارة السوشيال ميديا، والحملات الإعلانية. مقرنا في تعز، ونعمل مع علامات تجارية محلية وإقليمية لبناء حضور رقمي قوي ومؤثر.",
-    url: siteConfig.url,
-    logo: `${siteConfig.url}/imgs/2-3.png`,
-    image: `${siteConfig.url}/imgs/2-3.png`,
-    telephone: `+${siteConfig.phone}`,
-    email: siteConfig.email,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "تعز",
-      addressCountry: "YE",
-    },
-    sameAs: [
-      siteConfig.social.whatsapp,
-      siteConfig.social.facebook,
-      siteConfig.social.instagram,
-      siteConfig.social.linkedin,
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": businessId,
+        name: settings.branding.nameAr,
+        alternateName: settings.branding.nameEn,
+        description: settings.seo.descriptionAr,
+        url: siteConfig.url,
+        logo: {
+          "@type": "ImageObject",
+          url: absoluteUrl(settings.branding.logoUrl),
+        },
+        image: absoluteUrl(settings.seo.ogImageUrl),
+        telephone: `+${settings.contact.phone}`,
+        email: settings.contact.email,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: settings.contact.locationAr,
+          addressLocality: "تعز",
+          addressRegion: "تعز",
+          addressCountry: "YE",
+        },
+        areaServed: servedMarkets.map((market) => ({
+          "@type": "Country",
+          name: market.ar,
+          alternateName: market.en,
+        })),
+        sameAs: socialProfiles,
+        openingHoursSpecification: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: siteConfig.workingHours.days,
+          opens: siteConfig.workingHours.opens,
+          closes: siteConfig.workingHours.closes,
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: `+${settings.contact.phone}`,
+          email: settings.contact.email,
+          contactType: "customer service",
+          availableLanguage: ["Arabic", "English"],
+          areaServed: servedMarkets.map((market) => market.code),
+        },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "خدمات تمام ميديا",
+          itemListElement: [
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "التسويق الرقمي وإدارة الحملات",
+                url: absoluteUrl("/services/integrated"),
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "تطوير المواقع والتطبيقات",
+                url: absoluteUrl("/services/tech"),
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "الهوية البصرية والتصميم الإبداعي",
+                url: absoluteUrl("/services/creative"),
+              },
+            },
+          ],
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: siteConfig.url,
+        name: settings.branding.nameAr,
+        alternateName: settings.branding.nameEn,
+        description: settings.seo.descriptionAr,
+        inLanguage: ["ar", "en"],
+        publisher: {
+          "@id": businessId,
+        },
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${siteConfig.url}/#webpage`,
+        url: siteConfig.url,
+        name: settings.seo.titleAr,
+        description: settings.seo.descriptionAr,
+        inLanguage: "ar",
+        isPartOf: {
+          "@id": websiteId,
+        },
+        about: {
+          "@id": businessId,
+        },
+      },
     ],
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: siteConfig.workingHours.days,
-      opens: siteConfig.workingHours.opens,
-      closes: siteConfig.workingHours.closes,
-    },
   };
 
   return (
     <script
       type="application/ld+json"
       nonce={nonce}
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
     />
   );
 }

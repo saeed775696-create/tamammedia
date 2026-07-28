@@ -1,12 +1,11 @@
-export const metadata = {
-  title: "أعمالنا - تمام ميديا",
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "أعمالنا في التسويق والتصميم وتطوير المواقع",
   description:
-    "استعرض أحدث مشاريعنا في تصميم المواقع والمتاجر والهويات البصرية والفيديو. أعمال احترافية من وكالة تمام ميديا في اليمن.",
-  alternates: {
-    canonical: "/portfolio",
-    languages: { ar: "/portfolio", en: "/portfolio" },
-  },
-};
+    "استعرض مشاريع تمام ميديا في تطوير المواقع والمتاجر الإلكترونية، تصميم الهويات البصرية، المحتوى والحملات الرقمية لعلامات تجارية يمنية وإقليمية.",
+  path: "/portfolio",
+});
 
 export default function PortfolioLayout({
   children,

@@ -34,7 +34,7 @@ export default function CreativeServicePage() {
             {/* Visual Identity */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/visual_identity_real_1784858982810.jpg" alt="Visual Identity" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
+                <Image src="/imgs/service imgs/real/visual_identity_real_1784858982810.jpg" alt="تصميم هوية بصرية للشركات في اليمن والخليج" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-3 right-3 w-10 h-10 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center text-white border border-white/30">
                   <Layout size={20} />
@@ -53,7 +53,7 @@ export default function CreativeServicePage() {
             {/* Graphic Design */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/graphic_design_real_1784854299182.jpg" alt="Graphic Design" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
+                <Image src="/imgs/service imgs/real/graphic_design_real_1784854299182.jpg" alt="تصميم جرافيكي احترافي للعلامات التجارية" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Paintbrush size={24} />
@@ -72,7 +72,7 @@ export default function CreativeServicePage() {
             {/* Social Media */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/social_media_real_1784854275011.jpg" alt="Social Media" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
+                <Image src="/imgs/service imgs/real/social_media_real_1784854275011.jpg" alt="إدارة وتصميم محتوى وسائل التواصل الاجتماعي" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Megaphone size={24} />
@@ -91,7 +91,7 @@ export default function CreativeServicePage() {
             {/* Photography & Production */}
             <div className="card-base group flex flex-col p-6 md:p-8 lg:col-start-2">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/photography_real_1784858992445.jpg" alt="Photography" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
+                <Image src="/imgs/service imgs/real/photography_real_1784858992445.jpg" alt="تصوير وإنتاج محتوى بصري احترافي" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Camera size={24} />
@@ -110,7 +110,7 @@ export default function CreativeServicePage() {
             {/* Motion Graphics */}
             <div className="card-base group flex flex-col p-6 md:p-8 lg:col-start-3">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/motion_graphics_real_1784859000812.jpg" alt="Motion Graphics" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
+                <Image src="/imgs/service imgs/real/motion_graphics_real_1784859000812.jpg" alt="إنتاج فيديو وموشن جرافيك تسويقي" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Video size={24} />

@@ -155,7 +155,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   src="/imgs/services/graphic_design_real.jpg"
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  alt="Creative Services"
+                  alt={lang === "ar" ? "خدمات التصميم والهوية البصرية" : "Creative and brand identity services"}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   quality={65}
                 />
@@ -196,7 +196,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   src="/imgs/services/tech_solutions.jpg"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  alt="Tech Services"
+                  alt={lang === "ar" ? "خدمات تطوير المواقع والتطبيقات" : "Website and application development services"}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   quality={65}
                 />
@@ -236,7 +236,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
                   src="/imgs/services/marketing_real.jpg"
                   fill
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-                  alt="Integrated Solutions"
+                  alt={lang === "ar" ? "حلول التسويق الرقمي المتكاملة" : "Integrated digital marketing solutions"}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   quality={65}
                 />
@@ -316,7 +316,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
               <div className="absolute top-0 start-0 lg:start-8 w-[82%] aspect-[4/5] max-h-[420px] rounded-3xl overflow-hidden shadow-xl border-4 border-white z-10 transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
-                  alt="Tamam Media Team"
+                  alt={lang === "ar" ? "فريق تمام ميديا للتسويق والتقنية" : "Tamam Media marketing and technology team"}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-1000"
                   sizes="(max-width: 1024px) 80vw, 40vw"
@@ -328,7 +328,7 @@ export default function HomeContent({ team, partners, includeHero = true }: Home
               <div className="absolute bottom-0 end-0 lg:end-6 w-[58%] aspect-[4/3] max-h-[280px] rounded-3xl overflow-hidden shadow-xl border-4 border-white z-20 transition-all duration-700 group-hover:translate-y-2 group-hover:translate-x-2 group-hover:shadow-2xl">
                 <Image
                   src="/imgs/services/marketing_real.jpg"
-                  alt="Tamam Media Office"
+                  alt={lang === "ar" ? "مقر تمام ميديا في تعز اليمن" : "Tamam Media office in Taiz, Yemen"}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-1000"
                   sizes="(max-width: 1024px) 66vw, 30vw"

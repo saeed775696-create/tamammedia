@@ -1,12 +1,11 @@
-export const metadata = {
-  title: "خدماتنا - تمام ميديا",
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "خدمات التسويق الرقمي وتطوير المواقع",
   description:
-    "خدمات إبداعية، تقنية، ومتكاملة تشمل التصميم، التطوير، والتسويق الرقمي في اليمن.",
-  alternates: {
-    canonical: "/services",
-    languages: { ar: "/services", en: "/services" },
-  },
-};
+    "خدمات متكاملة تشمل التسويق الرقمي، إدارة الحملات، الهوية البصرية، تصميم المحتوى، وتطوير المواقع والتطبيقات للشركات في اليمن ودول الخليج.",
+  path: "/services",
+});
 
 export default function ServicesLayout({
   children,

@@ -34,7 +34,7 @@ export default function TechServicePage() {
             {/* App Development */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/app_development_real_1784859099327.jpg" alt="App Development" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
+                <Image src="/imgs/service imgs/real/app_development_real_1784859099327.jpg" alt="تطوير تطبيقات الجوال في اليمن والخليج" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Smartphone size={24} />
@@ -53,7 +53,7 @@ export default function TechServicePage() {
             {/* Web Development */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/tech_solutions_1784854112279.jpg" alt="Web Development" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
+                <Image src="/imgs/service imgs/real/tech_solutions_1784854112279.jpg" alt="تصميم وتطوير مواقع سريعة ومتجاوبة" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <Monitor size={24} />
@@ -72,7 +72,7 @@ export default function TechServicePage() {
             {/* E-Commerce */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/marketing_campaigns_1784854104204.jpg" alt="E-Commerce" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
+                <Image src="/imgs/service imgs/real/marketing_campaigns_1784854104204.jpg" alt="تطوير متاجر إلكترونية للشركات في المنطقة" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <ShoppingCart size={24} />
@@ -91,7 +91,7 @@ export default function TechServicePage() {
             {/* Hosting & Security */}
             <div className="card-base group flex flex-col p-6 md:p-8">
               <div className="relative w-full aspect-media rounded-xl overflow-hidden mb-6">
-                <Image src="/imgs/service imgs/real/app_development_1784854095919.jpg" alt="Hosting & Security" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
+                <Image src="/imgs/service imgs/real/app_development_1784854095919.jpg" alt="استضافة آمنة ودعم فني للمواقع والتطبيقات" fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" quality={65} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30">
                   <ShieldCheck size={24} />

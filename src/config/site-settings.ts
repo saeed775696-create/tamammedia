@@ -28,6 +28,23 @@ export const defaultSiteSettings: SiteSettings = {
   analytics: {
     googleMeasurementId: "",
   },
+  seo: {
+    titleAr: "تمام ميديا | وكالة تسويق رقمي وتطوير مواقع في اليمن والخليج",
+    titleEn: "Tamam Media | Digital Marketing & Web Development in Yemen and the GCC",
+    descriptionAr:
+      "تمام ميديا وكالة يمنية للتسويق الرقمي وتطوير المواقع والهوية البصرية وإدارة الحملات، نخدم الشركات في اليمن والسعودية والإمارات ودول الخليج.",
+    descriptionEn:
+      "Tamam Media is a Yemeni digital marketing, branding, and web development agency serving businesses across Yemen, Saudi Arabia, the UAE, and the GCC.",
+    ogImageUrl: "/opengraph-image",
+    regionalTitleAr: "من اليمن إلى الخليج والشرق الأوسط",
+    regionalTitleEn: "From Yemen to the GCC and the Middle East",
+    regionalDescriptionAr:
+      "ننطلق من تعز ونخدم الشركات والمشاريع عن بُعد في اليمن والسعودية والإمارات وعُمان وقطر والكويت والبحرين، بحلول تسويق رقمي وتطوير تقني تراعي طبيعة كل سوق.",
+    regionalDescriptionEn:
+      "Based in Taiz, we serve businesses remotely across Yemen, Saudi Arabia, the UAE, Oman, Qatar, Kuwait, and Bahrain with market-aware digital and technology solutions.",
+    googleSiteVerification: "",
+    bingSiteVerification: "",
+  },
   hero: {
     badgeAr: "وكالة تسويق رقمي متكاملة",
     badgeEn: "Integrated Digital Marketing Agency",
@@ -94,6 +111,7 @@ export function normalizeSiteSettings(value: unknown): SiteSettings {
     contact: mergeSection(defaultSiteSettings.contact, source.contact),
     social: mergeSection(defaultSiteSettings.social, source.social),
     analytics: mergeSection(defaultSiteSettings.analytics, source.analytics),
+    seo: mergeSection(defaultSiteSettings.seo, source.seo),
     hero: {
       ...hero,
       cards: Array.isArray(source.hero?.cards) && source.hero.cards.length > 0

@@ -1,19 +1,92 @@
+import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getServiceItem } from "@/lib/public-content.server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"; // يُفضل استخدام Image من Next.js للأداء
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  createPageMetadata,
+  serializeJsonLd,
+  servedMarkets,
+} from "@/lib/seo";
+
+type ServicePageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: ServicePageProps): Promise<Metadata> {
+  const { id } = await params;
+  const service = await getServiceItem(id);
+
+  if (!service) {
+    return {
+      title: "الخدمة غير موجودة",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return createPageMetadata({
+    title: `${service.titleAr} في اليمن والخليج`,
+    description: service.descriptionAr,
+    path: `/services/${service.id}`,
+    imageUrl: service.imageUrl,
+  });
+}
 
 export default async function ServiceDetailPage({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+}: ServicePageProps) {
   const { id } = await params;
   const service = await getServiceItem(id);
   if (!service) notFound();
+  const nonce = (await headers()).get("x-nonce") || undefined;
+  const canonical = absoluteUrl(`/services/${service.id}`);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${canonical}#service`,
+        name: service.titleAr,
+        alternateName: service.titleEn,
+        description: service.descriptionAr,
+        url: canonical,
+        image: service.imageUrl
+          ? absoluteUrl(service.imageUrl)
+          : absoluteUrl("/opengraph-image"),
+        provider: {
+          "@id": `${absoluteUrl("/")}#business`,
+          "@type": "ProfessionalService",
+          name: "تمام ميديا",
+        },
+        areaServed: servedMarkets.map((market) => ({
+          "@type": "Country",
+          name: market.ar,
+        })),
+        availableChannel: {
+          "@type": "ServiceChannel",
+          serviceUrl: absoluteUrl("/contact"),
+        },
+      },
+      breadcrumbJsonLd([
+        { name: "الرئيسية", path: "/" },
+        { name: "الخدمات", path: "/services" },
+        { name: service.titleAr, path: `/services/${service.id}` },
+      ]),
+    ],
+  };
 
   return (
     <article className="pb-24 bg-surface-100 min-h-screen">
+      <script
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       {/* --- 1. الترويسة العلوية (Hero Banner) --- */}
       <header className="relative bg-brand-900 pt-40 pb-32 overflow-hidden border-b-[6px] border-accent-500">
         {/* زخرفة هندسية في الخلفية مستوحاة من شعاركم */}

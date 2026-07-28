@@ -1,11 +1,11 @@
-export const metadata = {
-  title: "الخدمات التقنية - تمام ميديا",
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "تطوير المواقع والتطبيقات والمتاجر الإلكترونية",
   description:
-    "تطوير مواقع وتطبيقات، متاجر إلكترونية، استضافة وأمن معلومات في اليمن.",
-  alternates: {
-    canonical: "/services/tech",
-  },
-};
+    "تصميم وتطوير مواقع سريعة، تطبيقات ومتاجر إلكترونية آمنة للشركات في اليمن ودول الخليج، مع الاستضافة والدعم الفني وتحسين تجربة المستخدم.",
+  path: "/services/tech",
+});
 
 export default function TechLayout({
   children,

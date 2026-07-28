@@ -1,11 +1,11 @@
-export const metadata = {
-  title: "الخدمات الإبداعية - تمام ميديا",
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "الهوية البصرية والتصميم وإدارة المحتوى",
   description:
-    "هوية بصرية، تصميم جرافيكي، إدارة سوشيال ميديا، تصوير وإنتاج فيديو في اليمن.",
-  alternates: {
-    canonical: "/services/creative",
-  },
-};
+    "تصميم الهوية البصرية والجرافيك، إدارة محتوى السوشيال ميديا، التصوير والموشن جرافيك للعلامات التجارية في اليمن والسعودية والإمارات والخليج.",
+  path: "/services/creative",
+});
 
 export default function CreativeLayout({
   children,
