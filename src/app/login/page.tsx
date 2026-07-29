@@ -244,7 +244,7 @@ function LoginForm() {
           
           <div className="mt-10 text-center">
             <Link
-              href="/"
+              href={process.env.NEXT_PUBLIC_APP_URL || "/"}
               className="text-[14px] font-bold text-surface-500 hover:text-brand-900 transition-colors inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full hover:bg-surface-100/80"
             >
               <ArrowRight size={16} className="rotate-180" />

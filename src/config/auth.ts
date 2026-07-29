@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { getAdminHost, normalizeHost } from '@/lib/admin-host';
 
 const envSchema = z.object({
   NEXTAUTH_URL: z
@@ -16,6 +17,26 @@ const parsed = envSchema.safeParse({
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 });
+
+const configuredAdminHost = getAdminHost();
+const rawAdminHost = process.env.ADMIN_HOST?.trim();
+const configuredAuthHost = parsed.success
+  ? normalizeHost(parsed.data.NEXTAUTH_URL)
+  : null;
+
+if (process.env.NODE_ENV === 'production' && rawAdminHost && !configuredAdminHost) {
+  throw new Error('ADMIN_HOST must be a valid hostname without a path');
+}
+
+if (
+  process.env.NODE_ENV === 'production' &&
+  configuredAdminHost &&
+  configuredAuthHost !== configuredAdminHost
+) {
+  throw new Error(
+    'NEXTAUTH_URL must use the same hostname as ADMIN_HOST when admin host isolation is enabled'
+  );
+}
 
 if (!parsed.success && process.env.NODE_ENV === 'production') {
   throw new Error(

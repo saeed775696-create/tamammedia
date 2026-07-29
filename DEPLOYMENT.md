@@ -12,6 +12,7 @@
 | --- | --- |
 | `NEXTAUTH_URL` | `https://example.com` |
 | `NEXT_PUBLIC_APP_URL` | `https://example.com` |
+| `ADMIN_HOST` | اسم المضيف العشوائي للوحة فقط، مثل `m7x4p9ka3qv6.example.com` |
 | `NEXTAUTH_SECRET` | قيمة جديدة بطول 32 بايت أو أكثر |
 | `ANALYTICS_ENCRYPTION_KEY` | قيمة مستقلة جديدة بطول 32 بايت أو أكثر |
 | `DATABASE_URL` | رابط Supabase Pooler بمنفذ `6543` و`pgbouncer=true` |
@@ -29,6 +30,8 @@ openssl rand -base64 32
 
 لا تغيّر `NEXTAUTH_SECRET` أو `ANALYTICS_ENCRYPTION_KEY` بعد دخول الإنتاج دون خطة تدوير: الأول ينهي جلسات المستخدمين، والثاني يمنع قراءة اتصال Google Analytics المشفّر إلى أن يُدخل ملف JSON من جديد.
 
+عند تفعيل لوحة التحكم على نطاق فرعي، تصبح القيمتان مختلفتين عمدًا: اجعل `NEXT_PUBLIC_APP_URL` للدومين العام، و`NEXTAUTH_URL` للنطاق الفرعي الإداري. لا تضع قيمة `ADMIN_HOST` في متغير يبدأ بـ`NEXT_PUBLIC_`.
+
 ## 2. ربط الدومين في Vercel
 
 1. افتح مشروع `tamammedia-website` في Vercel، ثم **Settings > Domains**.
@@ -39,6 +42,27 @@ openssl rand -base64 32
 6. غيّر القيمتين `NEXTAUTH_URL` و`NEXT_PUBLIC_APP_URL` إلى النطاق الأساسي، ثم أعد النشر.
 
 يبقى نطاق Vercel المؤقت للاختبار فقط؛ التطبيق يرسل له `noindex` كي لا ينافس الدومين الرسمي في البحث.
+
+### عزل لوحة التحكم على نطاق فرعي عشوائي
+
+1. ولّد اسمًا عشوائيًا من 12 إلى 16 حرفًا وأرقامًا؛ لا تستخدم `admin` أو `dashboard` أو اسم الشركة. مثال توضيحي فقط: `m7x4p9ka3qv6.example.com`.
+2. أضف الاسم إلى **Vercel > Settings > Domains** في **المشروع نفسه**، ثم أضف سجل DNS الذي تعرضه Vercel.
+3. في متغيرات **Production** اضبط:
+
+   ```env
+   NEXT_PUBLIC_APP_URL="https://example.com"
+   NEXTAUTH_URL="https://m7x4p9ka3qv6.example.com"
+   ADMIN_HOST="m7x4p9ka3qv6.example.com"
+   ```
+
+4. أعد النشر بعد ظهور حالة **Valid Configuration** وشهادة SSL فعّالة.
+5. تحقّق أن `https://example.com/dashboard` و`/login` يعيدان 404، وأن النطاق الفرعي يفتح لوحة التحكم فقط ويرسل `/` إلى `/dashboard`.
+
+لا تعتمد على الاسم العشوائي كبديل للمصادقة: سجلات DNS وشهادات TLS قد تكشف النطاق. يظل عزل الكوكيز، الأدوار، حدود المحاولات، وCSP هي الحماية الأساسية.
+
+يتحقق التطبيق في الإنتاج من تطابق اسم المضيف في `NEXTAUTH_URL` و`ADMIN_HOST`. هذا مقصود: إذا أخطأت في أحدهما، يفشل البناء بدل تشغيل جلسات الإدارة بإعداد غير آمن.
+
+يعتمد العزل على رأس `Host` الذي يتحقق منه Vercel قبل تمريره للتطبيق. لا تشغّل هذه النسخة خلف وكيل يعيد تمرير رأس `Host` من العميل بلا تحقق.
 
 ## 3. Google Analytics 4 ولوحة الإحصاءات
 
@@ -108,4 +132,3 @@ openssl rand -base64 32
 - حساب مالك الدومين وDNS.
 - حساب مالك Google Analytics وGoogle Search Console وGoogle Cloud.
 - مدير أسرار يحتوي مفاتيح SMTP وSupabase وحساب Google الخدمي ومفاتيح NextAuth والتشفير.
-

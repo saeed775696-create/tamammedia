@@ -1,16 +1,86 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  getRequestHost,
+  isAdminHost,
+  isAdminIsolationEnabled,
+} from '@/lib/admin-host';
 
 const NONCE_PAGE_PATTERN =
   /^\/(?:dashboard|login|forgot-password|change-password)(?:\/|$)/;
+const DASHBOARD_API_PATTERN =
+  /^\/api\/(?:account|analytics|auth|contacts|partners|portfolio|services|site-settings|team|upload|users)(?:\/|$)/;
+const CONTENT_API_PATTERN =
+  /^\/api\/(?:partners|portfolio|services|team)(?:\/|$)/;
+const CONTACTS_API_PATTERN = /^\/api\/contacts(?:\/|$)/;
+
+function isAdminOnlyApiRequest(request: NextRequest): boolean {
+  const pathname = request.nextUrl.pathname;
+
+  if (!DASHBOARD_API_PATTERN.test(pathname)) return false;
+
+  // The public site submits contact forms and may read public collections.
+  // Mutations and all remaining administrative API families stay on ADMIN_HOST.
+  if (CONTACTS_API_PATTERN.test(pathname)) return request.method !== 'POST';
+  if (CONTENT_API_PATTERN.test(pathname)) return request.method !== 'GET';
+  return true;
+}
+
+function hiddenNotFound(requestId: string) {
+  return new NextResponse(null, {
+    status: 404,
+    headers: {
+      'Cache-Control': 'private, no-store, max-age=0',
+      'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+      'x-request-id': requestId,
+    },
+  });
+}
+
+function privateRedirect(url: URL, requestId: string) {
+  const response = NextResponse.redirect(url, 307);
+  response.headers.set('Cache-Control', 'private, no-store, max-age=0');
+  response.headers.set(
+    'X-Robots-Tag',
+    'noindex, nofollow, noarchive, nosnippet, noimageindex'
+  );
+  response.headers.set('x-request-id', requestId);
+  return response;
+}
 
 export function proxy(request: NextRequest) {
   const requestId = crypto.randomUUID();
-  const needsNonce = NONCE_PAGE_PATTERN.test(request.nextUrl.pathname);
-  const isApiRoute = request.nextUrl.pathname.startsWith('/api/');
+  const { pathname } = request.nextUrl;
+  const needsNonce = NONCE_PAGE_PATTERN.test(pathname);
+  const isApiRoute = pathname.startsWith('/api/');
+  const isDashboardApiRoute = DASHBOARD_API_PATTERN.test(pathname);
+  const adminIsolationEnabled = isAdminIsolationEnabled();
+  const requestHost = getRequestHost(request.headers, request.nextUrl.hostname);
+  const requestIsAdminHost = isAdminHost(requestHost);
   const isVercelPreview =
     request.nextUrl.hostname === 'tamammedia-website.vercel.app' ||
     request.nextUrl.hostname.endsWith('.vercel.app');
+
+  // Once ADMIN_HOST is configured, the public hostname never reveals where
+  // administration lives. A 404 is deliberate: redirects disclose the host.
+  if (adminIsolationEnabled && !requestIsAdminHost) {
+    if (needsNonce || isAdminOnlyApiRequest(request)) {
+      return hiddenNotFound(requestId);
+    }
+  }
+
+  // The administration hostname serves no public pages. It keeps every
+  // authenticated request on the same origin while avoiding public content,
+  // analytics, and accidental SEO exposure on this hostname.
+  if (adminIsolationEnabled && requestIsAdminHost) {
+    if (pathname === '/') {
+      return privateRedirect(new URL('/dashboard', request.url), requestId);
+    }
+
+    if (!needsNonce && !isDashboardApiRoute) {
+      return hiddenNotFound(requestId);
+    }
+  }
 
   // Public pages intentionally avoid request headers and nonces. They use the
   // static CSP from next.config.ts and remain eligible for ISR/CDN caching.
