@@ -492,7 +492,9 @@ export default function Footer() {
             </span>
             <span className="hidden sm:inline">|</span>
             <a
-              href={`tel:+${footer.designerPhone}`}
+              href={`https://wa.me/${footer.designerPhone}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white/50 hover:text-accent-500 transition-colors inline-flex items-center gap-1"
               dir="ltr"
             >
